@@ -24,8 +24,10 @@ export function HomePage() {
         <PageHeading title={t.home.title} description={t.home.subtitle} descriptionClassName="text-base" />
         <HomeSummaryTiles
           month={month}
+          incomeLabel={cur ? formatVnd(cur.incomeVnd) : '—'}
+          plannedBudgetLabel={cur ? formatVnd(cur.plannedVnd) : '—'}
+          actualSpentLabel={cur ? formatVnd(cur.actualSpentVnd) : '—'}
           plannedSurplusLabel={cur ? formatVnd(cur.plannedSurplusVnd) : '—'}
-          actualSurplusLabel={cur ? formatVnd(cur.actualSurplusVnd) : '—'}
         />
       </div>
     </RequireAuth>

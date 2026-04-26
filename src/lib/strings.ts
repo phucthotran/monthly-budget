@@ -38,7 +38,10 @@ export const t = {
     visible: 'Hiển thị',
   },
   home: {
+    actualSpent: 'Chi thực tế',
     actualSurplus: 'Dư sau chi thực tế',
+    income: 'Thu nhập',
+    plannedBudget: 'Dự chi (kế hoạch)',
     plannedSurplus: 'Dư sau dự chi (kế hoạch)',
     subtitle: 'Theo dõi dự chi, thu nhập và tiết kiệm (VND).',
     thisMonth: 'Tháng này',
