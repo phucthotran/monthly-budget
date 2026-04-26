@@ -15,10 +15,12 @@ export function useHomeData({
   actuals: { spentMonth: MonthKey; amountVnd: number }[]
 }) {
   return useMemo(() => {
-    const month = currentMonthKey()
     const months = statsMonthKeys()
     const snaps = buildMonthSnapshots(months, income, budget, actuals)
-    const cur = snaps.find((s) => s.month === month) ?? snaps[0]
-    return { cur, month }
+    const currentMonth = currentMonthKey()
+    const cur = snaps.find((s) => s.month === currentMonth) ?? snaps[0]
+    const nextMonth = months[0] === currentMonth ? months[1] : months[months.indexOf(currentMonth) + 1]
+    const next = nextMonth ? snaps.find((s) => s.month === nextMonth) : undefined
+    return { cur, currentMonth, next, nextMonth }
   }, [income, budget, actuals])
 }

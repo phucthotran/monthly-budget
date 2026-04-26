@@ -1,35 +1,72 @@
+import { PiggyBank, Receipt, TrendingUp, Wallet } from 'lucide-react'
+
 import { MetricTile } from '@/components/patterns'
-import { formatMonthLabel } from '@/lib/month'
 import { t } from '@/lib/strings'
 
 export function HomeSummaryTiles({
   actualSpentLabel,
   incomeLabel,
-  month,
   plannedBudgetLabel,
+  plannedSavingsToDateLabel,
   plannedSurplusLabel,
 }: {
-  month: string
   incomeLabel: string
   plannedBudgetLabel: string
   actualSpentLabel: string
+  plannedSavingsToDateLabel: string
   plannedSurplusLabel: string
 }) {
-  const monthLabel = formatMonthLabel(month)
-
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <MetricTile title={t.home.income} description={`${t.home.thisMonth}: ${monthLabel}`}>
+    <div className="grid grid-cols-2 gap-4">
+      <MetricTile
+        title={
+          <span className="inline-flex items-center gap-2">
+            <Wallet className="h-4 w-4 text-muted-foreground" />
+            {t.home.income}
+          </span>
+        }
+      >
         {incomeLabel}
       </MetricTile>
-      <MetricTile title={t.home.plannedBudget} description={`${t.home.thisMonth}: ${monthLabel}`}>
+      <MetricTile
+        title={
+          <span className="inline-flex items-center gap-2">
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            {t.home.plannedBudget}
+          </span>
+        }
+      >
         {plannedBudgetLabel}
       </MetricTile>
-      <MetricTile title={t.home.actualSpent} description={`${t.home.thisMonth}: ${monthLabel}`}>
+      <MetricTile
+        title={
+          <span className="inline-flex items-center gap-2">
+            <Receipt className="h-4 w-4 text-muted-foreground" />
+            {t.home.actualSpent}
+          </span>
+        }
+      >
         {actualSpentLabel}
       </MetricTile>
-      <MetricTile title={t.home.plannedSurplus} description={`${t.home.thisMonth}: ${monthLabel}`}>
+      <MetricTile
+        title={
+          <span className="inline-flex items-center gap-2">
+            <PiggyBank className="h-4 w-4 text-muted-foreground" />
+            {t.home.plannedSurplus}
+          </span>
+        }
+      >
         {plannedSurplusLabel}
+      </MetricTile>
+      <MetricTile
+        title={
+          <span className="inline-flex items-center gap-2">
+            <PiggyBank className="h-4 w-4 text-muted-foreground" />
+            {t.home.savingsToDatePlanned}
+          </span>
+        }
+      >
+        {plannedSavingsToDateLabel}
       </MetricTile>
     </div>
   )
