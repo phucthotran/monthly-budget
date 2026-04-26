@@ -130,6 +130,24 @@ Code thuần (dễ test) nằm trong [`src/lib/budget/`](src/lib/budget/).
 
 ---
 
+## Deploy lên GitHub Pages
+
+Repo đã có sẵn workflow deploy: [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
+
+### 1) Bật GitHub Pages
+
+1. Vào **Settings** → **Pages**
+2. **Build and deployment** → chọn **Source: GitHub Actions**
+
+### 2) Deploy
+
+- Push lên nhánh **`main`** → workflow sẽ build và publish thư mục `dist/`
+- Khi build cho Pages, app sẽ set `base` = `/<repo>/` thông qua biến `VITE_BASE`
+
+Lưu ý: để PWA/manifest hoạt động dưới subpath của Pages, manifest dùng đường dẫn relative (`start_url: '.'`, icon `favicon.svg`) trong `vite.config.ts`.
+
+---
+
 ## Chất lượng code
 
 - **ESLint** (flat config) + **Prettier** + `eslint-config-prettier`
