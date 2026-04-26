@@ -11,6 +11,8 @@ export interface MonthSnapshot {
   plannedSurplusVnd: number
   /** Thu nhập − chi thực tế. */
   actualSurplusVnd: number
+  /** Tiết kiệm tích lũy (kế hoạch) từ đầu phạm vi. */
+  plannedSavingsToDateVnd: number
 }
 
 export function buildMonthSnapshots(
@@ -20,16 +22,25 @@ export function buildMonthSnapshots(
   expenses: { spentMonth: MonthKey; amountVnd: number }[],
 ): MonthSnapshot[] {
   const actualByMonth = buildActualByMonth(expenses)
+  let plannedToDate = 0
+
   return months.map((month) => {
     const incomeVnd = incomeForMonth(month, income)
     const plannedVnd = plannedBudgetForMonth(month, budget)
     const actualSpentVnd = actualByMonth.get(month) ?? 0
+
+    const plannedSurplusVnd = incomeVnd - plannedVnd
+    const actualSurplusVnd = incomeVnd - actualSpentVnd
+
+    plannedToDate += plannedSurplusVnd
+
     return {
       actualSpentVnd,
-      actualSurplusVnd: incomeVnd - actualSpentVnd,
+      actualSurplusVnd,
       incomeVnd,
       month,
-      plannedSurplusVnd: incomeVnd - plannedVnd,
+      plannedSavingsToDateVnd: plannedToDate,
+      plannedSurplusVnd,
       plannedVnd,
     }
   })

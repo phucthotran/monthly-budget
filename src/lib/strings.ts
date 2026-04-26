@@ -64,10 +64,12 @@ export const t = {
     title: 'Danh mục phân loại',
   },
   stats: {
+    accumulated: 'Tích lũy',
     actual: 'Chi thực tế',
     actualSurplus: 'Tiết kiệm (thực tế)',
     income: 'Thu nhập',
     month: 'Tháng',
+    monthly: 'Theo tháng',
     planned: 'Dự chi',
     plannedSurplus: 'Tiết kiệm (kế hoạch)',
     subtitle: 'Từ tháng hiện tại đến hết năm, cộng thêm 12 tháng năm sau.',
