@@ -28,10 +28,10 @@ export function BudgetItemsTable({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>{t.budget.titleLabel}</TableHead>
-          <TableHead>{t.budget.category}</TableHead>
+          <TableHead className="w-[34%]">{t.budget.titleLabel}</TableHead>
+          <TableHead className="w-[18%]">{t.budget.category}</TableHead>
           <TableHead className="text-right">{t.budget.amount}</TableHead>
-          <TableHead>Kỳ áp dụng</TableHead>
+          <TableHead className="whitespace-nowrap">Kỳ áp dụng</TableHead>
           <TableHead className="text-right">{t.budget.remaining}</TableHead>
           <TableHead className="w-[220px]" />
         </TableRow>
@@ -43,15 +43,19 @@ export function BudgetItemsTable({
           const remaining = item.amountVnd - spent
           return (
             <TableRow key={item.id}>
-              <TableCell className="font-medium">{item.title}</TableCell>
-              <TableCell>
-                <Badge variant="secondary">{cat?.name ?? '—'}</Badge>
+              <TableCell className="font-medium max-w-[12rem] sm:max-w-[18rem] truncate">
+                <span className="block truncate">{item.title}</span>
               </TableCell>
-              <TableCell className="text-right tabular-nums">{formatVnd(item.amountVnd)}</TableCell>
-              <TableCell className="text-muted-foreground text-sm">
+              <TableCell>
+                <Badge variant="secondary" className="max-w-[10rem] truncate">
+                  <span className="block truncate">{cat?.name ?? '—'}</span>
+                </Badge>
+              </TableCell>
+              <TableCell className="text-right tabular-nums whitespace-nowrap">{formatVnd(item.amountVnd)}</TableCell>
+              <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
                 {formatMonthLabel(item.validFrom)} → {item.validTo ? formatMonthLabel(item.validTo) : '…'}
               </TableCell>
-              <TableCell className="text-right tabular-nums">{formatVnd(remaining)}</TableCell>
+              <TableCell className="text-right tabular-nums whitespace-nowrap">{formatVnd(remaining)}</TableCell>
               <TableCell className="text-right whitespace-nowrap">
                 <div className="inline-flex items-center justify-end gap-2">
                   <Button
