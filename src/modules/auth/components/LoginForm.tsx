@@ -5,8 +5,10 @@ import { t } from '@/lib/strings'
 export function LoginForm({
   email,
   error,
+  googlePending,
   mode,
   onEmailChange,
+  onGoogleSignIn,
   onPasswordChange,
   onSubmit,
   onToggleMode,
@@ -18,7 +20,9 @@ export function LoginForm({
   password: string
   error: null | string
   pending: boolean
+  googlePending: boolean
   onEmailChange: (v: string) => void
+  onGoogleSignIn: () => void
   onPasswordChange: (v: string) => void
   onToggleMode: () => void
   onSubmit: () => void
@@ -33,6 +37,25 @@ export function LoginForm({
             onSubmit()
           }}
         >
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={onGoogleSignIn}
+            disabled={pending || googlePending}
+          >
+            {t.auth.googleSignIn}
+          </Button>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">hoặc</span>
+            </div>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="email">{t.auth.email}</Label>
             <Input

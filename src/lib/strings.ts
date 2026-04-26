@@ -4,6 +4,8 @@ export const t = {
   auth: {
     email: 'Email',
     error: 'Đăng nhập thất bại. Kiểm tra email/mật khẩu.',
+    errorGoogle: 'Đăng nhập Google thất bại. Vui lòng thử lại.',
+    googleSignIn: 'Đăng nhập với Google',
     password: 'Mật khẩu',
     signIn: 'Đăng nhập',
     signUp: 'Tạo tài khoản',
