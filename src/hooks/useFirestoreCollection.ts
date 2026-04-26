@@ -37,7 +37,9 @@ export function useFirestoreCollection<T extends { id: string }>(
         const rows = snap.docs.map((d) => ({ id: d.id, ...(d.data() as DocumentData) }) as T)
         qc.setQueryData(queryKey, rows)
       },
-      () => {
+      (err) => {
+        // Avoid failing silently: this is usually permission / index / network.
+        console.error('[useFirestoreCollection] onSnapshot error', { err, queryKey, segments })
         qc.setQueryData(queryKey, [])
       },
     )

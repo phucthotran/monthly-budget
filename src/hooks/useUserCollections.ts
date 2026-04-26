@@ -8,7 +8,8 @@ const viCollator = new Intl.Collator('vi-VN', { sensitivity: 'base' })
 
 export function useCategories(uid: string | undefined) {
   const segments = useMemo(() => (uid ? (['users', uid, 'categories'] as const) : undefined), [uid])
-  const q = useFirestoreCollection<Category>(uid, segments, ['categories', uid])
+  const queryKey = useMemo(() => ['categories', uid] as const, [uid])
+  const q = useFirestoreCollection<Category>(uid, segments, queryKey)
   const data = useMemo(
     () => [...(q.data ?? [])].sort((a, b) => viCollator.compare(a.name ?? '', b.name ?? '')),
     [q.data],
@@ -18,7 +19,8 @@ export function useCategories(uid: string | undefined) {
 
 export function useBudgetItems(uid: string | undefined) {
   const segments = useMemo(() => (uid ? (['users', uid, 'budgetItems'] as const) : undefined), [uid])
-  const q = useFirestoreCollection<BudgetItem>(uid, segments, ['budgetItems', uid])
+  const queryKey = useMemo(() => ['budgetItems', uid] as const, [uid])
+  const q = useFirestoreCollection<BudgetItem>(uid, segments, queryKey)
   const data = useMemo(
     () =>
       [...(q.data ?? [])].sort((a, b) => {
@@ -33,7 +35,8 @@ export function useBudgetItems(uid: string | undefined) {
 
 export function useIncomePeriods(uid: string | undefined) {
   const segments = useMemo(() => (uid ? (['users', uid, 'incomePeriods'] as const) : undefined), [uid])
-  const q = useFirestoreCollection<IncomePeriod>(uid, segments, ['incomePeriods', uid])
+  const queryKey = useMemo(() => ['incomePeriods', uid] as const, [uid])
+  const q = useFirestoreCollection<IncomePeriod>(uid, segments, queryKey)
   const data = useMemo(
     () =>
       [...(q.data ?? [])].sort((a, b) => {
@@ -48,5 +51,6 @@ export function useIncomePeriods(uid: string | undefined) {
 
 export function useActualExpenses(uid: string | undefined) {
   const segments = useMemo(() => (uid ? (['users', uid, 'actualExpenses'] as const) : undefined), [uid])
-  return useFirestoreCollection<ActualExpense>(uid, segments, ['actualExpenses', uid])
+  const queryKey = useMemo(() => ['actualExpenses', uid] as const, [uid])
+  return useFirestoreCollection<ActualExpense>(uid, segments, queryKey)
 }
