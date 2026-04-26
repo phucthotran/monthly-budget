@@ -1,0 +1,25 @@
+---
+description: Dialog edit/init pattern using useImperativeHandle
+alwaysApply: true
+---
+
+# Form/Dialog Edit Init Pattern
+
+## Requirement
+
+- Do **not** initialize edit form values by `useEffect` watching `open`.
+- Use an imperative API with `useImperativeHandle`.
+
+## Pattern
+
+- Dialog component exposes a handle:
+  - `openCreate()`
+  - `openEdit(entity)`
+  - optional `close()`
+- Parent stores `ref` and calls these methods.
+
+## Why
+
+- Guarantees correct mapping for edit state.
+- Avoids brittle state syncing between `open` and form values.
+

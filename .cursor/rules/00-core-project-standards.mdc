@@ -1,0 +1,28 @@
+---
+description: Core standards for this repo (monthly-budget)
+alwaysApply: true
+---
+
+# Core Standards (monthly-budget)
+
+## UX/i18n
+
+- UI language is Vietnamese.
+- Currency is VND.
+- Month label display must be **month then year**: use `formatMonthLabel(monthKey)` (e.g. `T4/2026`).
+
+## Project structure
+
+- Keep `src/routes/*.tsx` **thin**: routes should only define `createRoute(...)` and import the main page component from a module.
+- Feature logic and UI live in `src/modules/<feature>/...`.
+
+## Data ordering
+
+- Category lists: sort **A→Z** by `name` (Vietnamese collation).
+- Budget items and income periods: sort by **month/year first** (`validFrom` asc), then **A→Z** by `title`/`label`.
+
+## Firestore conventions
+
+- Keep paths under `users/{uid}/...`.
+- Prefer client-side sorting to avoid Firestore index friction, unless there is a strong reason to use server ordering.
+

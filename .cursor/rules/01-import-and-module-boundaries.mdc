@@ -1,0 +1,24 @@
+---
+description: Import rules (alias vs component barrels) + avoid cycles
+alwaysApply: true
+---
+
+# Import Rules
+
+## Alias imports
+
+- Prefer alias imports `@/...` across the codebase.
+
+## Component imports
+
+- When importing UI components, prefer **barrels**:
+  - `@/components/ui`
+  - `@/components/patterns`
+
+Avoid deep imports like `@/components/ui/button` in app code.
+
+## Avoid cycles inside components
+
+- Inside `src/components/ui/**` and `src/components/patterns/**`, prefer **relative imports** when importing other components from those folders (e.g. `../ui`).
+- Keep `lib/*` imports as alias (`@/lib/...`).
+

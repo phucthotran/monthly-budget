@@ -1,0 +1,22 @@
+---
+description: Standard UX components for month/year and VND amount input
+alwaysApply: true
+---
+
+# Month/Year + Money Inputs
+
+## Month/Year
+
+- Do not use native `input type="month"`.
+- Use `MonthYearPicker` (`src/components/inputs/MonthYearPicker.tsx`).
+
+Rules:
+- Month UI uses `T1..T12`.
+- Year list max is 5 years.
+- Component must be responsive (no modal overflow).
+
+## VND amount
+
+- Use `VndAmountInput` (`src/components/inputs/VndAmountInput.tsx`) for amount fields.
+- Store numeric value (integer VND), but display formatted `1.000.000`.
+
