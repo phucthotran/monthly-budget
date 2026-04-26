@@ -139,6 +139,19 @@ Repo đã có sẵn workflow deploy: [`.github/workflows/deploy.yml`](.github/wo
 1. Vào **Settings** → **Pages**
 2. **Build and deployment** → chọn **Source: GitHub Actions**
 
+### 2) Khai báo Firebase env (Environment secrets)
+
+Workflow build trên GitHub Pages **không dùng** `.env.local`, nên bạn cần khai báo các biến Firebase trong **Environment secrets**.
+
+1. Vào **Settings** → **Environments** → tạo (hoặc chọn) environment tên **`github-pages`**
+2. Trong environment **`github-pages`** → **Environment secrets** → thêm các secret:
+   - `VITE_FIREBASE_API_KEY`
+   - `VITE_FIREBASE_AUTH_DOMAIN`
+   - `VITE_FIREBASE_PROJECT_ID`
+   - `VITE_FIREBASE_STORAGE_BUCKET`
+   - `VITE_FIREBASE_MESSAGING_SENDER_ID`
+   - `VITE_FIREBASE_APP_ID`
+
 ### 2) Deploy
 
 - Push lên nhánh **`main`** → workflow sẽ build và publish thư mục `dist/`
