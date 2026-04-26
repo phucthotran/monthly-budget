@@ -15,36 +15,40 @@ export function CategoriesTable({
   onDelete: (c: Category) => void
 }) {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>{t.settings.name}</TableHead>
-          <TableHead>Trạng thái</TableHead>
-          <TableHead className="w-[200px]" />
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {categories.map((c) => (
-          <TableRow key={c.id}>
-            <TableCell className="font-medium">{c.name}</TableCell>
-            <TableCell>
-              {c.archived ? (
-                <Badge variant="muted">{t.settings.archived}</Badge>
-              ) : (
-                <Badge variant="secondary">Hiển thị</Badge>
-              )}
-            </TableCell>
-            <TableCell className="text-right space-x-2">
-              <Button size="sm" variant="outline" type="button" onClick={() => onToggleArchive(c)}>
-                {c.archived ? 'Hiện' : 'Ẩn'}
-              </Button>
-              <Button size="sm" variant="ghost" type="button" onClick={() => onDelete(c)}>
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
-            </TableCell>
+    <div className="-mx-4 overflow-x-auto px-4">
+      <Table className="min-w-[640px]">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[55%]">{t.settings.name}</TableHead>
+            <TableHead className="whitespace-nowrap">Trạng thái</TableHead>
+            <TableHead className="w-[200px]" />
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {categories.map((c) => (
+            <TableRow key={c.id}>
+              <TableCell className="font-medium max-w-[18rem] truncate">
+                <span className="block truncate">{c.name}</span>
+              </TableCell>
+              <TableCell>
+                {c.archived ? (
+                  <Badge variant="muted">{t.settings.archived}</Badge>
+                ) : (
+                  <Badge variant="secondary">Hiển thị</Badge>
+                )}
+              </TableCell>
+              <TableCell className="text-right whitespace-nowrap space-x-2">
+                <Button size="sm" variant="outline" type="button" onClick={() => onToggleArchive(c)}>
+                  {c.archived ? 'Hiện' : 'Ẩn'}
+                </Button>
+                <Button size="sm" variant="ghost" type="button" onClick={() => onDelete(c)}>
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   )
 }

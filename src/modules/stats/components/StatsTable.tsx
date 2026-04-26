@@ -6,29 +6,35 @@ import { t } from '@/lib/strings'
 
 export function StatsTable({ formatVnd, rows }: { rows: MonthSnapshot[]; formatVnd: (n: number) => string }) {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>{t.stats.month}</TableHead>
-          <TableHead className="text-right">{t.stats.income}</TableHead>
-          <TableHead className="text-right">{t.stats.planned}</TableHead>
-          <TableHead className="text-right">{t.stats.actual}</TableHead>
-          <TableHead className="text-right">{t.stats.plannedSurplus}</TableHead>
-          <TableHead className="text-right">{t.stats.actualSurplus}</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {rows.map((s) => (
-          <TableRow key={s.month}>
-            <TableCell className="font-medium">{formatMonthLabel(s.month)}</TableCell>
-            <TableCell className="text-right tabular-nums">{formatVnd(s.incomeVnd)}</TableCell>
-            <TableCell className="text-right tabular-nums">{formatVnd(s.plannedVnd)}</TableCell>
-            <TableCell className="text-right tabular-nums">{formatVnd(s.actualSpentVnd)}</TableCell>
-            <TableCell className="text-right tabular-nums text-primary">{formatVnd(s.plannedSurplusVnd)}</TableCell>
-            <TableCell className="text-right tabular-nums text-primary">{formatVnd(s.actualSurplusVnd)}</TableCell>
+    <div className="-mx-4 overflow-x-auto px-4">
+      <Table className="min-w-[860px]">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="whitespace-nowrap">{t.stats.month}</TableHead>
+            <TableHead className="text-right whitespace-nowrap">{t.stats.income}</TableHead>
+            <TableHead className="text-right whitespace-nowrap">{t.stats.planned}</TableHead>
+            <TableHead className="text-right whitespace-nowrap">{t.stats.actual}</TableHead>
+            <TableHead className="text-right whitespace-nowrap">{t.stats.plannedSurplus}</TableHead>
+            <TableHead className="text-right whitespace-nowrap">{t.stats.actualSurplus}</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {rows.map((s) => (
+            <TableRow key={s.month}>
+              <TableCell className="font-medium whitespace-nowrap">{formatMonthLabel(s.month)}</TableCell>
+              <TableCell className="text-right tabular-nums whitespace-nowrap">{formatVnd(s.incomeVnd)}</TableCell>
+              <TableCell className="text-right tabular-nums whitespace-nowrap">{formatVnd(s.plannedVnd)}</TableCell>
+              <TableCell className="text-right tabular-nums whitespace-nowrap">{formatVnd(s.actualSpentVnd)}</TableCell>
+              <TableCell className="text-right tabular-nums whitespace-nowrap text-primary">
+                {formatVnd(s.plannedSurplusVnd)}
+              </TableCell>
+              <TableCell className="text-right tabular-nums whitespace-nowrap text-primary">
+                {formatVnd(s.actualSurplusVnd)}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   )
 }
