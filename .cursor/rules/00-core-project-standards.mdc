@@ -9,6 +9,7 @@ alwaysApply: true
 
 - UI language is Vietnamese.
 - Currency is VND.
+- UI copy should be centralized in `src/lib/strings.ts` (`t.*`). Avoid hardcoding Vietnamese strings in components.
 - Month label display must be **month then year**: use `formatMonthLabel(monthKey)` (e.g. `T4/2026`).
 
 ## Project structure

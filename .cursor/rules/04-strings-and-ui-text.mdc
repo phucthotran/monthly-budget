@@ -1,0 +1,35 @@
+---
+description: Centralize Vietnamese UI text in src/lib/strings.ts (no hardcoded copy)
+alwaysApply: true
+---
+
+# Strings / UI text rules
+
+## Requirement
+
+- **Do not hardcode Vietnamese UI strings in components** (titles, labels, button text, table headers, empty states, helper text).
+- Put UI copy in `src/lib/strings.ts` under `t.*`, then reference it from components.
+
+## Scope
+
+- Applies to:
+  - Page headings (`PageHeading`, `Panel`)
+  - Tabs (`TabsList`, `TabsTrigger`, `TabsContent`)
+  - Tables (`TableHead`, `TableCell` labels/headers)
+  - Buttons / CTAs
+  - Dialog titles/descriptions
+  - Form labels, placeholders, validation messages (except library-generated messages)
+
+## Conventions
+
+- Prefer reusing existing keys under `t.common.*` for shared copy:
+  - `t.common.edit`, `t.common.period`, `t.common.status`, `t.common.visible`, etc.
+- For feature-specific copy, add keys under the relevant namespace:
+  - `t.stats.*`, `t.income.*`, `t.settings.*`, `t.budget.*`, `t.auth.*`
+- Keep keys **deterministically ordered** (repo uses object key sorting rules).
+
+## Exceptions (allowed hardcode)
+
+- `confirm(...)` prompts and short one-off debug strings may be hardcoded temporarily, but should be moved into `t.*` once UX is finalized.
+- Symbols only (e.g. `→`, `…`) are OK to inline.
+

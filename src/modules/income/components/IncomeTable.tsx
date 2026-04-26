@@ -23,7 +23,7 @@ export function IncomeTable({
           <TableRow>
             <TableHead className="w-[40%]">{t.income.label}</TableHead>
             <TableHead className="text-right whitespace-nowrap">{t.income.amount}</TableHead>
-            <TableHead className="whitespace-nowrap">Kỳ áp dụng</TableHead>
+            <TableHead className="whitespace-nowrap">{t.common.period}</TableHead>
             <TableHead className="w-[140px]" />
           </TableRow>
         </TableHeader>
@@ -39,7 +39,7 @@ export function IncomeTable({
               </TableCell>
               <TableCell className="text-right whitespace-nowrap space-x-2">
                 <Button size="sm" variant="outline" type="button" onClick={() => onEdit(row)}>
-                  Sửa
+                  {t.common.edit}
                 </Button>
                 <Button size="sm" variant="ghost" type="button" onClick={() => onDelete(row)}>
                   <Trash2 className="h-4 w-4 text-destructive" />

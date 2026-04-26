@@ -30,16 +30,16 @@ export function StatsPage() {
 
         <StatsSummaryTiles plannedAvgLabel={formatVnd(plannedAvg)} actualAvgLabel={formatVnd(actualAvg)} />
 
-        <Panel title="Chi tiết" description="Gộp bảng chi tiết và tiết kiệm.">
+        <Panel title={t.stats.tabsTitle} description={t.stats.tabsDescription}>
           <Tabs defaultValue="detail" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="detail" className="gap-2">
                 <Table2 className="h-4 w-4" />
-                Bảng chi tiết
+                {t.stats.tabDetail}
               </TabsTrigger>
               <TabsTrigger value="savings" className="gap-2">
                 <PiggyBank className="h-4 w-4" />
-                Tiết kiệm
+                {t.stats.tabSavings}
               </TabsTrigger>
             </TabsList>
 

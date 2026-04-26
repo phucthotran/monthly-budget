@@ -28,10 +28,14 @@ export const t = {
   },
   common: {
     cancel: 'Hủy',
+    edit: 'Sửa',
     loading: 'Đang tải…',
     month: 'Tháng',
     note: 'Ghi chú',
+    period: 'Kỳ áp dụng',
     save: 'Lưu',
+    status: 'Trạng thái',
+    visible: 'Hiển thị',
   },
   home: {
     actualSurplus: 'Dư sau chi thực tế',
@@ -60,7 +64,9 @@ export const t = {
   settings: {
     add: 'Thêm danh mục',
     archived: 'Đã ẩn',
+    hide: 'Ẩn',
     name: 'Tên',
+    show: 'Hiện',
     title: 'Danh mục phân loại',
   },
   stats: {
@@ -72,7 +78,12 @@ export const t = {
     monthly: 'Theo tháng',
     planned: 'Dự chi',
     plannedSurplus: 'Tiết kiệm (kế hoạch)',
+    savingsAccumulatedMonthly: 'Tích lũy tiết kiệm (Từng tháng)',
     subtitle: 'Từ tháng hiện tại đến hết năm, cộng thêm 12 tháng năm sau.',
+    tabDetail: 'Bảng chi tiết',
+    tabSavings: 'Tiết kiệm',
+    tabsDescription: 'Gộp bảng chi tiết và tiết kiệm.',
+    tabsTitle: 'Chi tiết',
     title: 'Thống kê theo tháng',
   },
 } as const

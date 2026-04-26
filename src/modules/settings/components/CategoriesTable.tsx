@@ -20,7 +20,7 @@ export function CategoriesTable({
         <TableHeader>
           <TableRow>
             <TableHead className="w-[55%]">{t.settings.name}</TableHead>
-            <TableHead className="whitespace-nowrap">Trạng thái</TableHead>
+            <TableHead className="whitespace-nowrap">{t.common.status}</TableHead>
             <TableHead className="w-[200px]" />
           </TableRow>
         </TableHeader>
@@ -34,12 +34,12 @@ export function CategoriesTable({
                 {c.archived ? (
                   <Badge variant="muted">{t.settings.archived}</Badge>
                 ) : (
-                  <Badge variant="secondary">Hiển thị</Badge>
+                  <Badge variant="secondary">{t.common.visible}</Badge>
                 )}
               </TableCell>
               <TableCell className="text-right whitespace-nowrap space-x-2">
                 <Button size="sm" variant="outline" type="button" onClick={() => onToggleArchive(c)}>
-                  {c.archived ? 'Hiện' : 'Ẩn'}
+                  {c.archived ? t.settings.show : t.settings.hide}
                 </Button>
                 <Button size="sm" variant="ghost" type="button" onClick={() => onDelete(c)}>
                   <Trash2 className="h-4 w-4 text-destructive" />

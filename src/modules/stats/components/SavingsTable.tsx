@@ -12,7 +12,7 @@ export function SavingsTable({ formatVnd, rows }: { rows: MonthSnapshot[]; forma
           <TableRow>
             <TableHead className="whitespace-nowrap">{t.stats.month}</TableHead>
             <TableHead className="text-right whitespace-nowrap">{t.stats.plannedSurplus}</TableHead>
-            <TableHead className="text-right whitespace-nowrap">Tích lũy tiết kiệm (Từng tháng)</TableHead>
+            <TableHead className="text-right whitespace-nowrap">{t.stats.savingsAccumulatedMonthly}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
