@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react'
+import { Plus, Settings } from 'lucide-react'
 import { useState } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
@@ -25,6 +25,7 @@ export function SettingsPage() {
     <RequireAuth>
       <div className="space-y-6">
         <PageHeading
+          icon={<Settings />}
           title={t.settings.title}
           description="Dùng để phân loại các khoản dự chi."
           actions={

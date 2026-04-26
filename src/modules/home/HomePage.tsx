@@ -1,4 +1,4 @@
-import { CalendarDays } from 'lucide-react'
+import { CalendarDays, LayoutDashboard } from 'lucide-react'
 
 import { useAuthContext } from '@/components/AuthProvider'
 import { PageHeading } from '@/components/patterns'
@@ -24,7 +24,12 @@ export function HomePage() {
   return (
     <RequireAuth>
       <div className="space-y-6">
-        <PageHeading title={t.home.title} description={t.home.subtitle} descriptionClassName="text-base" />
+        <PageHeading
+          icon={<LayoutDashboard />}
+          title={t.home.title}
+          description={t.home.subtitle}
+          descriptionClassName="text-base"
+        />
 
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-3">

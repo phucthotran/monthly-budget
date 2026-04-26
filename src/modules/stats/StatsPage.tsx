@@ -1,4 +1,4 @@
-import { PiggyBank, Table2 } from 'lucide-react'
+import { PiggyBank, Table2, TrendingUp } from 'lucide-react'
 
 import { useAuthContext } from '@/components/AuthProvider'
 import { PageHeading, Panel } from '@/components/patterns'
@@ -26,7 +26,7 @@ export function StatsPage() {
   return (
     <RequireAuth>
       <div className="space-y-6">
-        <PageHeading title={t.stats.title} description={t.stats.subtitle} />
+        <PageHeading icon={<TrendingUp />} title={t.stats.title} description={t.stats.subtitle} />
 
         <StatsSummaryTiles plannedAvgLabel={formatVnd(plannedAvg)} actualAvgLabel={formatVnd(actualAvg)} />
 

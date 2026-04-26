@@ -1,6 +1,6 @@
 import type { BudgetItem } from '@/lib/types'
 
-import { Plus } from 'lucide-react'
+import { Plus, Wallet } from 'lucide-react'
 import { useRef } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
@@ -42,6 +42,7 @@ export function BudgetPage() {
     <RequireAuth>
       <div className="space-y-6">
         <PageHeading
+          icon={<Wallet />}
           title={t.budget.title}
           description="VND · áp dụng theo khoảng tháng"
           actions={

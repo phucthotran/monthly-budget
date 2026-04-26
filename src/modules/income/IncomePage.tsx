@@ -1,6 +1,6 @@
 import type { IncomePeriod } from '@/lib/types'
 
-import { Plus } from 'lucide-react'
+import { PiggyBank, Plus } from 'lucide-react'
 import { useRef } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
@@ -35,6 +35,7 @@ export function IncomePage() {
     <RequireAuth>
       <div className="space-y-6">
         <PageHeading
+          icon={<PiggyBank />}
           title={t.income.title}
           description="Mỗi kỳ có thể có mức thu nhập khác nhau theo tháng."
           actions={
