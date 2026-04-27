@@ -1,4 +1,5 @@
 import { PiggyBank, Table2, TrendingUp } from 'lucide-react'
+import { useMemo } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
 import { InfoTooltip, PageHeading, Panel } from '@/components/patterns'
@@ -11,7 +12,9 @@ import { formatVnd } from '@/lib/vnd'
 import { SavingsTable } from './components/SavingsTable'
 import { StatsSummaryTiles } from './components/StatsSummaryTiles'
 import { StatsTable } from './components/StatsTable'
+import { groupSnapshotsByYear } from './groupSnapshotsByYear'
 import { useStatsData } from './hooks/useStatsData'
+import { useStatsYearCollapse } from './hooks/useStatsYearCollapse'
 
 export function StatsPage() {
   const { user } = useAuthContext()
@@ -22,6 +25,8 @@ export function StatsPage() {
   const { data: actuals = [] } = useActualExpenses(uid)
 
   const { actualAvg, months, plannedAvg, snaps } = useStatsData({ actuals, budget, income })
+  const byYear = useMemo(() => groupSnapshotsByYear(snaps), [snaps])
+  const { isYearOpen, toggleYear } = useStatsYearCollapse(byYear)
 
   return (
     <RequireAuth>
@@ -54,11 +59,11 @@ export function StatsPage() {
 
             <TabsContent value="detail" className="mt-4">
               <div className="text-sm text-muted-foreground mb-3">{monthCountLabel(months.length)}</div>
-              <StatsTable rows={snaps} formatVnd={formatVnd} />
+              <StatsTable formatVnd={formatVnd} isYearOpen={isYearOpen} rows={snaps} toggleYear={toggleYear} />
             </TabsContent>
 
             <TabsContent value="savings" className="mt-4">
-              <SavingsTable rows={snaps} formatVnd={formatVnd} />
+              <SavingsTable formatVnd={formatVnd} isYearOpen={isYearOpen} rows={snaps} toggleYear={toggleYear} />
             </TabsContent>
           </Tabs>
         </Panel>

@@ -47,3 +47,10 @@ export function formatMonthLabel(month: MonthKey): string {
   if (!y || !m) return month
   return `T${Number(m)}/${y}`
 }
+
+/** Month-only label `T{n}` for use under a year group header. */
+export function formatMonthLabelShort(month: MonthKey): string {
+  const [, m] = month.split('-')
+  if (!m) return month
+  return `T${Number(m)}`
+}

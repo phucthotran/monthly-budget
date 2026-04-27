@@ -3,8 +3,12 @@ import type { ReactNode } from 'react'
 
 import { InfoTooltip } from '@/components/patterns'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
-import { formatMonthLabel } from '@/lib/month'
+import { formatMonthLabelShort } from '@/lib/month'
 import { t } from '@/lib/strings'
+
+import { groupSnapshotsByYear } from '../groupSnapshotsByYear'
+
+import { StatsYearHeaderRow } from './StatsYearHeaderRow'
 
 function HeadWithHint({
   align = 'right',
@@ -31,7 +35,18 @@ function HeadWithHint({
   )
 }
 
-export function StatsTable({ formatVnd, rows }: { rows: MonthSnapshot[]; formatVnd: (n: number) => string }) {
+export function StatsTable({
+  formatVnd,
+  isYearOpen,
+  rows,
+  toggleYear,
+}: {
+  formatVnd: (n: number) => string
+  isYearOpen: (year: string) => boolean
+  rows: MonthSnapshot[]
+  toggleYear: (year: string) => void
+}) {
+  const byYear = groupSnapshotsByYear(rows)
   return (
     <div className="-mx-4 overflow-x-auto px-4">
       <Table className="min-w-[760px]">
@@ -56,19 +71,37 @@ export function StatsTable({ formatVnd, rows }: { rows: MonthSnapshot[]; formatV
             />
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {rows.map((s) => (
-            <TableRow key={s.month}>
-              <TableCell className="font-medium whitespace-nowrap">{formatMonthLabel(s.month)}</TableCell>
-              <TableCell className="text-right tabular-nums whitespace-nowrap">{formatVnd(s.incomeVnd)}</TableCell>
-              <TableCell className="text-right tabular-nums whitespace-nowrap">{formatVnd(s.plannedVnd)}</TableCell>
-              <TableCell className="text-right tabular-nums whitespace-nowrap">{formatVnd(s.actualSpentVnd)}</TableCell>
-              <TableCell className="text-right tabular-nums whitespace-nowrap text-primary">
-                {formatVnd(s.plannedSurplusVnd)}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
+        {byYear.map(({ rows: yearRows, year }) => (
+          <TableBody key={year}>
+            <StatsYearHeaderRow
+              colSpan={5}
+              isOpen={isYearOpen(year)}
+              year={year}
+              onToggle={() => {
+                toggleYear(year)
+              }}
+            />
+            {isYearOpen(year)
+              ? yearRows.map((s) => (
+                  <TableRow key={s.month}>
+                    <TableCell className="whitespace-nowrap font-medium">{formatMonthLabelShort(s.month)}</TableCell>
+                    <TableCell className="whitespace-nowrap text-right tabular-nums">
+                      {formatVnd(s.incomeVnd)}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-right tabular-nums">
+                      {formatVnd(s.plannedVnd)}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-right tabular-nums">
+                      {formatVnd(s.actualSpentVnd)}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-right tabular-nums text-primary">
+                      {formatVnd(s.plannedSurplusVnd)}
+                    </TableCell>
+                  </TableRow>
+                ))
+              : null}
+          </TableBody>
+        ))}
       </Table>
     </div>
   )

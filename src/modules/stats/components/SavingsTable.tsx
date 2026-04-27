@@ -2,10 +2,25 @@ import type { MonthSnapshot } from '@/lib/budget/aggregate'
 
 import { InfoTooltip } from '@/components/patterns'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
-import { formatMonthLabel } from '@/lib/month'
+import { formatMonthLabelShort } from '@/lib/month'
 import { t } from '@/lib/strings'
 
-export function SavingsTable({ formatVnd, rows }: { rows: MonthSnapshot[]; formatVnd: (n: number) => string }) {
+import { groupSnapshotsByYear } from '../groupSnapshotsByYear'
+
+import { StatsYearHeaderRow } from './StatsYearHeaderRow'
+
+export function SavingsTable({
+  formatVnd,
+  isYearOpen,
+  rows,
+  toggleYear,
+}: {
+  formatVnd: (n: number) => string
+  isYearOpen: (year: string) => boolean
+  rows: MonthSnapshot[]
+  toggleYear: (year: string) => void
+}) {
+  const byYear = groupSnapshotsByYear(rows)
   return (
     <div className="-mx-4 overflow-x-auto px-4">
       <Table className="min-w-[520px]">
@@ -36,19 +51,31 @@ export function SavingsTable({ formatVnd, rows }: { rows: MonthSnapshot[]; forma
             </TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {rows.map((s) => (
-            <TableRow key={s.month}>
-              <TableCell className="font-medium whitespace-nowrap">{formatMonthLabel(s.month)}</TableCell>
-              <TableCell className="text-right tabular-nums whitespace-nowrap text-primary">
-                {formatVnd(s.plannedSurplusVnd)}
-              </TableCell>
-              <TableCell className="text-right tabular-nums whitespace-nowrap">
-                {formatVnd(s.plannedSavingsToDateVnd)}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
+        {byYear.map(({ rows: yearRows, year }) => (
+          <TableBody key={year}>
+            <StatsYearHeaderRow
+              colSpan={3}
+              isOpen={isYearOpen(year)}
+              year={year}
+              onToggle={() => {
+                toggleYear(year)
+              }}
+            />
+            {isYearOpen(year)
+              ? yearRows.map((s) => (
+                  <TableRow key={s.month}>
+                    <TableCell className="whitespace-nowrap font-medium">{formatMonthLabelShort(s.month)}</TableCell>
+                    <TableCell className="whitespace-nowrap text-right tabular-nums text-primary">
+                      {formatVnd(s.plannedSurplusVnd)}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-right tabular-nums">
+                      {formatVnd(s.plannedSavingsToDateVnd)}
+                    </TableCell>
+                  </TableRow>
+                ))
+              : null}
+          </TableBody>
+        ))}
       </Table>
     </div>
   )
