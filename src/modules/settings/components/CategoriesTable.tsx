@@ -1,18 +1,17 @@
 import type { Category } from '@/lib/types'
 
-import { Trash2 } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 
-import { Badge, Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
+import { ActionTooltipButton } from '@/components/patterns'
+import { Badge, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
 import { t } from '@/lib/strings'
 
 export function CategoriesTable({
   categories,
-  onDelete,
   onToggleArchive,
 }: {
   categories: Category[]
   onToggleArchive: (c: Category) => void
-  onDelete: (c: Category) => void
 }) {
   return (
     <div className="-mx-4 overflow-x-auto px-4">
@@ -21,7 +20,7 @@ export function CategoriesTable({
           <TableRow>
             <TableHead className="w-[55%]">{t.settings.name}</TableHead>
             <TableHead className="whitespace-nowrap">{t.common.status}</TableHead>
-            <TableHead className="w-[200px]" />
+            <TableHead className="w-[96px]" />
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -37,13 +36,16 @@ export function CategoriesTable({
                   <Badge variant="secondary">{t.common.visible}</Badge>
                 )}
               </TableCell>
-              <TableCell className="text-right whitespace-nowrap space-x-2">
-                <Button size="sm" variant="outline" type="button" onClick={() => onToggleArchive(c)}>
-                  {c.archived ? t.settings.show : t.settings.hide}
-                </Button>
-                <Button size="sm" variant="ghost" type="button" onClick={() => onDelete(c)}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
+              <TableCell className="text-right whitespace-nowrap">
+                <div className="inline-flex items-center justify-end gap-1">
+                  <ActionTooltipButton
+                    variant="outline"
+                    onClick={() => onToggleArchive(c)}
+                    label={c.archived ? t.settings.showAction : t.settings.hideAction}
+                  >
+                    {c.archived ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                  </ActionTooltipButton>
+                </div>
               </TableCell>
             </TableRow>
           ))}

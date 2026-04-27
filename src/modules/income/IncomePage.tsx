@@ -1,15 +1,15 @@
 import type { IncomePeriod } from '@/lib/types'
 
 import { PiggyBank, Plus } from 'lucide-react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
-import { PageHeading, Panel } from '@/components/patterns'
+import { ConfirmDeleteDialog, PageHeading, Panel } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
 import { useIncomePeriods } from '@/hooks/useUserCollections'
 import { currentMonthKey } from '@/lib/month'
-import { t } from '@/lib/strings'
+import { incomeDeleteDialogP1, t } from '@/lib/strings'
 
 import { IncomeDialog, type IncomeDialogHandle } from './components/IncomeDialog'
 import { IncomeTable } from './components/IncomeTable'
@@ -25,11 +25,7 @@ export function IncomePage() {
 
   const dialogRef = useRef<IncomeDialogHandle>(null)
 
-  async function onDelete(row: IncomePeriod) {
-    if (!mutations) return
-    if (!confirm(t.income.deleteConfirm)) return
-    await mutations.deleteIncome(row.id)
-  }
+  const [rowToDelete, setRowToDelete] = useState<IncomePeriod | null>(null)
 
   return (
     <RequireAuth>
@@ -62,14 +58,29 @@ export function IncomePage() {
 
         <Panel title={<></>}>
           <IncomeTable
+            asOfMonth={month}
             rows={rows}
             onEdit={(row) => dialogRef.current?.openEdit(row)}
-            onDelete={(row) => void onDelete(row)}
+            onDelete={(row) => setRowToDelete(row)}
           />
           {rows.length === 0 ? (
             <p className="text-sm text-muted-foreground py-6 text-center">{t.income.emptyList}</p>
           ) : null}
         </Panel>
+
+        <ConfirmDeleteDialog
+          open={rowToDelete !== null}
+          title={t.income.deleteDialogTitle}
+          description={rowToDelete ? <p>{incomeDeleteDialogP1(rowToDelete.label)}</p> : null}
+          emphasis={rowToDelete ? t.income.deleteDialogP2 : null}
+          onOpenChange={(open) => {
+            if (!open) setRowToDelete(null)
+          }}
+          onConfirm={async () => {
+            if (!mutations || !rowToDelete) return
+            await mutations.deleteIncome(rowToDelete.id)
+          }}
+        />
       </div>
     </RequireAuth>
   )

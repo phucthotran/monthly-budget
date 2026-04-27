@@ -34,6 +34,12 @@ export function isMonthInRange(month: string, validFrom: string, validTo: null |
 
 export type MonthKey = string
 
+/** Có tháng kết thúc và kết thúc trước `asOfMonth` (so sánh chuỗi yyyy-MM). */
+export function isPeriodClosedBefore(validTo: MonthKey | null, asOfMonth: MonthKey): boolean {
+  if (validTo === null) return false
+  return validTo < asOfMonth
+}
+
 /** Hiển thị theo VN: MM/YYYY */
 export function formatMonthVi(month: MonthKey): string {
   const [y, m] = month.split('-')

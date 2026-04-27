@@ -1,10 +1,10 @@
 import type { BudgetItem, Category, MonthKey } from '@/lib/types'
 
-import { Trash2 } from 'lucide-react'
+import { HandCoinsIcon, Pencil, Trash2 } from 'lucide-react'
 
-import { InfoTooltip } from '@/components/patterns'
-import { Badge, Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
-import { formatMonthLabel } from '@/lib/month'
+import { ActionTooltipButton, InfoTooltip } from '@/components/patterns'
+import { Badge, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
+import { formatMonthLabel, isPeriodClosedBefore } from '@/lib/month'
 import { t } from '@/lib/strings'
 import { formatVnd } from '@/lib/vnd'
 
@@ -50,7 +50,7 @@ export function BudgetItemsTable({
               />
             </span>
           </TableHead>
-          <TableHead className="w-[220px]" />
+          <TableHead className="w-[128px]" />
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -58,6 +58,7 @@ export function BudgetItemsTable({
           const cat = categories.find((c) => c.id === item.categoryId)
           const spent = actualMap.get(`${item.id}|${month}`) ?? 0
           const remaining = item.amountVnd - spent
+          const locked = isPeriodClosedBefore(item.validTo, month)
           return (
             <TableRow key={item.id}>
               <TableCell className="font-medium max-w-[12rem] sm:max-w-[18rem] truncate">
@@ -74,34 +75,31 @@ export function BudgetItemsTable({
               </TableCell>
               <TableCell className="text-right tabular-nums whitespace-nowrap">{formatVnd(remaining)}</TableCell>
               <TableCell className="text-right whitespace-nowrap">
-                <div className="inline-flex items-center justify-end gap-2">
-                  <Button
-                    size="sm"
+                <div className="inline-flex items-center justify-end gap-1">
+                  <ActionTooltipButton
                     variant="secondary"
-                    type="button"
+                    disabled={locked}
                     onClick={() => onAddActual(item)}
-                    className="whitespace-nowrap"
+                    label={locked ? t.budget.periodEndedLocked : t.budget.addActualAction}
                   >
-                    {t.budget.addActual}
-                  </Button>
-                  <Button
-                    size="sm"
+                    <HandCoinsIcon className="h-4 w-4" />
+                  </ActionTooltipButton>
+                  <ActionTooltipButton
                     variant="outline"
-                    type="button"
+                    disabled={locked}
                     onClick={() => onEdit(item)}
-                    className="whitespace-nowrap"
+                    label={locked ? t.budget.periodEndedLocked : t.budget.editAction}
                   >
-                    {t.budget.edit}
-                  </Button>
-                  <Button
-                    size="sm"
+                    <Pencil className="h-4 w-4" />
+                  </ActionTooltipButton>
+                  <ActionTooltipButton
                     variant="ghost"
-                    type="button"
+                    disabled={locked}
                     onClick={() => onDelete(item)}
-                    className="whitespace-nowrap"
+                    label={locked ? t.budget.periodEndedLocked : t.budget.deleteAction}
                   >
                     <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
+                  </ActionTooltipButton>
                 </div>
               </TableCell>
             </TableRow>

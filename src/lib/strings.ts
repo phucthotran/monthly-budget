@@ -16,15 +16,20 @@ export const t = {
     actuals: 'Chi thực tế',
     add: 'Thêm khoản dự chi',
     addActual: 'Ghi chi thực tế',
+    addActualAction: 'Ghi chi thực tế',
     addActualBody: 'Số tiền này được trừ khỏi cột Còn lại của đúng khoản và đúng tháng.',
     addActualContext: 'ghi số tiền đã chi cho khoản này',
     amount: 'Số tiền (VND)',
     category: 'Phân loại',
     delete: 'Xóa',
-    deleteConfirm: 'Xóa khoản dự chi này?',
+    deleteAction: 'Xóa khoản dự chi',
+    deleteDialogP2:
+      'Khoản dự chi này sẽ không còn trong danh sách dự chi. Các mục chi thực tế đã ghi trước đó vẫn lưu trong tài khoản nhưng không còn liên kết với tên khoản này, nên tổng quan và thống kê có thể khác trước khi xóa.',
+    deleteDialogTitle: 'Xóa khoản dự chi?',
     dialogP1: 'Tạo một khoản dự chi theo từng kỳ áp dụng.',
     dialogP2c: 'Bỏ trống tháng kết thúc nếu khoản còn dùng cho các tháng sau.',
     edit: 'Sửa',
+    editAction: 'Sửa khoản dự chi',
     emptyList: 'Chưa có khoản dự chi.',
     fieldValidFrom: 'Bắt đầu từ tháng',
     fieldValidTo: 'Đến tháng',
@@ -32,6 +37,7 @@ export const t = {
     pageLead: 'Lập kế hoạch chi từng khoản theo từng tháng.',
     periodColumn: 'Kỳ',
     periodColumnHint: 'Kỳ áp dụng mà khoản này được tính vào tổng dự chi.',
+    periodEndedLocked: 'Kỳ đã kết thúc — không sửa, xóa hay ghi chi thực tế.',
     remaining: 'Còn lại (VND)',
     remainingHint: 'Số tiền còn lại sau khi dự chi trong tháng đang xem.',
     termRemaining: 'Còn lại',
@@ -44,6 +50,7 @@ export const t = {
   common: {
     cancel: 'Hủy',
     close: 'Đóng',
+    delete: 'Xóa',
     edit: 'Sửa',
     loading: 'Đang tải…',
     month: 'Tháng',
@@ -53,6 +60,7 @@ export const t = {
     note: 'Ghi chú',
     orSeparator: 'hoặc',
     period: 'Kỳ áp dụng',
+    periodEndedLocked: 'Kỳ đã kết thúc — không sửa hoặc xóa để giữ nguyên dữ liệu cũ.',
     pickMonth: 'Chọn tháng',
     save: 'Lưu',
     selectPlaceholder: 'Chọn',
@@ -81,9 +89,13 @@ export const t = {
   income: {
     add: 'Thêm kỳ thu nhập',
     amount: 'Số tiền (VND)',
-    deleteConfirm: 'Xóa kỳ thu này?',
+    deleteAction: 'Xóa kỳ thu nhập',
+    deleteDialogP2:
+      'Kỳ thu nhập sẽ không còn trong danh sách kỳ thu nhập. Các tháng trong quá khứ từng dùng mức thu này có thể hiển thị khác trên tổng quan và thống kê.',
+    deleteDialogTitle: 'Xóa kỳ thu nhập?',
     dialogP1: 'Tạo một mức thu nhập theo tháng. Khi thu nhập đổi, thêm kỳ mới thay vì sửa lại từng tháng.',
     dialogP2c: 'Bỏ trống tháng kết thúc nếu mức thu này còn dùng cho các tháng sau.',
+    editAction: 'Sửa kỳ thu nhập',
     editTitle: 'Sửa kỳ thu nhập',
     emptyList: 'Chưa có kỳ thu nhập nào.',
     fieldValidFrom: 'Từ tháng',
@@ -111,10 +123,12 @@ export const t = {
     dialogP1: 'Đặt tên ngắn, dễ hiểu khi tạo khoản dự chi. Không dùng ký tự đặc biệt.',
     emptyList: 'Chưa có danh mục nào.',
     hide: 'Ẩn',
+    hideAction: 'Ẩn danh mục',
     name: 'Tên',
     pageDetail: 'Ẩn danh mục khi không dùng nữa; các khoản dự chi cũ vẫn giữ nguyên.',
     pageLead: 'Tạo nhóm để phân loại các khoản dự chi.',
     show: 'Hiện',
+    showAction: 'Hiện danh mục',
     title: 'Phân loại',
   },
   stats: {
@@ -147,13 +161,17 @@ export const t = {
   },
 } as const
 
+export function budgetDeleteDialogP1(title: string) {
+  return `Bạn sắp xóa khoản dự chi “${title}”. Thao tác này không thể hoàn tác.`
+}
+
+export function incomeDeleteDialogP1(label: string) {
+  return `Bạn sắp xóa kỳ thu nhập “${label}”. Thao tác này không thể hoàn tác.`
+}
+
 export function monthCountLabel(count: number) {
   if (count === 0) {
     return t.common.noScopeMonths
   }
   return `${String(count)} ${t.common.monthsUnit}`
-}
-
-export function settingsDeleteCategoryConfirm(name: string) {
-  return `Xóa danh mục “${name}”? Các khoản cũ vẫn giữ dữ liệu đã lưu.`
 }

@@ -1,4 +1,4 @@
-import { PiggyBank, Receipt, TrendingUp, Wallet } from 'lucide-react'
+import { HandCoinsIcon, PiggyBank, TrendingUp, Wallet } from 'lucide-react'
 import { type ReactNode } from 'react'
 
 import { InfoTooltip, MetricTile } from '@/components/patterns'
@@ -31,7 +31,7 @@ export function HomeSummaryTiles({
       <MetricTile
         title={
           <span className="inline-flex items-center gap-2">
-            <Wallet className="h-4 w-4 text-muted-foreground shrink-0" />
+            <Wallet className="size-5 text-muted-foreground shrink-0" />
             <TileTitleWithHint
               content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.home.incomeHint}</p>}
               label={t.home.income}
@@ -44,7 +44,7 @@ export function HomeSummaryTiles({
       <MetricTile
         title={
           <span className="inline-flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-muted-foreground shrink-0" />
+            <TrendingUp className="size-5 text-muted-foreground shrink-0" />
             <TileTitleWithHint
               content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.home.plannedBudgetHint}</p>}
               label={t.home.plannedBudget}
@@ -57,7 +57,7 @@ export function HomeSummaryTiles({
       <MetricTile
         title={
           <span className="inline-flex items-center gap-2">
-            <Receipt className="h-4 w-4 text-muted-foreground shrink-0" />
+            <HandCoinsIcon className="size-5 text-muted-foreground shrink-0" />
             <TileTitleWithHint
               content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.home.actualSpentHint}</p>}
               label={t.home.actualSpent}
@@ -70,7 +70,7 @@ export function HomeSummaryTiles({
       <MetricTile
         title={
           <span className="inline-flex items-center gap-2">
-            <PiggyBank className="h-4 w-4 text-muted-foreground shrink-0" />
+            <PiggyBank className="size-5 text-muted-foreground shrink-0" />
             <TileTitleWithHint
               content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.home.plannedSurplusHint}</p>}
               label={t.home.plannedSurplus}
@@ -83,7 +83,7 @@ export function HomeSummaryTiles({
       <MetricTile
         title={
           <span className="inline-flex items-center gap-2">
-            <PiggyBank className="h-4 w-4 text-muted-foreground shrink-0" />
+            <PiggyBank className="size-5 text-muted-foreground shrink-0" />
             <TileTitleWithHint
               content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.home.plannedSavingsHint}</p>}
               label={t.home.savingsToDatePlanned}

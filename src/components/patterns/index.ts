@@ -1,4 +1,6 @@
+export { ActionTooltipButton, type ActionTooltipButtonProps } from './ActionTooltipButton'
 export { AuthCard, type AuthCardProps } from './AuthCard'
+export { ConfirmDeleteDialog, type ConfirmDeleteDialogProps } from './ConfirmDeleteDialog'
 export { FormLabelWithHint, type FormLabelWithHintProps, InfoTooltip, type InfoTooltipProps } from './InfoTooltip'
 export { MetricTile, type MetricTileProps } from './MetricTile'
 export { ModalHeading, type ModalHeadingProps } from './ModalHeading'

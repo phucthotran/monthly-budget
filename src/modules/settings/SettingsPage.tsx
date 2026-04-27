@@ -6,7 +6,7 @@ import { PageHeading, Panel } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
 import { useCategories } from '@/hooks/useUserCollections'
-import { settingsDeleteCategoryConfirm, t } from '@/lib/strings'
+import { t } from '@/lib/strings'
 
 import { CategoriesTable } from './components/CategoriesTable'
 import { CategoryDialog } from './components/CategoryDialog'
@@ -57,11 +57,6 @@ export function SettingsPage() {
             onToggleArchive={(c) => {
               if (!mutations) return
               void mutations.toggleArchive(c)
-            }}
-            onDelete={(c) => {
-              if (!mutations) return
-              if (!confirm(settingsDeleteCategoryConfirm(c.name))) return
-              void mutations.deleteCategory(c)
             }}
           />
           {categories.length === 0 ? (

@@ -1,14 +1,14 @@
 import type { BudgetItem } from '@/lib/types'
 
 import { Plus, Wallet } from 'lucide-react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
-import { PageHeading, Panel } from '@/components/patterns'
+import { ConfirmDeleteDialog, PageHeading, Panel } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
 import { useActualExpenses, useBudgetItems, useCategories } from '@/hooks/useUserCollections'
-import { t } from '@/lib/strings'
+import { budgetDeleteDialogP1, t } from '@/lib/strings'
 
 import { ActualExpenseDialog, type ActualExpenseDialogHandle } from './components/ActualExpenseDialog'
 import { BudgetItemDialog, type BudgetItemDialogHandle } from './components/BudgetItemDialog'
@@ -31,11 +31,7 @@ export function BudgetPage() {
   const budgetDialogRef = useRef<BudgetItemDialogHandle>(null)
   const actualDialogRef = useRef<ActualExpenseDialogHandle>(null)
 
-  async function onDelete(item: BudgetItem) {
-    if (!mutations) return
-    if (!confirm(t.budget.deleteConfirm)) return
-    await mutations.deleteBudgetItem(item.id)
-  }
+  const [itemToDelete, setItemToDelete] = useState<BudgetItem | null>(null)
 
   return (
     <RequireAuth>
@@ -75,7 +71,7 @@ export function BudgetPage() {
             actualMap={actualMap}
             onAddActual={(item) => actualDialogRef.current?.openForItem(item)}
             onEdit={(item) => budgetDialogRef.current?.openEdit(item)}
-            onDelete={(item) => void onDelete(item)}
+            onDelete={(item) => setItemToDelete(item)}
           />
           {items.length === 0 ? (
             <p className="text-sm text-muted-foreground py-6 text-center">{t.budget.emptyList}</p>
@@ -88,6 +84,20 @@ export function BudgetPage() {
           onSubmit={async (value) => {
             if (!mutations) return
             await mutations.addActualExpense(value)
+          }}
+        />
+
+        <ConfirmDeleteDialog
+          open={itemToDelete !== null}
+          title={t.budget.deleteDialogTitle}
+          description={itemToDelete ? <p>{budgetDeleteDialogP1(itemToDelete.title)}</p> : null}
+          emphasis={itemToDelete ? t.budget.deleteDialogP2 : null}
+          onOpenChange={(open) => {
+            if (!open) setItemToDelete(null)
+          }}
+          onConfirm={async () => {
+            if (!mutations || !itemToDelete) return
+            await mutations.deleteBudgetItem(itemToDelete.id)
           }}
         />
       </div>

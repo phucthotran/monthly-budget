@@ -1,6 +1,6 @@
 import { Link, useRouterState } from '@tanstack/react-router'
 import { signOut } from 'firebase/auth'
-import { LayoutDashboard, LogOut, PiggyBank, Receipt, Settings, TrendingUp, Wallet } from 'lucide-react'
+import { LayoutDashboard, LogOut, PiggyBank, Settings, TrendingUp, Wallet, WalletCards } from 'lucide-react'
 import { type ReactNode } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
@@ -26,7 +26,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="min-h-dvh flex flex-col md:flex-row">
         <aside className="border-b border-border md:border-b-0 md:border-r md:w-56 shrink-0 bg-card/50">
           <div className="flex h-14 items-center gap-2 px-4 font-semibold tracking-tight">
-            <Receipt className="h-5 w-5 text-primary" />
+            <WalletCards className="h-5 w-5 text-primary" />
             <span className="truncate">{t.appName}</span>
           </div>
           <Separator />

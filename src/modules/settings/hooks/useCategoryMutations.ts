@@ -1,6 +1,6 @@
 import type { Category } from '@/lib/types'
 
-import { addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore'
+import { addDoc, collection, doc, updateDoc } from 'firebase/firestore'
 
 import { getFirestoreDb } from '@/lib/firebase'
 
@@ -22,9 +22,5 @@ export function categoryMutations(uid: string) {
     })
   }
 
-  async function deleteCategory(category: Category) {
-    await deleteDoc(doc(db, 'users', uid, 'categories', category.id))
-  }
-
-  return { addCategory, deleteCategory, toggleArchive }
+  return { addCategory, toggleArchive }
 }
