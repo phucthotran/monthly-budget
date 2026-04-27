@@ -2,7 +2,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { type ReactNode, useEffect } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
-import { t } from '@/lib/strings'
+import { PageLoadingSkeleton } from '@/components/patterns'
 
 export function RequireAuth({ children }: { children: ReactNode }) {
   const { loading, user } = useAuthContext()
@@ -15,7 +15,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   }, [loading, user, navigate])
 
   if (loading) {
-    return <div className="text-sm text-muted-foreground py-10">{t.common.loading}</div>
+    return <PageLoadingSkeleton />
   }
   if (!user) return null
   return children

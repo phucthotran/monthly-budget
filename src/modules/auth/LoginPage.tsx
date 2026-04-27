@@ -2,6 +2,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
 
 import { LoginForm } from './components/LoginForm'
+import { LoginLoadingSkeleton } from './components/LoginLoadingSkeleton'
 import { useEmailAuth } from './hooks/useEmailAuth'
 import { useGoogleAuth } from './hooks/useGoogleAuth'
 
@@ -14,6 +15,10 @@ export function LoginPage() {
   useEffect(() => {
     if (!loading && user) void navigate({ to: '/' })
   }, [loading, user, navigate])
+
+  if (loading) {
+    return <LoginLoadingSkeleton />
+  }
 
   return (
     <LoginForm
