@@ -1,13 +1,12 @@
 import { useForm } from '@tanstack/react-form'
-import { z } from 'zod'
+import { useId } from 'react'
 
 import { ModalHeading } from '@/components/patterns'
-import { Button, Dialog, DialogContent, DialogFooter, Input, Label } from '@/components/ui'
+import { Button, Dialog, DialogContent, DialogFooter, Field, FieldError, FieldLabel, Input } from '@/components/ui'
+import { firstFieldErrorMessage } from '@/lib/form/fieldMeta'
 import { t } from '@/lib/strings'
 
-const schema = z.object({
-  name: z.string().min(1),
-})
+import { categoryFormSchema } from '../schemas/categoryFormSchema'
 
 export function CategoryDialog({
   onOpenChange,
@@ -18,14 +17,16 @@ export function CategoryDialog({
   onOpenChange: (v: boolean) => void
   onSubmit: (value: { name: string }) => Promise<void>
 }) {
+  const formId = useId()
   const form = useForm({
     defaultValues: { name: '' },
     onSubmit: async ({ value }) => {
-      const parsed = schema.safeParse(value)
-      if (!parsed.success) return
-      await onSubmit({ name: parsed.data.name })
+      await onSubmit({ name: value.name.trim() })
       onOpenChange(false)
       form.reset()
+    },
+    validators: {
+      onSubmit: categoryFormSchema,
     },
   })
 
@@ -54,12 +55,24 @@ export function CategoryDialog({
           }}
         >
           <form.Field name="name">
-            {(field) => (
-              <div className="space-y-2">
-                <Label>{t.settings.name}</Label>
-                <Input value={field.state.value} onChange={(e) => field.handleChange(e.target.value)} />
-              </div>
-            )}
+            {(field) => {
+              const err = firstFieldErrorMessage(field.state.meta)
+              const errId = `${formId}-name-err`
+              return (
+                <Field invalid={!!err}>
+                  <FieldLabel htmlFor={`${formId}-name`}>{t.settings.name}</FieldLabel>
+                  <Input
+                    aria-describedby={err ? errId : undefined}
+                    aria-invalid={!!err}
+                    id={`${formId}-name`}
+                    value={field.state.value}
+                    maxLength={45}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                  <FieldError id={errId}>{err}</FieldError>
+                </Field>
+              )
+            }}
           </form.Field>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

@@ -4,7 +4,7 @@ import { addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestor
 
 import { canRecordActualExpenseForBudgetItem } from '@/lib/budget/apply'
 import { getFirestoreDb } from '@/lib/firebase'
-import { currentMonthKey } from '@/lib/month'
+import { compareMonthKeys, currentMonthKey } from '@/lib/month'
 
 export type BudgetItemInput = {
   title: string
@@ -18,7 +18,7 @@ export function budgetMutations(uid: string) {
   const db = getFirestoreDb()
 
   async function upsertBudgetItem(editing: BudgetItem | null, input: BudgetItemInput) {
-    if (!editing && input.validFrom < currentMonthKey()) {
+    if (!editing && compareMonthKeys(input.validFrom, currentMonthKey()) < 0) {
       throw new Error('New budget item validFrom must be current month or later')
     }
 

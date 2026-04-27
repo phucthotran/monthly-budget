@@ -173,6 +173,17 @@ export const t = {
     tabSavingsTooltip: 'Phần dư theo kế hoạch và số tích lũy qua thời gian.',
     title: 'Thống kê',
   },
+  validation: {
+    amountAtLeastOne: 'Nhập số tiền từ 1.000 VND trở lên.',
+    amountNotNegative: 'Số tiền không được âm.',
+    categoryRequired: 'Chọn phân loại.',
+    labelRequired: 'Nhập tên kỳ thu nhập.',
+    monthFormat: 'Chọn tháng hợp lệ.',
+    nameRequired: 'Nhập tên danh mục.',
+    titleRequired: 'Nhập tên khoản.',
+    validFromNotBeforeCurrent: 'Khi tạo mới, chỉ chọn từ tháng hiện tại trở đi.',
+    validToBeforeFrom: 'Tháng kết thúc không được trước tháng bắt đầu.',
+  },
 } as const
 
 export function budgetDeleteDialogP1(title: string) {

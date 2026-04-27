@@ -2,11 +2,20 @@ import { describe, expect, it } from 'vitest'
 
 import {
   asOfMonthForYearFilter,
+  compareMonthKeys,
   formatMonthLabelShort,
   monthYearPickerYearConstraints,
   statsMonthKeys,
   yearFilterRange,
 } from '@/lib/month'
+
+describe('compareMonthKeys', () => {
+  it('orders by calendar year and month, not string collation alone', () => {
+    expect(compareMonthKeys('2025-12', '2026-01')).toBeLessThan(0)
+    expect(compareMonthKeys('2026-01', '2026-01')).toBe(0)
+    expect(compareMonthKeys('2026-02', '2026-01')).toBeGreaterThan(0)
+  })
+})
 
 describe('statsMonthKeys', () => {
   it('covers from current month through next calendar year (12 months)', () => {

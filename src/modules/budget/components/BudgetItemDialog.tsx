@@ -1,8 +1,7 @@
 import type { BudgetItem, Category, MonthKey } from '@/lib/types'
 
 import { useForm } from '@tanstack/react-form'
-import { type ForwardedRef, forwardRef, useImperativeHandle, useMemo, useState } from 'react'
-import { z } from 'zod'
+import { type ForwardedRef, forwardRef, useId, useImperativeHandle, useMemo, useState } from 'react'
 
 import { MonthYearPicker, VndAmountInput } from '@/components/inputs'
 import { FormLabelWithHint, ModalHeading } from '@/components/patterns'
@@ -11,24 +10,21 @@ import {
   Dialog,
   DialogContent,
   DialogFooter,
+  Field,
+  FieldError,
+  FieldLabel,
   Input,
-  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui'
-import { currentMonthKey, monthYearPickerYearConstraints } from '@/lib/month'
+import { firstFieldErrorMessage } from '@/lib/form/fieldMeta'
+import { compareMonthKeys, monthYearPickerYearConstraints } from '@/lib/month'
 import { t } from '@/lib/strings'
 
-const schema = z.object({
-  amountVnd: z.number().min(1),
-  categoryId: z.string().min(1),
-  title: z.string().min(1),
-  validFrom: z.string().regex(/^\d{4}-\d{2}$/),
-  validTo: z.string().optional(),
-})
+import { budgetItemFormSchema } from '../schemas/budgetItemFormSchema'
 
 export type BudgetItemDialogHandle = {
   openCreate: () => void
@@ -56,6 +52,8 @@ function BudgetItemDialogImpl(
 
   const defaultCategoryId = useMemo(() => categories.find((c) => !c.archived)?.id ?? '', [categories])
   const yearPick = useMemo(() => monthYearPickerYearConstraints(editing), [editing])
+  const schema = useMemo(() => budgetItemFormSchema(!!editing), [editing])
+  const formId = useId()
 
   const form = useForm({
     defaultValues: {
@@ -66,25 +64,21 @@ function BudgetItemDialogImpl(
       validTo: '',
     },
     onSubmit: async ({ value }) => {
-      const parsed = schema.safeParse(value)
-      if (!parsed.success) return
-      if (!editing) {
-        if (parsed.data.validFrom < currentMonthKey()) return
-      }
-      const validTo = parsed.data.validTo?.trim() ? (parsed.data.validTo.trim() as MonthKey) : null
-      if (validTo && validTo < (parsed.data.validFrom as MonthKey)) return
-
+      const validTo = value.validTo.trim() ? (value.validTo.trim() as MonthKey) : null
       await onSubmit(editing, {
-        amountVnd: parsed.data.amountVnd,
-        categoryId: parsed.data.categoryId,
-        title: parsed.data.title,
-        validFrom: parsed.data.validFrom as MonthKey,
+        amountVnd: value.amountVnd,
+        categoryId: value.categoryId,
+        title: value.title.trim(),
+        validFrom: value.validFrom as MonthKey,
         validTo,
       })
 
       setOpen(false)
       setEditing(null)
       form.reset()
+    },
+    validators: {
+      onSubmit: schema,
     },
   })
 
@@ -139,95 +133,142 @@ function BudgetItemDialogImpl(
           }}
         >
           <form.Field name="title">
-            {(field) => (
-              <div className="space-y-2">
-                <Label>{t.budget.titleLabel}</Label>
-                <Input value={field.state.value} onChange={(e) => field.handleChange(e.target.value)} />
-              </div>
-            )}
+            {(field) => {
+              const err = firstFieldErrorMessage(field.state.meta)
+              const errId = `${formId}-title-err`
+              return (
+                <Field invalid={!!err}>
+                  <FieldLabel htmlFor={`${formId}-title`}>{t.budget.titleLabel}</FieldLabel>
+                  <Input
+                    aria-describedby={err ? errId : undefined}
+                    aria-invalid={!!err}
+                    id={`${formId}-title`}
+                    value={field.state.value}
+                    maxLength={45}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                  <FieldError id={errId}>{err}</FieldError>
+                </Field>
+              )
+            }}
           </form.Field>
 
           <form.Field name="amountVnd">
-            {(field) => (
-              <div className="space-y-2">
-                <Label>{t.budget.amount}</Label>
-                <VndAmountInput value={field.state.value} onValueChange={(n) => field.handleChange(n)} />
-              </div>
-            )}
+            {(field) => {
+              const err = firstFieldErrorMessage(field.state.meta)
+              const errId = `${formId}-amount-err`
+              return (
+                <Field invalid={!!err}>
+                  <FieldLabel htmlFor={`${formId}-amount`}>{t.budget.amount}</FieldLabel>
+                  <VndAmountInput
+                    aria-describedby={err ? errId : undefined}
+                    id={`${formId}-amount`}
+                    invalid={!!err}
+                    value={field.state.value}
+                    onValueChange={(n) => field.handleChange(n)}
+                  />
+                  <FieldError id={errId}>{err}</FieldError>
+                </Field>
+              )
+            }}
           </form.Field>
 
           <form.Field name="categoryId">
-            {(field) => (
-              <div className="space-y-2">
-                <Label>{t.budget.category}</Label>
-                <Select value={field.state.value} onValueChange={(v) => field.handleChange(v)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={t.common.selectPlaceholder} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories
-                      .filter((c) => !c.archived)
-                      .map((c) => (
-                        <SelectItem key={c.id} value={c.id}>
-                          {c.name}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-          </form.Field>
-          <form.Field name="validFrom">
-            {(field) => (
-              <div className="space-y-2">
-                {editing ? (
-                  <Label>{t.budget.validFrom}</Label>
-                ) : (
-                  <FormLabelWithHint hint={<p className="text-pretty">{t.budget.validFromCreateHint}</p>}>
-                    {t.budget.validFrom}
-                  </FormLabelWithHint>
-                )}
-                <MonthYearPicker
-                  value={field.state.value}
-                  maxYear={yearPick.maxYear}
-                  maxYears={yearPick.maxYears}
-                  minMonth={editing ? undefined : defaultMonth}
-                  minYear={yearPick.minYear}
-                  onChange={(v) => {
-                    field.handleChange(v)
-                    const to = form.state.values.validTo?.trim() ?? ''
-                    if (to && to < v) {
-                      form.setFieldValue('validTo', '')
-                    }
-                  }}
-                />
-              </div>
-            )}
-          </form.Field>
-          <form.Subscribe selector={(s) => s.values.validFrom}>
-            {(validFrom) => {
-              const fromKey = /^\d{4}-\d{2}$/.test(validFrom) ? (validFrom as MonthKey) : defaultMonth
+            {(field) => {
+              const err = firstFieldErrorMessage(field.state.meta)
+              const errId = `${formId}-category-err`
               return (
-                <form.Field name="validTo">
-                  {(field) => (
-                    <div className="space-y-2">
-                      <FormLabelWithHint hint={<p className="text-pretty">{t.budget.validToHint}</p>}>
-                        {t.budget.validTo}
-                      </FormLabelWithHint>
-                      <MonthYearPicker
-                        value={field.state.value}
-                        maxYear={yearPick.maxYear}
-                        maxYears={yearPick.maxYears}
-                        minMonth={fromKey}
-                        minYear={yearPick.minYear}
-                        onChange={(v) => field.handleChange(v)}
-                      />
-                    </div>
-                  )}
-                </form.Field>
+                <Field invalid={!!err}>
+                  <FieldLabel htmlFor={`${formId}-category`}>{t.budget.category}</FieldLabel>
+                  <Select value={field.state.value} onValueChange={(v) => field.handleChange(v)}>
+                    <SelectTrigger
+                      aria-describedby={err ? errId : undefined}
+                      aria-invalid={!!err}
+                      id={`${formId}-category`}
+                    >
+                      <SelectValue placeholder={t.common.selectPlaceholder} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories
+                        .filter((c) => !c.archived)
+                        .map((c) => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {c.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                  <FieldError id={errId}>{err}</FieldError>
+                </Field>
               )
             }}
-          </form.Subscribe>
+          </form.Field>
+          <form.Field name="validFrom">
+            {(field) => {
+              const err = firstFieldErrorMessage(field.state.meta)
+              const errId = `${formId}-validFrom-err`
+              return (
+                <Field invalid={!!err}>
+                  {editing ? (
+                    <FieldLabel>{t.budget.validFrom}</FieldLabel>
+                  ) : (
+                    <FormLabelWithHint hint={<p className="text-pretty">{t.budget.validFromCreateHint}</p>}>
+                      {t.budget.validFrom}
+                    </FormLabelWithHint>
+                  )}
+                  <MonthYearPicker
+                    invalid={!!err}
+                    value={field.state.value}
+                    maxYear={yearPick.maxYear}
+                    maxYears={yearPick.maxYears}
+                    minMonth={editing ? undefined : defaultMonth}
+                    minYear={yearPick.minYear}
+                    onChange={(v) => {
+                      field.handleChange(v)
+                      const to = form.state.values.validTo?.trim() ?? ''
+                      if (to && compareMonthKeys(to, v) < 0) {
+                        form.setFieldValue('validTo', '')
+                      }
+                    }}
+                  />
+                  <FieldError id={errId}>{err}</FieldError>
+                </Field>
+              )
+            }}
+          </form.Field>
+          <form.Field name="validTo">
+            {(field) => {
+              const err = firstFieldErrorMessage(field.state.meta)
+              const errId = `${formId}-validTo-err`
+              return (
+                <Field invalid={!!err}>
+                  <FormLabelWithHint hint={<p className="text-pretty">{t.budget.validToHint}</p>}>
+                    {t.budget.validTo}
+                  </FormLabelWithHint>
+                  <form.Subscribe selector={(s) => s.values.validFrom}>
+                    {(validFrom) => {
+                      const fromKey = /^\d{4}-\d{2}$/.test(validFrom) ? (validFrom as MonthKey) : defaultMonth
+                      const fromYear = Number(fromKey.slice(0, 4))
+                      const toMinYear = Math.max(yearPick.minYear, fromYear)
+                      return (
+                        <MonthYearPicker
+                          invalid={!!err}
+                          outOfMinSync="empty"
+                          value={field.state.value}
+                          maxYear={yearPick.maxYear}
+                          maxYears={yearPick.maxYears}
+                          minMonth={fromKey}
+                          minYear={toMinYear}
+                          onChange={(v) => field.handleChange(v)}
+                        />
+                      )
+                    }}
+                  </form.Subscribe>
+                  <FieldError id={errId}>{err}</FieldError>
+                </Field>
+              )
+            }}
+          </form.Field>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>

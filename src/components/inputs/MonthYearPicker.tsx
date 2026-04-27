@@ -1,7 +1,7 @@
 import { Calendar } from 'lucide-react'
-import { useMemo } from 'react'
+import { useLayoutEffect, useMemo, useRef } from 'react'
 
-import { currentCalendarYear, currentMonthKey, type MonthKey } from '@/lib/month'
+import { compareMonthKeys, currentCalendarYear, currentMonthKey, MONTH_KEY_REGEX, type MonthKey } from '@/lib/month'
 import { t } from '@/lib/strings'
 import { cn } from '@/lib/utils'
 
@@ -28,12 +28,18 @@ function visibleYearsAsc(yearsAsc: number[], centerYear: number, maxYears: numbe
 
 export function MonthYearPicker({
   className,
+  invalid,
   maxMonth,
   maxYear,
   maxYears = 5,
   minMonth,
   minYear,
   onChange,
+  /**
+   * When the stored `value` is before `minMonth` (e.g. "from" moved forward) or after `maxMonth`, re-sync
+   * the parent. Use `empty` for optional end date (`''` in form); `minMonth` clamps to the lower bound.
+   */
+  outOfMinSync = 'minMonth',
   placeholder = t.common.pickMonth,
   value,
 }: {
@@ -41,20 +47,44 @@ export function MonthYearPicker({
   onChange: (v: MonthKey) => void
   placeholder?: string
   className?: string
+  invalid?: boolean
   minMonth?: MonthKey
   maxMonth?: MonthKey
   minYear?: number
   maxYear?: number
   maxYears?: number
+  outOfMinSync?: 'empty' | 'minMonth'
 }) {
   const trimmed = value?.trim() ?? ''
-  const effectiveMonth: MonthKey = /^\d{4}-\d{2}$/.test(trimmed)
-    ? (trimmed as MonthKey)
-    : minMonth
-      ? minMonth
-      : maxMonth
-        ? maxMonth
-        : currentMonthKey()
+  const isValidKey = MONTH_KEY_REGEX.test(trimmed)
+
+  const onChangeRef = useRef(onChange)
+  onChangeRef.current = onChange
+
+  useLayoutEffect(() => {
+    if (!isValidKey || !trimmed) return
+    const v = trimmed as MonthKey
+    if (minMonth && compareMonthKeys(v, minMonth) < 0) {
+      if (outOfMinSync === 'empty') onChangeRef.current('' as MonthKey)
+      else onChangeRef.current(minMonth)
+      return
+    }
+    if (maxMonth && compareMonthKeys(v, maxMonth) > 0) {
+      onChangeRef.current(maxMonth)
+    }
+  }, [isValidKey, maxMonth, minMonth, outOfMinSync, trimmed])
+
+  const effectiveMonth: MonthKey = (() => {
+    if (isValidKey) {
+      const parsed = trimmed as MonthKey
+      if (minMonth && compareMonthKeys(parsed, minMonth) < 0) return minMonth
+      if (maxMonth && compareMonthKeys(parsed, maxMonth) > 0) return maxMonth
+      return parsed
+    }
+    if (minMonth) return minMonth
+    if (maxMonth) return maxMonth
+    return currentMonthKey()
+  })()
   const [yStr, mStr] = effectiveMonth.split('-') as [string, string]
   const year = Number(yStr)
   const month = mStr
@@ -63,7 +93,9 @@ export function MonthYearPicker({
     const nowYear = currentCalendarYear()
     const minMonthYear = minMonth ? Number(minMonth.split('-')[0]) : undefined
     const maxMonthYear = maxMonth ? Number(maxMonth.split('-')[0]) : undefined
-    const start = minYear ?? minMonthYear ?? nowYear - 2
+    // When both are set, the year list must not start below `minMonth`'s year (e.g. end month after start month).
+    const fromPropMin = minYear != null && minMonthYear != null ? Math.max(minYear, minMonthYear) : undefined
+    const start = fromPropMin ?? minYear ?? minMonthYear ?? nowYear - 2
     let end = maxYear ?? maxMonthYear ?? nowYear + 2
     if (end < start) end = start + Math.max(0, maxYears - 1)
     const ys: number[] = []
@@ -75,8 +107,8 @@ export function MonthYearPicker({
     () =>
       MONTHS.filter((mm) => {
         const candidate = `${yStr}-${mm}` as MonthKey
-        if (minMonth && candidate < minMonth) return false
-        if (maxMonth && candidate > maxMonth) return false
+        if (minMonth && compareMonthKeys(candidate, minMonth) < 0) return false
+        if (maxMonth && compareMonthKeys(candidate, maxMonth) > 0) return false
         return true
       }),
     [maxMonth, minMonth, yStr],
@@ -84,8 +116,8 @@ export function MonthYearPicker({
 
   function monthForYear(nextYear: string): string {
     const candidate = `${nextYear}-${month}` as MonthKey
-    if (minMonth && candidate < minMonth) return minMonth.split('-')[1] ?? month
-    if (maxMonth && candidate > maxMonth) return maxMonth.split('-')[1] ?? month
+    if (minMonth && compareMonthKeys(candidate, minMonth) < 0) return minMonth.split('-')[1] ?? month
+    if (maxMonth && compareMonthKeys(candidate, maxMonth) > 0) return maxMonth.split('-')[1] ?? month
     return month
   }
 
@@ -99,7 +131,7 @@ export function MonthYearPicker({
             onChange(`${yStr}-${mm}` as MonthKey)
           }}
         >
-          <SelectTrigger className="pl-8">
+          <SelectTrigger aria-invalid={invalid || undefined} className="pl-8">
             <SelectValue placeholder={placeholder}>{`T${Number(month)}`}</SelectValue>
           </SelectTrigger>
           <SelectContent>
@@ -118,7 +150,7 @@ export function MonthYearPicker({
           onChange(`${y}-${monthForYear(y)}` as MonthKey)
         }}
       >
-        <SelectTrigger>
+        <SelectTrigger aria-invalid={invalid || undefined}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

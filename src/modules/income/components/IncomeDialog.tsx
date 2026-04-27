@@ -1,21 +1,16 @@
 import type { IncomePeriod, MonthKey } from '@/lib/types'
 
 import { useForm } from '@tanstack/react-form'
-import { type ForwardedRef, forwardRef, useImperativeHandle, useMemo, useState } from 'react'
-import { z } from 'zod'
+import { type ForwardedRef, forwardRef, useId, useImperativeHandle, useMemo, useState } from 'react'
 
 import { MonthYearPicker, VndAmountInput } from '@/components/inputs'
 import { FormLabelWithHint, ModalHeading } from '@/components/patterns'
-import { Button, Dialog, DialogContent, DialogFooter, Input, Label } from '@/components/ui'
-import { monthYearPickerYearConstraints } from '@/lib/month'
+import { Button, Dialog, DialogContent, DialogFooter, Field, FieldError, FieldLabel, Input } from '@/components/ui'
+import { firstFieldErrorMessage } from '@/lib/form/fieldMeta'
+import { compareMonthKeys, monthYearPickerYearConstraints } from '@/lib/month'
 import { t } from '@/lib/strings'
 
-const schema = z.object({
-  amountVnd: z.number().min(0),
-  label: z.string().min(1),
-  validFrom: z.string().regex(/^\d{4}-\d{2}$/),
-  validTo: z.string().optional(),
-})
+import { incomeFormSchema } from '../schemas/incomeFormSchema'
 
 export type IncomeDialogHandle = {
   openCreate: () => void
@@ -40,6 +35,7 @@ function IncomeDialogImpl(
   const [editing, setEditing] = useState<IncomePeriod | null>(null)
 
   const yearPick = useMemo(() => monthYearPickerYearConstraints(editing), [editing])
+  const formId = useId()
 
   const form = useForm({
     defaultValues: {
@@ -49,19 +45,19 @@ function IncomeDialogImpl(
       validTo: '',
     },
     onSubmit: async ({ value }) => {
-      const parsed = schema.safeParse(value)
-      if (!parsed.success) return
-
       await onSubmit(editing, {
-        amountVnd: parsed.data.amountVnd,
-        label: parsed.data.label,
-        validFrom: parsed.data.validFrom as MonthKey,
-        validTo: parsed.data.validTo?.trim() ? (parsed.data.validTo.trim() as MonthKey) : null,
+        amountVnd: value.amountVnd,
+        label: value.label.trim(),
+        validFrom: value.validFrom as MonthKey,
+        validTo: value.validTo.trim() ? (value.validTo.trim() as MonthKey) : null,
       })
 
       setOpen(false)
       setEditing(null)
       form.reset()
+    },
+    validators: {
+      onSubmit: incomeFormSchema,
     },
   })
 
@@ -114,52 +110,104 @@ function IncomeDialogImpl(
           }}
         >
           <form.Field name="label">
-            {(field) => (
-              <div className="space-y-2">
-                <Label>{t.income.label}</Label>
-                <Input value={field.state.value} onChange={(e) => field.handleChange(e.target.value)} />
-              </div>
-            )}
+            {(field) => {
+              const err = firstFieldErrorMessage(field.state.meta)
+              const errId = `${formId}-label-err`
+              return (
+                <Field invalid={!!err}>
+                  <FieldLabel htmlFor={`${formId}-label`}>{t.income.label}</FieldLabel>
+                  <Input
+                    aria-describedby={err ? errId : undefined}
+                    aria-invalid={!!err}
+                    id={`${formId}-label`}
+                    value={field.state.value}
+                    maxLength={45}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                  <FieldError id={errId}>{err}</FieldError>
+                </Field>
+              )
+            }}
           </form.Field>
 
           <form.Field name="amountVnd">
-            {(field) => (
-              <div className="space-y-2">
-                <Label>{t.income.amount}</Label>
-                <VndAmountInput value={field.state.value} onValueChange={(n) => field.handleChange(n)} />
-              </div>
-            )}
+            {(field) => {
+              const err = firstFieldErrorMessage(field.state.meta)
+              const errId = `${formId}-amount-err`
+              return (
+                <Field invalid={!!err}>
+                  <FieldLabel htmlFor={`${formId}-amount`}>{t.income.amount}</FieldLabel>
+                  <VndAmountInput
+                    aria-describedby={err ? errId : undefined}
+                    id={`${formId}-amount`}
+                    invalid={!!err}
+                    value={field.state.value}
+                    onValueChange={(n) => field.handleChange(n)}
+                  />
+                  <FieldError id={errId}>{err}</FieldError>
+                </Field>
+              )
+            }}
           </form.Field>
 
           <form.Field name="validFrom">
-            {(field) => (
-              <div className="space-y-2">
-                <Label>{t.income.validFrom}</Label>
-                <MonthYearPicker
-                  value={field.state.value}
-                  maxYear={yearPick.maxYear}
-                  maxYears={yearPick.maxYears}
-                  minYear={yearPick.minYear}
-                  onChange={(v) => field.handleChange(v)}
-                />
-              </div>
-            )}
+            {(field) => {
+              const err = firstFieldErrorMessage(field.state.meta)
+              const errId = `${formId}-validFrom-err`
+              return (
+                <Field invalid={!!err}>
+                  <FieldLabel>{t.income.validFrom}</FieldLabel>
+                  <MonthYearPicker
+                    invalid={!!err}
+                    value={field.state.value}
+                    maxYear={yearPick.maxYear}
+                    maxYears={yearPick.maxYears}
+                    minYear={yearPick.minYear}
+                    onChange={(v) => {
+                      field.handleChange(v)
+                      const to = form.state.values.validTo?.trim() ?? ''
+                      if (to && compareMonthKeys(to, v) < 0) {
+                        form.setFieldValue('validTo', '')
+                      }
+                    }}
+                  />
+                  <FieldError id={errId}>{err}</FieldError>
+                </Field>
+              )
+            }}
           </form.Field>
           <form.Field name="validTo">
-            {(field) => (
-              <div className="space-y-2">
-                <FormLabelWithHint hint={<p className="text-pretty">{t.income.validToHint}</p>}>
-                  {t.income.validTo}
-                </FormLabelWithHint>
-                <MonthYearPicker
-                  value={field.state.value}
-                  maxYear={yearPick.maxYear}
-                  maxYears={yearPick.maxYears}
-                  minYear={yearPick.minYear}
-                  onChange={(v) => field.handleChange(v)}
-                />
-              </div>
-            )}
+            {(field) => {
+              const err = firstFieldErrorMessage(field.state.meta)
+              const errId = `${formId}-validTo-err`
+              return (
+                <Field invalid={!!err}>
+                  <FormLabelWithHint hint={<p className="text-pretty">{t.income.validToHint}</p>}>
+                    {t.income.validTo}
+                  </FormLabelWithHint>
+                  <form.Subscribe selector={(s) => s.values.validFrom}>
+                    {(validFrom) => {
+                      const fromKey = /^\d{4}-\d{2}$/.test(validFrom) ? (validFrom as MonthKey) : defaultMonth
+                      const fromYear = Number(fromKey.slice(0, 4))
+                      const toMinYear = Math.max(yearPick.minYear, fromYear)
+                      return (
+                        <MonthYearPicker
+                          invalid={!!err}
+                          outOfMinSync="empty"
+                          value={field.state.value}
+                          maxYear={yearPick.maxYear}
+                          maxYears={yearPick.maxYears}
+                          minMonth={fromKey}
+                          minYear={toMinYear}
+                          onChange={(v) => field.handleChange(v)}
+                        />
+                      )
+                    }}
+                  </form.Subscribe>
+                  <FieldError id={errId}>{err}</FieldError>
+                </Field>
+              )
+            }}
           </form.Field>
 
           <DialogFooter>

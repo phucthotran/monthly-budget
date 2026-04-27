@@ -1,0 +1,27 @@
+---
+description: Security checks — pre-commit (audit, Gitleaks, Trivy) and GitHub Actions
+alwaysApply: true
+---
+
+# Security: pre-commit and CI (monthly-budget)
+
+## Pre-commit
+
+- `.husky/pre-commit` runs `lint-staged`, then `pnpm run security:precommit` (`scripts/security-precommit.mjs`).
+- **pnpm audit:** `pnpm audit --audit-level=high` (fails on high/critical).
+- **Gitleaks:** `gitleaks protect --staged` with redaction and minimal logging (`--redact`, `--no-banner`, `--log-level warn`). Developers must install [Gitleaks](https://github.com/gitleaks/gitleaks) and have it on `PATH`.
+- **Trivy:** filesystem scan with `secret,misconfig` scanners only (not full vuln scan of `node_modules` every commit). Uses `.trivyignore`. Developers must install [Trivy](https://trivy.dev/latest/getting-started/installation/) and have it on `PATH`.
+- Pre-commit script errors are generic English strings; do not print raw `Error` objects or paths that leak environment details.
+
+## CI
+
+- `.github/workflows/security.yml` runs on `pull_request` and push to `main`: Gitleaks, `pnpm install --frozen-lockfile`, `pnpm audit --audit-level=high`, and **aquasecurity/trivy-action** (pin with **`v` prefix**, e.g. `aquasecurity/trivy-action@v0.36.0` — bare tags like `0.28.0` are invalid).
+
+## Dependencies and lockfile
+
+- `package.json` may define `pnpm.overrides` (e.g. for audited transitive deps). After changing overrides, run **`pnpm install`** and commit the updated **`pnpm-lock.yaml`**. Mismatch triggers `ERR_PNPM_LOCKFILE_CONFIG_MISMATCH` with frozen install.
+
+## npm scripts
+
+- `security:audit` — audit only.
+- `security:precommit` — full local pre-commit security steps.

@@ -26,6 +26,18 @@ export {
   DrawerTitle,
   DrawerTrigger,
 } from './drawer'
+export {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSeparator,
+  FieldSet,
+  FieldTitle,
+} from './field'
 export { Input } from './input'
 export { Label } from './label'
 export {

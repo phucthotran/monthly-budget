@@ -16,6 +16,7 @@ alwaysApply: true
 
 - Keep `src/routes/*.tsx` **thin**: routes should only define `createRoute(...)` and import the main page component from a module.
 - Feature logic and UI live in `src/modules/<feature>/...`.
+- Form validation: TanStack Form + Zod; form schemas live in `src/modules/<feature>/schemas/`. See `05-tanstack-form-zod.mdc`.
 
 ## Data ordering
 
@@ -26,4 +27,8 @@ alwaysApply: true
 
 - Keep paths under `users/{uid}/...`.
 - Prefer client-side sorting to avoid Firestore index friction, unless there is a strong reason to use server ordering.
+
+## Security and commits
+
+- Pre-commit (`pnpm audit`, Gitleaks, Trivy) and CI workflow conventions: see `06-security-precommit-ci.mdc`.
 

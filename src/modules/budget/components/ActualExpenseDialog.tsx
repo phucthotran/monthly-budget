@@ -1,22 +1,18 @@
 import type { BudgetItem, MonthKey } from '@/lib/types'
 
 import { useForm } from '@tanstack/react-form'
-import { type ForwardedRef, forwardRef, type ReactNode, useImperativeHandle, useState } from 'react'
-import { z } from 'zod'
+import { type ForwardedRef, forwardRef, type ReactNode, useId, useImperativeHandle, useState } from 'react'
 
 import { MonthYearPicker, VndAmountInput } from '@/components/inputs'
 import { FormLabelWithHint, ModalHeading } from '@/components/patterns'
-import { Button, Dialog, DialogContent, DialogFooter, Input, Label } from '@/components/ui'
+import { Button, Dialog, DialogContent, DialogFooter, Field, FieldError, FieldLabel, Input } from '@/components/ui'
+import { firstFieldErrorMessage } from '@/lib/form/fieldMeta'
 import { isMonthInRange } from '@/lib/month'
 import { t } from '@/lib/strings'
 
-const em = (children: ReactNode) => <strong className="font-medium text-foreground">{children}</strong>
+import { actualExpenseFormSchema } from '../schemas/actualExpenseFormSchema'
 
-const schema = z.object({
-  amountVnd: z.number().min(1),
-  note: z.string().optional(),
-  spentMonth: z.string().regex(/^\d{4}-\d{2}$/),
-})
+const em = (children: ReactNode) => <strong className="font-medium text-foreground">{children}</strong>
 
 export type ActualExpenseDialogHandle = {
   openForItem: (item: BudgetItem) => void
@@ -38,6 +34,7 @@ function ActualExpenseDialogImpl(
 ) {
   const [open, setOpen] = useState(false)
   const [item, setItem] = useState<BudgetItem | null>(null)
+  const formId = useId()
 
   const form = useForm({
     defaultValues: {
@@ -46,19 +43,21 @@ function ActualExpenseDialogImpl(
       spentMonth: defaultMonth,
     },
     onSubmit: async ({ value }) => {
-      const parsed = schema.safeParse(value)
-      if (!parsed.success || !item) return
-      const spentMonth = parsed.data.spentMonth as MonthKey
+      if (!item) return
+      const spentMonth = value.spentMonth as MonthKey
 
       await onSubmit(item, {
-        amountVnd: parsed.data.amountVnd,
-        note: parsed.data.note?.trim() || null,
+        amountVnd: value.amountVnd,
+        note: value.note?.trim() || null,
         spentMonth,
       })
 
       setOpen(false)
       setItem(null)
       form.reset()
+    },
+    validators: {
+      onSubmit: actualExpenseFormSchema,
     },
   })
 
@@ -108,37 +107,66 @@ function ActualExpenseDialogImpl(
           }}
         >
           <form.Field name="amountVnd">
-            {(field) => (
-              <div className="space-y-2">
-                <Label>{t.budget.amount}</Label>
-                <VndAmountInput value={field.state.value} onValueChange={(n) => field.handleChange(n)} />
-              </div>
-            )}
+            {(field) => {
+              const err = firstFieldErrorMessage(field.state.meta)
+              const errId = `${formId}-amount-err`
+              return (
+                <Field invalid={!!err}>
+                  <FieldLabel htmlFor={`${formId}-amount`}>{t.budget.amount}</FieldLabel>
+                  <VndAmountInput
+                    aria-describedby={err ? errId : undefined}
+                    id={`${formId}-amount`}
+                    invalid={!!err}
+                    value={field.state.value}
+                    onValueChange={(n) => field.handleChange(n)}
+                  />
+                  <FieldError id={errId}>{err}</FieldError>
+                </Field>
+              )
+            }}
           </form.Field>
 
           <form.Field name="spentMonth">
-            {(field) => (
-              <div className="space-y-2">
-                <FormLabelWithHint hint={<p className="text-pretty">{t.budget.actualPeriodHint}</p>}>
-                  {t.common.month}
-                </FormLabelWithHint>
-                <MonthYearPicker
-                  value={field.state.value}
-                  minMonth={item.validFrom}
-                  maxMonth={item.validTo ?? undefined}
-                  onChange={(v) => field.handleChange(v)}
-                />
-              </div>
-            )}
+            {(field) => {
+              const err = firstFieldErrorMessage(field.state.meta)
+              const errId = `${formId}-spentMonth-err`
+              return (
+                <Field invalid={!!err}>
+                  <FormLabelWithHint hint={<p className="text-pretty">{t.budget.actualPeriodHint}</p>}>
+                    {t.common.month}
+                  </FormLabelWithHint>
+                  <MonthYearPicker
+                    invalid={!!err}
+                    value={field.state.value}
+                    minMonth={item.validFrom}
+                    maxMonth={item.validTo ?? undefined}
+                    onChange={(v) => field.handleChange(v)}
+                  />
+                  <FieldError id={errId}>{err}</FieldError>
+                </Field>
+              )
+            }}
           </form.Field>
 
           <form.Field name="note">
-            {(field) => (
-              <div className="space-y-2">
-                <Label>{t.common.note}</Label>
-                <Input value={field.state.value} onChange={(e) => field.handleChange(e.target.value)} />
-              </div>
-            )}
+            {(field) => {
+              const err = firstFieldErrorMessage(field.state.meta)
+              const errId = `${formId}-note-err`
+              return (
+                <Field invalid={!!err}>
+                  <FieldLabel htmlFor={`${formId}-note`}>{t.common.note}</FieldLabel>
+                  <Input
+                    aria-describedby={err ? errId : undefined}
+                    aria-invalid={!!err}
+                    id={`${formId}-note`}
+                    value={field.state.value}
+                    maxLength={60}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                  <FieldError id={errId}>{err}</FieldError>
+                </Field>
+              )
+            }}
           </form.Field>
 
           <DialogFooter>
