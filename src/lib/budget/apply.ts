@@ -10,6 +10,10 @@ export function plannedBudgetForMonth(month: MonthKey, items: BudgetItem[]): num
   return items.filter((b) => isMonthInRange(month, b.validFrom, b.validTo)).reduce((s, b) => s + b.amountVnd, 0)
 }
 
+export function canRecordActualExpenseForBudgetItem(item: BudgetItem, month: MonthKey): boolean {
+  return isMonthInRange(month, item.validFrom, item.validTo)
+}
+
 export function actualSpentForMonth(month: MonthKey, byMonth: Map<MonthKey, number>): number {
   return byMonth.get(month) ?? 0
 }

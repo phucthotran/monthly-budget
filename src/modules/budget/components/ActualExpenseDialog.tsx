@@ -4,10 +4,10 @@ import { useForm } from '@tanstack/react-form'
 import { type ForwardedRef, forwardRef, type ReactNode, useImperativeHandle, useState } from 'react'
 import { z } from 'zod'
 
-import { MonthYearPicker } from '@/components/inputs/MonthYearPicker'
-import { VndAmountInput } from '@/components/inputs/VndAmountInput'
-import { ModalHeading } from '@/components/patterns'
+import { MonthYearPicker, VndAmountInput } from '@/components/inputs'
+import { FormLabelWithHint, ModalHeading } from '@/components/patterns'
 import { Button, Dialog, DialogContent, DialogFooter, Input, Label } from '@/components/ui'
+import { isMonthInRange } from '@/lib/month'
 import { t } from '@/lib/strings'
 
 const em = (children: ReactNode) => <strong className="font-medium text-foreground">{children}</strong>
@@ -29,12 +29,10 @@ function ActualExpenseDialogImpl(
     onSubmit,
   }: {
     defaultMonth: MonthKey
-    onSubmit: (value: {
-      budgetItemId: string
-      amountVnd: number
-      spentMonth: MonthKey
-      note: null | string
-    }) => Promise<void>
+    onSubmit: (
+      item: BudgetItem,
+      value: { amountVnd: number; spentMonth: MonthKey; note: null | string },
+    ) => Promise<void>
   },
   ref: ForwardedRef<ActualExpenseDialogHandle>,
 ) {
@@ -50,12 +48,12 @@ function ActualExpenseDialogImpl(
     onSubmit: async ({ value }) => {
       const parsed = schema.safeParse(value)
       if (!parsed.success || !item) return
+      const spentMonth = parsed.data.spentMonth as MonthKey
 
-      await onSubmit({
+      await onSubmit(item, {
         amountVnd: parsed.data.amountVnd,
-        budgetItemId: item.id,
         note: parsed.data.note?.trim() || null,
-        spentMonth: parsed.data.spentMonth as MonthKey,
+        spentMonth,
       })
 
       setOpen(false)
@@ -71,7 +69,11 @@ function ActualExpenseDialogImpl(
     },
     openForItem(next) {
       setItem(next)
-      form.reset({ amountVnd: 0, note: '', spentMonth: defaultMonth })
+      form.reset({
+        amountVnd: 0,
+        note: '',
+        spentMonth: isMonthInRange(defaultMonth, next.validFrom, next.validTo) ? defaultMonth : next.validFrom,
+      })
       setOpen(true)
     },
   }))
@@ -117,8 +119,15 @@ function ActualExpenseDialogImpl(
           <form.Field name="spentMonth">
             {(field) => (
               <div className="space-y-2">
-                <Label>{t.common.month}</Label>
-                <MonthYearPicker value={field.state.value} onChange={(v) => field.handleChange(v)} />
+                <FormLabelWithHint hint={<p className="text-pretty">{t.budget.actualPeriodHint}</p>}>
+                  {t.common.month}
+                </FormLabelWithHint>
+                <MonthYearPicker
+                  value={field.state.value}
+                  minMonth={item.validFrom}
+                  maxMonth={item.validTo ?? undefined}
+                  onChange={(v) => field.handleChange(v)}
+                />
               </div>
             )}
           </form.Field>

@@ -81,9 +81,9 @@ export function BudgetPage() {
         <ActualExpenseDialog
           ref={actualDialogRef}
           defaultMonth={month}
-          onSubmit={async (value) => {
+          onSubmit={async (item, value) => {
             if (!mutations) return
-            await mutations.addActualExpense(value)
+            await mutations.addActualExpense(item, value)
           }}
         />
 

@@ -4,6 +4,7 @@ import { HandCoinsIcon, Pencil, Trash2 } from 'lucide-react'
 
 import { ActionTooltipButton, InfoTooltip } from '@/components/patterns'
 import { Badge, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
+import { canRecordActualExpenseForBudgetItem } from '@/lib/budget/apply'
 import { formatMonthLabel, isPeriodClosedBefore } from '@/lib/month'
 import { t } from '@/lib/strings'
 import { formatVnd } from '@/lib/vnd'
@@ -59,6 +60,7 @@ export function BudgetItemsTable({
           const spent = actualMap.get(`${item.id}|${month}`) ?? 0
           const remaining = item.amountVnd - spent
           const locked = isPeriodClosedBefore(item.validTo, month)
+          const canAddActual = canRecordActualExpenseForBudgetItem(item, month)
           return (
             <TableRow key={item.id}>
               <TableCell className="font-medium max-w-[12rem] sm:max-w-[18rem] truncate">
@@ -78,9 +80,9 @@ export function BudgetItemsTable({
                 <div className="inline-flex items-center justify-end gap-1">
                   <ActionTooltipButton
                     variant="secondary"
-                    disabled={locked}
+                    disabled={!canAddActual}
                     onClick={() => onAddActual(item)}
-                    label={locked ? t.budget.periodEndedLocked : t.budget.addActualAction}
+                    label={canAddActual ? t.budget.addActualAction : t.budget.actualPeriodInactiveLocked}
                   >
                     <HandCoinsIcon className="h-4 w-4" />
                   </ActionTooltipButton>

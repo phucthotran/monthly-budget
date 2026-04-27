@@ -2,7 +2,9 @@ import type { BudgetItem, MonthKey } from '@/lib/types'
 
 import { addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore'
 
+import { canRecordActualExpenseForBudgetItem } from '@/lib/budget/apply'
 import { getFirestoreDb } from '@/lib/firebase'
+import { currentMonthKey } from '@/lib/month'
 
 export type BudgetItemInput = {
   title: string
@@ -16,6 +18,10 @@ export function budgetMutations(uid: string) {
   const db = getFirestoreDb()
 
   async function upsertBudgetItem(editing: BudgetItem | null, input: BudgetItemInput) {
+    if (!editing && input.validFrom < currentMonthKey()) {
+      throw new Error('New budget item validFrom must be current month or later')
+    }
+
     const payload = {
       amountVnd: input.amountVnd,
       categoryId: input.categoryId,
@@ -40,15 +46,17 @@ export function budgetMutations(uid: string) {
     await deleteDoc(doc(db, 'users', uid, 'budgetItems', id))
   }
 
-  async function addActualExpense(input: {
-    budgetItemId: string
-    amountVnd: number
-    spentMonth: MonthKey
-    note: null | string
-  }) {
+  async function addActualExpense(
+    item: BudgetItem,
+    input: { amountVnd: number; spentMonth: MonthKey; note: null | string },
+  ) {
+    if (!canRecordActualExpenseForBudgetItem(item, input.spentMonth)) {
+      throw new Error('Actual expense month is outside the budget item period')
+    }
+
     await addDoc(collection(db, 'users', uid, 'actualExpenses'), {
       amountVnd: input.amountVnd,
-      budgetItemId: input.budgetItemId,
+      budgetItemId: item.id,
       createdAt: Date.now(),
       note: input.note,
       spentMonth: input.spentMonth,

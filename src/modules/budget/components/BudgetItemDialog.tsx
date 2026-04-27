@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui'
+import { currentMonthKey } from '@/lib/month'
 import { t } from '@/lib/strings'
 
 const schema = z.object({
@@ -66,13 +67,18 @@ function BudgetItemDialogImpl(
     onSubmit: async ({ value }) => {
       const parsed = schema.safeParse(value)
       if (!parsed.success) return
+      if (!editing) {
+        if (parsed.data.validFrom < currentMonthKey()) return
+      }
+      const validTo = parsed.data.validTo?.trim() ? (parsed.data.validTo.trim() as MonthKey) : null
+      if (validTo && validTo < (parsed.data.validFrom as MonthKey)) return
 
       await onSubmit(editing, {
         amountVnd: parsed.data.amountVnd,
         categoryId: parsed.data.categoryId,
         title: parsed.data.title,
         validFrom: parsed.data.validFrom as MonthKey,
-        validTo: parsed.data.validTo?.trim() ? (parsed.data.validTo.trim() as MonthKey) : null,
+        validTo,
       })
 
       setOpen(false)
@@ -173,21 +179,48 @@ function BudgetItemDialogImpl(
           <form.Field name="validFrom">
             {(field) => (
               <div className="space-y-2">
-                <Label>{t.budget.validFrom}</Label>
-                <MonthYearPicker value={field.state.value} onChange={(v) => field.handleChange(v)} />
+                {editing ? (
+                  <Label>{t.budget.validFrom}</Label>
+                ) : (
+                  <FormLabelWithHint hint={<p className="text-pretty">{t.budget.validFromCreateHint}</p>}>
+                    {t.budget.validFrom}
+                  </FormLabelWithHint>
+                )}
+                <MonthYearPicker
+                  value={field.state.value}
+                  minMonth={editing ? undefined : defaultMonth}
+                  onChange={(v) => {
+                    field.handleChange(v)
+                    const to = form.state.values.validTo?.trim() ?? ''
+                    if (to && to < v) {
+                      form.setFieldValue('validTo', '')
+                    }
+                  }}
+                />
               </div>
             )}
           </form.Field>
-          <form.Field name="validTo">
-            {(field) => (
-              <div className="space-y-2">
-                <FormLabelWithHint hint={<p className="text-pretty">{t.budget.validToHint}</p>}>
-                  {t.budget.validTo}
-                </FormLabelWithHint>
-                <MonthYearPicker value={field.state.value} onChange={(v) => field.handleChange(v)} />
-              </div>
-            )}
-          </form.Field>
+          <form.Subscribe selector={(s) => s.values.validFrom}>
+            {(validFrom) => {
+              const fromKey = /^\d{4}-\d{2}$/.test(validFrom) ? (validFrom as MonthKey) : defaultMonth
+              return (
+                <form.Field name="validTo">
+                  {(field) => (
+                    <div className="space-y-2">
+                      <FormLabelWithHint hint={<p className="text-pretty">{t.budget.validToHint}</p>}>
+                        {t.budget.validTo}
+                      </FormLabelWithHint>
+                      <MonthYearPicker
+                        value={field.state.value}
+                        minMonth={fromKey}
+                        onChange={(v) => field.handleChange(v)}
+                      />
+                    </div>
+                  )}
+                </form.Field>
+              )
+            }}
+          </form.Subscribe>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>

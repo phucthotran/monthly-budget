@@ -12,6 +12,8 @@ export const t = {
     switchToSignUp: 'Chưa có tài khoản? Đăng ký',
   },
   budget: {
+    actualPeriodHint: 'Chỉ ghi chi thực tế cho các tháng khoản dự chi còn hiệu lực.',
+    actualPeriodInactiveLocked: 'Chỉ ghi chi thực tế trong kỳ áp dụng của khoản này.',
     actuals: 'Chi thực tế',
     add: 'Thêm khoản dự chi',
     addActual: 'Ghi chi thực tế',
@@ -26,7 +28,7 @@ export const t = {
       'Khoản dự chi này sẽ không còn trong danh sách dự chi. Các mục chi thực tế đã ghi trước đó vẫn lưu trong tài khoản nhưng không còn liên kết với tên khoản này, nên tổng quan và thống kê có thể khác trước khi xóa.',
     deleteDialogTitle: 'Xóa khoản dự chi?',
     dialogP1: 'Tạo một khoản dự chi theo từng kỳ áp dụng.',
-    dialogP2c: 'Bỏ trống tháng kết thúc nếu khoản còn dùng cho các tháng sau.',
+    dialogP2c: 'Bỏ trống tháng kết thúc nếu khoản dự chi này còn dùng cho các tháng sau.',
     edit: 'Sửa',
     editAction: 'Sửa khoản dự chi',
     emptyList: 'Chưa có khoản dự chi.',
@@ -43,8 +45,9 @@ export const t = {
     title: 'Dự chi',
     titleLabel: 'Tên khoản',
     validFrom: 'Từ tháng',
+    validFromCreateHint: 'Chỉ cho phép tạo khoản từ tháng hiện tại trở đi.',
     validTo: 'Đến tháng (tùy chọn)',
-    validToHint: 'Bỏ trống nếu tiếp tục áp dụng từ tháng bắt đầu về sau.',
+    validToHint: 'Có thể trùng tháng với từ tháng hoặc chọn tháng sau.',
   },
   common: {
     back: 'Quay lại',
