@@ -27,7 +27,12 @@ export function HomePage() {
         <PageHeading
           icon={<LayoutDashboard />}
           title={t.home.title}
-          description={t.home.subtitle}
+          description={
+            <div className="space-y-2 text-pretty text-base">
+              <p>{t.home.subtitle}</p>
+              <p className="text-sm text-muted-foreground">{t.home.subtitleDetail}</p>
+            </div>
+          }
           descriptionClassName="text-base"
         />
 

@@ -5,7 +5,7 @@ import { type ForwardedRef, forwardRef, useImperativeHandle, useMemo, useState }
 import { z } from 'zod'
 
 import { MonthYearPicker, VndAmountInput } from '@/components/inputs'
-import { ModalHeading } from '@/components/patterns'
+import { FormLabelWithHint, ModalHeading } from '@/components/patterns'
 import {
   Button,
   Dialog,
@@ -115,7 +115,15 @@ function BudgetItemDialogImpl(
       }}
     >
       <DialogContent>
-        <ModalHeading title={editing ? t.budget.edit : t.budget.add} description="Khoản dự chi theo tháng (VN)." />
+        <ModalHeading
+          title={editing ? t.budget.edit : t.budget.add}
+          description={
+            <div className="space-y-2.5 text-pretty leading-relaxed">
+              <p>{t.budget.dialogP1}</p>
+              <p>{t.budget.dialogP2c}</p>
+            </div>
+          }
+        />
         <form
           className="space-y-4"
           onSubmit={(e) => {
@@ -147,7 +155,7 @@ function BudgetItemDialogImpl(
                 <Label>{t.budget.category}</Label>
                 <Select value={field.state.value} onValueChange={(v) => field.handleChange(v)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Chọn" />
+                    <SelectValue placeholder={t.common.selectPlaceholder} />
                   </SelectTrigger>
                   <SelectContent>
                     {categories
@@ -162,25 +170,24 @@ function BudgetItemDialogImpl(
               </div>
             )}
           </form.Field>
-
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <form.Field name="validFrom">
-              {(field) => (
-                <div className="space-y-2">
-                  <Label>{t.budget.validFrom}</Label>
-                  <MonthYearPicker value={field.state.value} onChange={(v) => field.handleChange(v)} />
-                </div>
-              )}
-            </form.Field>
-            <form.Field name="validTo">
-              {(field) => (
-                <div className="space-y-2">
-                  <Label>{t.budget.validTo}</Label>
-                  <MonthYearPicker value={field.state.value} onChange={(v) => field.handleChange(v)} />
-                </div>
-              )}
-            </form.Field>
-          </div>
+          <form.Field name="validFrom">
+            {(field) => (
+              <div className="space-y-2">
+                <Label>{t.budget.validFrom}</Label>
+                <MonthYearPicker value={field.state.value} onChange={(v) => field.handleChange(v)} />
+              </div>
+            )}
+          </form.Field>
+          <form.Field name="validTo">
+            {(field) => (
+              <div className="space-y-2">
+                <FormLabelWithHint hint={<p className="text-pretty">{t.budget.validToHint}</p>}>
+                  {t.budget.validTo}
+                </FormLabelWithHint>
+                <MonthYearPicker value={field.state.value} onChange={(v) => field.handleChange(v)} />
+              </div>
+            )}
+          </form.Field>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>

@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 
 export type PageHeadingProps = {
   title: ReactNode
+  /** Có thể là đoạn văn hoặc khối HTML (nhiều thẻ p, danh sách). */
   description?: ReactNode
   /** Icon cùng hàng với tiêu đề (ví dụ icon trùng sidebar). */
   icon?: ReactNode
@@ -20,16 +21,24 @@ export function PageHeading({ actions, className, description, descriptionClassN
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">
           {icon != null ? (
-            <span className="inline-flex items-center gap-2.5">
+            <span className="inline-flex items-center gap-2.5 min-w-0">
               <span className="inline-flex shrink-0 text-primary [&>svg]:h-7 [&>svg]:w-7">{icon}</span>
-              <span>{title}</span>
+              <span className="min-w-0">{title}</span>
             </span>
           ) : (
-            title
+            <span className="min-w-0">{title}</span>
           )}
         </h1>
         {description != null ? (
-          <p className={cn('text-muted-foreground mt-1 text-sm', descriptionClassName)}>{description}</p>
+          <div
+            className={cn(
+              'text-muted-foreground mt-1 text-sm space-y-2 text-pretty',
+              '[&_strong]:font-medium [&_strong]:text-foreground/90',
+              descriptionClassName,
+            )}
+          >
+            {description}
+          </div>
         ) : null}
       </div>
       {actions ? <div className="flex shrink-0 flex-wrap gap-2 sm:justify-end">{actions}</div> : null}

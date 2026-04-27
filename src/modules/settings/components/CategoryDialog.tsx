@@ -38,7 +38,14 @@ export function CategoryDialog({
       }}
     >
       <DialogContent>
-        <ModalHeading title={t.settings.add} description="Tên hiển thị tiếng Việt." />
+        <ModalHeading
+          title={t.settings.add}
+          description={
+            <div className="space-y-2.5 text-pretty leading-relaxed">
+              <p>{t.settings.dialogP1}</p>
+            </div>
+          }
+        />
         <form
           className="space-y-4"
           onSubmit={(e) => {

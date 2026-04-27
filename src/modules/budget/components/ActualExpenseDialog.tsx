@@ -1,7 +1,7 @@
 import type { BudgetItem, MonthKey } from '@/lib/types'
 
 import { useForm } from '@tanstack/react-form'
-import { type ForwardedRef, forwardRef, useImperativeHandle, useState } from 'react'
+import { type ForwardedRef, forwardRef, type ReactNode, useImperativeHandle, useState } from 'react'
 import { z } from 'zod'
 
 import { MonthYearPicker } from '@/components/inputs/MonthYearPicker'
@@ -9,6 +9,8 @@ import { VndAmountInput } from '@/components/inputs/VndAmountInput'
 import { ModalHeading } from '@/components/patterns'
 import { Button, Dialog, DialogContent, DialogFooter, Input, Label } from '@/components/ui'
 import { t } from '@/lib/strings'
+
+const em = (children: ReactNode) => <strong className="font-medium text-foreground">{children}</strong>
 
 const schema = z.object({
   amountVnd: z.number().min(1),
@@ -85,7 +87,17 @@ function ActualExpenseDialogImpl(
       }}
     >
       <DialogContent>
-        <ModalHeading title={t.budget.addActual} description={`${item.title} · ${t.budget.amount}`} />
+        <ModalHeading
+          title={t.budget.addActual}
+          description={
+            <div className="space-y-2.5 text-pretty leading-relaxed">
+              <p>
+                {em(item.title)} — {t.budget.addActualContext}
+              </p>
+              <p className="text-muted-foreground">{t.budget.addActualBody}</p>
+            </div>
+          }
+        />
         <form
           className="space-y-4"
           onSubmit={(e) => {

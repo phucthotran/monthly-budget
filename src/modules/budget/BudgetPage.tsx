@@ -8,7 +8,6 @@ import { PageHeading, Panel } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
 import { useActualExpenses, useBudgetItems, useCategories } from '@/hooks/useUserCollections'
-import { formatMonthLabel } from '@/lib/month'
 import { t } from '@/lib/strings'
 
 import { ActualExpenseDialog, type ActualExpenseDialogHandle } from './components/ActualExpenseDialog'
@@ -34,7 +33,7 @@ export function BudgetPage() {
 
   async function onDelete(item: BudgetItem) {
     if (!mutations) return
-    if (!confirm('Xóa khoản dự chi này?')) return
+    if (!confirm(t.budget.deleteConfirm)) return
     await mutations.deleteBudgetItem(item.id)
   }
 
@@ -44,7 +43,12 @@ export function BudgetPage() {
         <PageHeading
           icon={<Wallet />}
           title={t.budget.title}
-          description="VND · áp dụng theo khoảng tháng"
+          description={
+            <div className="space-y-2 text-pretty">
+              <p>{t.budget.pageLead}</p>
+              <p className="text-sm text-muted-foreground">{t.budget.pageDetail}</p>
+            </div>
+          }
           actions={
             <Button type="button" onClick={() => budgetDialogRef.current?.openCreate()}>
               <Plus className="h-4 w-4" />
@@ -63,10 +67,7 @@ export function BudgetPage() {
           }}
         />
 
-        <Panel
-          title="Danh sách"
-          description={`Còn lại trong tháng ${formatMonthLabel(month)} so với chi thực tế đã ghi.`}
-        >
+        <Panel title={<></>}>
           <BudgetItemsTable
             month={month}
             items={items}
@@ -77,7 +78,7 @@ export function BudgetPage() {
             onDelete={(item) => void onDelete(item)}
           />
           {items.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-6 text-center">Chưa có khoản dự chi.</p>
+            <p className="text-sm text-muted-foreground py-6 text-center">{t.budget.emptyList}</p>
           ) : null}
         </Panel>
 

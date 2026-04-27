@@ -1,5 +1,6 @@
 import type { MonthSnapshot } from '@/lib/budget/aggregate'
 
+import { InfoTooltip } from '@/components/patterns'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
 import { formatMonthLabel } from '@/lib/month'
 import { t } from '@/lib/strings'
@@ -11,8 +12,28 @@ export function SavingsTable({ formatVnd, rows }: { rows: MonthSnapshot[]; forma
         <TableHeader>
           <TableRow>
             <TableHead className="whitespace-nowrap">{t.stats.month}</TableHead>
-            <TableHead className="text-right whitespace-nowrap">{t.stats.plannedSurplus}</TableHead>
-            <TableHead className="text-right whitespace-nowrap">{t.stats.savingsAccumulatedMonthly}</TableHead>
+            <TableHead className="text-right whitespace-nowrap">
+              <span className="inline-flex w-full items-center justify-end gap-0.5">
+                {t.stats.plannedSurplus}
+                <InfoTooltip
+                  className="h-4 w-4 shrink-0"
+                  content={
+                    <p className="max-w-xs text-pretty text-sm leading-snug">{t.stats.plannedSurplusColumnHint}</p>
+                  }
+                />
+              </span>
+            </TableHead>
+            <TableHead className="text-right whitespace-nowrap">
+              <span className="inline-flex w-full items-center justify-end gap-0.5">
+                {t.stats.savingsAccumulatedMonthly}
+                <InfoTooltip
+                  className="h-4 w-4 shrink-0"
+                  content={
+                    <p className="max-w-xs text-pretty text-sm leading-snug">{t.stats.savingsAccumulatedColumnHint}</p>
+                  }
+                />
+              </span>
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

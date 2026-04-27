@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui'
 import { type MonthKey } from '@/lib/month'
+import { t } from '@/lib/strings'
 import { cn } from '@/lib/utils'
 
 const MONTHS = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'))
@@ -30,7 +31,7 @@ export function MonthYearPicker({
   maxYears = 5,
   minYear,
   onChange,
-  placeholder = 'Chọn tháng',
+  placeholder = t.common.pickMonth,
   value,
 }: {
   value: MonthKey
@@ -56,7 +57,7 @@ export function MonthYearPicker({
   }, [minYear, maxYear, maxYears, year])
 
   return (
-    <div className={cn('grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_96px]', className)}>
+    <div className={cn('grid grid-cols-1 gap-2 sm:grid-cols-2', className)}>
       <div className="relative min-w-0">
         <Calendar className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Select

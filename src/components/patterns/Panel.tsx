@@ -2,7 +2,7 @@ import { type ReactNode } from 'react'
 
 import { cn } from '@/lib/utils'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui'
 
 export type PanelProps = {
   title: ReactNode
@@ -22,7 +22,11 @@ export function Panel({ bodyClassName, children, className, description, title }
     <Card className={className}>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
-        {description != null && description !== '' ? <CardDescription>{description}</CardDescription> : null}
+        {description != null && description !== '' ? (
+          <div className="text-sm text-muted-foreground [&_strong]:font-medium [&_strong]:text-foreground/90">
+            {description}
+          </div>
+        ) : null}
       </CardHeader>
       <CardContent className={cn('overflow-x-auto', bodyClassName)}>{children}</CardContent>
     </Card>

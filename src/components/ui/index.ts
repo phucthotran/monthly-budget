@@ -30,3 +30,4 @@ export {
 export { Separator } from './separator'
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table'
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs'
+export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip'

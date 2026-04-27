@@ -1,4 +1,5 @@
 export { AuthCard, type AuthCardProps } from './AuthCard'
+export { FormLabelWithHint, type FormLabelWithHintProps, InfoTooltip, type InfoTooltipProps } from './InfoTooltip'
 export { MetricTile, type MetricTileProps } from './MetricTile'
 export { ModalHeading, type ModalHeadingProps } from './ModalHeading'
 export { PageHeading, type PageHeadingProps } from './PageHeading'

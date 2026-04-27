@@ -27,7 +27,7 @@ export function IncomePage() {
 
   async function onDelete(row: IncomePeriod) {
     if (!mutations) return
-    if (!confirm('Xóa kỳ thu nhập này?')) return
+    if (!confirm(t.income.deleteConfirm)) return
     await mutations.deleteIncome(row.id)
   }
 
@@ -37,7 +37,12 @@ export function IncomePage() {
         <PageHeading
           icon={<PiggyBank />}
           title={t.income.title}
-          description="Mỗi kỳ có thể có mức thu nhập khác nhau theo tháng."
+          description={
+            <div className="space-y-2 text-pretty">
+              <p>{t.income.pageLead}</p>
+              <p className="text-sm text-muted-foreground">{t.income.pageDetail}</p>
+            </div>
+          }
           actions={
             <Button type="button" onClick={() => dialogRef.current?.openCreate()}>
               <Plus className="h-4 w-4" />
@@ -55,14 +60,14 @@ export function IncomePage() {
           }}
         />
 
-        <Panel title="Danh sách kỳ" description="Tổng thu nhập một tháng = tổng các kỳ đang hiệu lực.">
+        <Panel title={<></>}>
           <IncomeTable
             rows={rows}
             onEdit={(row) => dialogRef.current?.openEdit(row)}
             onDelete={(row) => void onDelete(row)}
           />
           {rows.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-6 text-center">Chưa có kỳ thu nhập.</p>
+            <p className="text-sm text-muted-foreground py-6 text-center">{t.income.emptyList}</p>
           ) : null}
         </Panel>
       </div>

@@ -2,6 +2,7 @@ import type { BudgetItem, Category, MonthKey } from '@/lib/types'
 
 import { Trash2 } from 'lucide-react'
 
+import { InfoTooltip } from '@/components/patterns'
 import { Badge, Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
 import { formatMonthLabel } from '@/lib/month'
 import { t } from '@/lib/strings'
@@ -30,9 +31,25 @@ export function BudgetItemsTable({
         <TableRow>
           <TableHead className="w-[34%]">{t.budget.titleLabel}</TableHead>
           <TableHead className="w-[18%]">{t.budget.category}</TableHead>
-          <TableHead className="text-right">{t.budget.amount}</TableHead>
-          <TableHead className="whitespace-nowrap">Kỳ áp dụng</TableHead>
-          <TableHead className="text-right">{t.budget.remaining}</TableHead>
+          <TableHead className="text-right whitespace-nowrap">{t.budget.amount}</TableHead>
+          <TableHead className="whitespace-nowrap min-w-[8rem]">
+            <span className="inline-flex items-center gap-1">
+              {t.budget.periodColumn}
+              <InfoTooltip
+                className="h-4 w-4"
+                content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.budget.periodColumnHint}</p>}
+              />
+            </span>
+          </TableHead>
+          <TableHead className="text-right whitespace-nowrap min-w-[7rem]">
+            <span className="inline-flex w-full items-center justify-end gap-1">
+              {t.budget.remaining}
+              <InfoTooltip
+                className="h-4 w-4"
+                content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.budget.remainingHint}</p>}
+              />
+            </span>
+          </TableHead>
           <TableHead className="w-[220px]" />
         </TableRow>
       </TableHeader>

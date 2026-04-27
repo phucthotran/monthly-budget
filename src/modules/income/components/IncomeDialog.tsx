@@ -4,9 +4,8 @@ import { useForm } from '@tanstack/react-form'
 import { type ForwardedRef, forwardRef, useImperativeHandle, useState } from 'react'
 import { z } from 'zod'
 
-import { MonthYearPicker } from '@/components/inputs/MonthYearPicker'
-import { VndAmountInput } from '@/components/inputs/VndAmountInput'
-import { ModalHeading } from '@/components/patterns'
+import { MonthYearPicker, VndAmountInput } from '@/components/inputs'
+import { FormLabelWithHint, ModalHeading } from '@/components/patterns'
 import { Button, Dialog, DialogContent, DialogFooter, Input, Label } from '@/components/ui'
 import { t } from '@/lib/strings'
 
@@ -95,7 +94,15 @@ function IncomeDialogImpl(
       }}
     >
       <DialogContent>
-        <ModalHeading title={editing ? 'Sửa thu nhập' : t.income.add} description="Áp dụng theo khoảng tháng (VN)." />
+        <ModalHeading
+          title={editing ? t.income.editTitle : t.income.add}
+          description={
+            <div className="space-y-2.5 text-pretty leading-relaxed">
+              <p>{t.income.dialogP1}</p>
+              <p>{t.income.dialogP2c}</p>
+            </div>
+          }
+        />
         <form
           className="space-y-4"
           onSubmit={(e) => {
@@ -121,24 +128,24 @@ function IncomeDialogImpl(
             )}
           </form.Field>
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <form.Field name="validFrom">
-              {(field) => (
-                <div className="space-y-2">
-                  <Label>{t.income.validFrom}</Label>
-                  <MonthYearPicker value={field.state.value} onChange={(v) => field.handleChange(v)} />
-                </div>
-              )}
-            </form.Field>
-            <form.Field name="validTo">
-              {(field) => (
-                <div className="space-y-2">
-                  <Label>{t.income.validTo}</Label>
-                  <MonthYearPicker value={field.state.value} onChange={(v) => field.handleChange(v)} />
-                </div>
-              )}
-            </form.Field>
-          </div>
+          <form.Field name="validFrom">
+            {(field) => (
+              <div className="space-y-2">
+                <Label>{t.income.validFrom}</Label>
+                <MonthYearPicker value={field.state.value} onChange={(v) => field.handleChange(v)} />
+              </div>
+            )}
+          </form.Field>
+          <form.Field name="validTo">
+            {(field) => (
+              <div className="space-y-2">
+                <FormLabelWithHint hint={<p className="text-pretty">{t.income.validToHint}</p>}>
+                  {t.income.validTo}
+                </FormLabelWithHint>
+                <MonthYearPicker value={field.state.value} onChange={(v) => field.handleChange(v)} />
+              </div>
+            )}
+          </form.Field>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>

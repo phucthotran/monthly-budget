@@ -6,7 +6,7 @@ import { PageHeading, Panel } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
 import { useCategories } from '@/hooks/useUserCollections'
-import { t } from '@/lib/strings'
+import { settingsDeleteCategoryConfirm, t } from '@/lib/strings'
 
 import { CategoriesTable } from './components/CategoriesTable'
 import { CategoryDialog } from './components/CategoryDialog'
@@ -27,7 +27,12 @@ export function SettingsPage() {
         <PageHeading
           icon={<Settings />}
           title={t.settings.title}
-          description="Dùng để phân loại các khoản dự chi."
+          description={
+            <div className="space-y-2 text-pretty">
+              <p>{t.settings.pageLead}</p>
+              <p className="text-sm text-muted-foreground">{t.settings.pageDetail}</p>
+            </div>
+          }
           actions={
             <Button type="button" onClick={() => setOpen(true)}>
               <Plus className="h-4 w-4" />
@@ -46,7 +51,7 @@ export function SettingsPage() {
           }}
         />
 
-        <Panel title="Danh sách" description="Ẩn danh mục không xóa dữ liệu cũ.">
+        <Panel title={<></>}>
           <CategoriesTable
             categories={categories}
             onToggleArchive={(c) => {
@@ -55,12 +60,12 @@ export function SettingsPage() {
             }}
             onDelete={(c) => {
               if (!mutations) return
-              if (!confirm(`Xóa danh mục “${c.name}”?`)) return
+              if (!confirm(settingsDeleteCategoryConfirm(c.name))) return
               void mutations.deleteCategory(c)
             }}
           />
           {categories.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-6 text-center">Chưa có danh mục.</p>
+            <p className="text-sm text-muted-foreground py-6 text-center">{t.settings.emptyList}</p>
           ) : null}
         </Panel>
       </div>
