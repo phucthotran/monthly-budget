@@ -65,6 +65,10 @@ export const t = {
     save: 'Lưu',
     selectPlaceholder: 'Chọn',
     status: 'Trạng thái',
+    theme: 'Giao diện',
+    themeDark: 'Tối',
+    themeLight: 'Sáng',
+    themeSystem: 'Theo hệ thống',
     visible: 'Hiển thị',
   },
   home: {

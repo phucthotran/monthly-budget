@@ -4,6 +4,7 @@ import { LayoutDashboard, LogOut, PiggyBank, Settings, TrendingUp, Wallet, Walle
 import { type ReactNode } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { Button, Separator, TooltipProvider } from '@/components/ui'
 import { getFirebaseAuth } from '@/lib/firebase'
 import { t } from '@/lib/strings'
@@ -24,13 +25,13 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <TooltipProvider delayDuration={200}>
       <div className="min-h-dvh flex flex-col md:flex-row">
-        <aside className="border-b border-border md:border-b-0 md:border-r md:w-56 shrink-0 bg-card/50">
+        <aside className="flex min-h-0 shrink-0 flex-col border-b border-border bg-card/50 md:min-h-dvh md:border-b-0 md:border-r md:w-56">
           <div className="flex h-14 items-center gap-2 px-4 font-semibold tracking-tight">
             <WalletCards className="h-5 w-5 text-primary" />
             <span className="truncate">{t.appName}</span>
           </div>
           <Separator />
-          <nav className="flex gap-1 p-2 md:flex-col overflow-x-auto md:overflow-visible">
+          <nav className="flex min-h-0 flex-1 gap-1 overflow-x-auto p-2 md:flex-col md:overflow-visible">
             {nav.map((item) => {
               const active = pathname === item.to
               const Icon = item.icon
@@ -51,7 +52,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               )
             })}
           </nav>
-          <div className="p-2 mt-auto border-t border-border md:border-t-0 space-y-1">
+          <div className="mt-auto flex flex-col gap-1 border-t border-border p-2">
             {user ? (
               <Button
                 variant="ghost"
@@ -66,6 +67,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <Link to="/login">{t.nav.login}</Link>
               </Button>
             )}
+            <ThemeToggle fullWidth />
           </div>
         </aside>
         <main className="flex-1 p-4 md:p-8 max-w-6xl w-full mx-auto">{children}</main>
