@@ -3,13 +3,10 @@
     {
       "name": "Default",
       "files": [
-        "index.html",
-        "src/components/AppProviders.tsx",
         "src/components/AppShell.tsx",
-        "src/index.css",
         "src/lib/strings.ts",
-        "src/components/ThemeProvider.tsx",
-        "src/components/ThemeToggle.tsx"
+        ".vscode/changelists.json",
+        "src/components/AppShellUserCard.tsx"
       ]
     }
   ],

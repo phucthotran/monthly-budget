@@ -113,6 +113,7 @@ export const t = {
     validToHint: 'Bỏ trống nếu tiếp tục áp dụng từ tháng bắt đầu về sau.',
   },
   nav: {
+    account: 'Tài khoản',
     budget: 'Dự chi',
     home: 'Tổng quan',
     income: 'Thu nhập',
