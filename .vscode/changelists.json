@@ -5,8 +5,15 @@
       "files": [
         "src/components/AppShell.tsx",
         "src/lib/strings.ts",
-        ".vscode/changelists.json",
-        "src/components/AppShellUserCard.tsx"
+        "package.json",
+        "pnpm-lock.yaml",
+        "src/components/patterns/PageHeading.tsx",
+        "src/components/patterns/index.ts",
+        "src/components/ui/index.ts",
+        "@/components/ui/drawer.tsx",
+        "src/components/patterns/MobileBackButton.tsx",
+        "src/components/ui/drawer.tsx",
+        ".vscode/changelists.json"
       ]
     }
   ],

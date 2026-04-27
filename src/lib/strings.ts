@@ -48,6 +48,7 @@ export const t = {
     validToHint: 'Bỏ trống nếu tiếp tục áp dụng từ tháng bắt đầu về sau.',
   },
   common: {
+    back: 'Quay lại',
     cancel: 'Hủy',
     close: 'Đóng',
     delete: 'Xóa',
@@ -115,10 +116,12 @@ export const t = {
   nav: {
     account: 'Tài khoản',
     budget: 'Dự chi',
+    drawerTitle: 'Menu điều hướng',
     home: 'Tổng quan',
     income: 'Thu nhập',
     login: 'Đăng nhập',
     logout: 'Đăng xuất',
+    openMenu: 'Mở menu điều hướng',
     settings: 'Phân loại',
     stats: 'Thống kê',
   },

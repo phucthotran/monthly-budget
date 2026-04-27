@@ -2,6 +2,8 @@ import { type ReactNode } from 'react'
 
 import { cn } from '@/lib/utils'
 
+import { MobileBackButton } from './MobileBackButton'
+
 export type PageHeadingProps = {
   title: ReactNode
   /** Có thể là đoạn văn hoặc khối HTML (nhiều thẻ p, danh sách). */
@@ -12,22 +14,37 @@ export type PageHeadingProps = {
   actions?: ReactNode
   className?: string
   descriptionClassName?: string
+  /** Ẩn nút quay lại trên mobile (mặc định hiện trừ khi đang ở trang chủ). */
+  hideMobileBack?: boolean
 }
 
 /** Tiêu đề trang + mô tả + vùng actions — dùng chung mọi màn hình nội dung. */
-export function PageHeading({ actions, className, description, descriptionClassName, icon, title }: PageHeadingProps) {
+export function PageHeading({
+  actions,
+  className,
+  description,
+  descriptionClassName,
+  hideMobileBack,
+  icon,
+  title,
+}: PageHeadingProps) {
   return (
     <div className={cn('flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between', className)}>
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">
-          {icon != null ? (
-            <span className="inline-flex items-center gap-2.5 min-w-0">
-              <span className="inline-flex shrink-0 text-primary [&>svg]:h-7 [&>svg]:w-7">{icon}</span>
-              <span className="min-w-0">{title}</span>
+          <span className="flex min-w-0 items-center gap-2">
+            {!hideMobileBack ? <MobileBackButton className="-ml-2" /> : null}
+            <span className="min-w-0 flex-1">
+              {icon != null ? (
+                <span className="inline-flex min-w-0 items-center gap-2.5">
+                  <span className="inline-flex shrink-0 text-primary [&>svg]:h-7 [&>svg]:w-7">{icon}</span>
+                  <span className="min-w-0">{title}</span>
+                </span>
+              ) : (
+                <span className="min-w-0">{title}</span>
+              )}
             </span>
-          ) : (
-            <span className="min-w-0">{title}</span>
-          )}
+          </span>
         </h1>
         {description != null ? (
           <div
