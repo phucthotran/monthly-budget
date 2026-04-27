@@ -4,15 +4,15 @@ import { formatInTimeZone } from 'date-fns-tz'
 
 export type { MonthKey }
 
-/** `yyyy-MM` — dùng cho Zod / form validation. */
+/** `yyyy-MM` string format for Zod and form validation. */
 export const MONTH_KEY_REGEX = /^\d{4}-\d{2}$/
 
 const MONTH_KEY_CAPTURE = /^(\d{4})-(\d{2})$/
 
 /**
- * So sánh hai tháng `yyyy-MM` (năm rồi tháng, tháng hai chữ số). Không dựa vào thứ tự từ vựng chuỗi.
- * Trả về số âm nếu a trước b, 0 nếu trùng, số dương nếu a sau b. Nếu một chuỗi không đúng
- * `MONTH_KEY_REGEX`, dùng `localeCompare` (gọi sau khi field đã validate format).
+ * Compare two `yyyy-MM` month keys (year, then two-digit month). Uses numeric order, not raw string sort.
+ * Returns negative if `a` is before `b`, zero if equal, positive if `a` is after `b`.
+ * If either string does not match `MONTH_KEY_REGEX`, falls back to `localeCompare` (only after fields are validated to format).
  */
 export function compareMonthKeys(a: string, b: string): number {
   const ma = a.trim().match(MONTH_KEY_CAPTURE)
@@ -117,7 +117,7 @@ export function isMonthInRange(month: string, validFrom: string, validTo: null |
   return compareMonthKeys(month, validTo) <= 0
 }
 
-/** Period ended before `asOfMonth` (dùng `compareMonthKeys`). */
+/** Period ended before `asOfMonth` (uses `compareMonthKeys`). */
 export function isPeriodClosedBefore(validTo: MonthKey | null, asOfMonth: MonthKey): boolean {
   if (validTo === null) return false
   return compareMonthKeys(validTo, asOfMonth) < 0

@@ -7,30 +7,30 @@ alwaysApply: true
 
 ## Schemas
 
-- Đặt Zod schema form trong `src/modules/<feature>/schemas/` (một file hoặc vài file theo từng màn hình), export rõ tên (vd. `budgetItemFormSchema`, `incomeFormSchema`).
-- Thông báo lỗi: dùng `t.validation.*` từ `src/lib/strings.ts` (không hardcode tiếng Việt trong schema).
-- Chuỗi tháng `yyyy-MM` trong Zod: dùng `MONTH_KEY_REGEX` từ `@/lib/month` với `.regex(MONTH_KEY_REGEX, { message: t.validation.monthFormat })`.
-- Với ràng buộc nhiều field trên cùng object, ưu tiên `z.object(...).refine(..., { path: ['fieldName'], message: t.validation... })` thay vì `superRefine` khi cần path ổn định cho Standard Schema / TanStack.
-- Có thể export helper thuần (vd. `budgetItemValidToRangeError`) dùng lại ở **field** `validators` và giữ thống nhất với `.refine` trong cùng file schema.
+- Place form Zod schemas in `src/modules/<feature>/schemas/` (one or more files per screen) and export clear names (e.g. `budgetItemFormSchema`, `incomeFormSchema`).
+- Error copy: use `t.validation.*` from `src/lib/strings.ts` (do not hardcode Vietnamese in schemas).
+- For `yyyy-MM` month strings in Zod, use `MONTH_KEY_REGEX` from `@/lib/month` with `.regex(MONTH_KEY_REGEX, { message: t.validation.monthFormat })`.
+- For cross-field rules on the same object, prefer `z.object(...).refine(..., { path: ['fieldName'], message: t.validation... })` over `superRefine` when you need a stable path for Standard Schema / TanStack.
+- You may export a small pure helper (e.g. `budgetItemValidToRangeError`) for reuse in field `validators` and keep it aligned with `.refine` in the same schema file.
 
 ## useForm
 
-- **Không** gọi `schema.safeParse` trong callback `onSubmit` thành công. Validation chạy qua `validators` của form.
-- Gắn schema trực tiếp: `validators: { onSubmit: schema }` (Zod 3 hỗ trợ Standard Schema; TanStack sẽ map lỗi xuống field).
-- Thứ tự option: `onSubmit` (handler lưu) rồi `validators` theo yêu cầu ESLint/object sort của repo nếu có.
-- Dùng `firstFieldErrorMessage` từ `@/lib/form/fieldMeta` để lấy chuỗi lỗi hiển thị từ `field.state.meta`.
+- **Do not** call `schema.safeParse` in the `onSubmit` success path. Validation goes through the form’s `validators`.
+- Attach the schema directly: `validators: { onSubmit: schema }` (Zod 3 Standard Schema; TanStack maps errors to fields).
+- Option order: `onSubmit` (save handler) then `validators`, following ESLint / object sort rules in the repo if any.
+- Use `firstFieldErrorMessage` from `@/lib/form/fieldMeta` to read the error string from `field.state.meta` for display.
 
 ## UI: shadcn Field
 
-- Bọc mỗi nhóm label + control + lỗi bằng `Field` / `FieldLabel` / `FieldError` từ `@/components/ui` (barrel), không dùng `Label` + `div` tùy ý cho form field.
-- Truyền `invalid={!!err}` lên `Field` khi có lỗi (nhóm dùng `data-invalid` theo thiết kế shadcn).
-- `Input` / `SelectTrigger` dùng `aria-invalid` + class lỗi từ design system; `VndAmountInput` / `MonthYearPicker` hỗ trợ `invalid` / `aria-invalid` tương ứng.
+- Wrap each label + control + error group with `Field` / `FieldLabel` / `FieldError` from `@/components/ui` (barrel), not ad-hoc `Label` + `div` for form fields.
+- Pass `invalid={!!err}` to `Field` when there is an error (shadcn `data-invalid` pattern).
+- `Input` / `SelectTrigger` use `aria-invalid` and error classes from the design system; `VndAmountInput` / `MonthYearPicker` support `invalid` / `aria-invalid` accordingly.
 
-## Field phụ thuộc field khác (cross-field trên submit)
+## Cross-field fields (form-level submit validation)
 
-- Nếu lỗi từ validator **cấp form** không hiển thị đúng một field (vd. field render trong `Subscribe` / đăng ký trễ): ưu tiên **đưa `form.Field name="..."` bọc ngoài** `Subscribe`, và khi cần thêm `validators.onSubmit` **cấp field** gọi cùng helper với schema (đã export từ `schemas/`).
-- Tránh trùng logic: cùng một helper trong module schema cho `.refine` và cho `validators.onSubmit` của field khi cần.
+- If a form-level validator error does not show on the right field (e.g. field inside `Subscribe` / late subscription), prefer wrapping with **`form.Field name="..."` outside** `Subscribe`, and if needed add field-level `validators.onSubmit` that calls the same helper as the schema (exported from `schemas/`).
+- Avoid duplicated logic: one helper per module schema for both `.refine` and field `validators.onSubmit` when they must stay in sync.
 
-## Dialog có ref (create/edit)
+## Dialogs with ref (create/edit)
 
-- Giữ pattern `useImperativeHandle` + `openCreate` / `openEdit` / `close` (xem rule `02-forms-dialog-edit-pattern`).
+- Keep `useImperativeHandle` + `openCreate` / `openEdit` / `close` (see rule `02-forms-dialog-edit-pattern`).

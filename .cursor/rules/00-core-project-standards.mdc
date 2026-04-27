@@ -12,6 +12,10 @@ alwaysApply: true
 - UI copy should be centralized in `src/lib/strings.ts` (`t.*`). Avoid hardcoding Vietnamese strings in components.
 - Month label display must be **month then year**: use `formatMonthLabel(monthKey)` (e.g. `T4/2026`).
 
+## Code comments and docs
+
+- **Code comments, JSDoc, and `*.mdc` rules** in this repo are written in **English** (clarity for tooling and mixed-language teams). UI strings for users stay Vietnamese via `t.*` as above.
+
 ## Project structure
 
 - Keep `src/routes/*.tsx` **thin**: routes should only define `createRoute(...)` and import the main page component from a module.

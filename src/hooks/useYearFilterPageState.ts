@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { currentCalendarYear, yearFilterRange } from '@/lib/month'
 
-/** Shared year filter for Dự chi / Thu nhập: options aligned with `yearFilterRange`, state clamped to allowed years. */
+/** Shared year filter for budget / income pages: options from `yearFilterRange`, state clamped to allowed years. */
 export function useYearFilterPageState() {
   const [filterYear, setFilterYear] = useState(() => currentCalendarYear())
   const yearOptions = useMemo(() => yearFilterRange(), [])
