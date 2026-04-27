@@ -33,7 +33,6 @@ export interface ActualExpense {
   id: string
   budgetItemId: string
   amountVnd: number
-  /** Tháng ghi nhận chi (VN). */
   spentMonth: MonthKey
   spentAt?: string
   note?: string

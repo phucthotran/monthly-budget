@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           try {
             await ensureDefaultCategories(getFirestoreDb(), u.uid)
           } catch {
-            // offline / rules — bỏ qua, seed sẽ chạy lại khi online
+            // Offline or rules: seed will retry when possible.
           }
         }
       })

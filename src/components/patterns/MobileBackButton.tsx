@@ -9,7 +9,6 @@ export type MobileBackButtonProps = {
   className?: string
 }
 
-/** Nút quay lại — chỉ hiện trên mobile (ẩn từ breakpoint md); ẩn ở trang chủ. */
 export function MobileBackButton({ className }: MobileBackButtonProps) {
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const navigate = useNavigate()

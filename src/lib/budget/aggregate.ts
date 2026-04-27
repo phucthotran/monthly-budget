@@ -7,11 +7,11 @@ export interface MonthSnapshot {
   incomeVnd: number
   plannedVnd: number
   actualSpentVnd: number
-  /** Thu nhập − dự chi (kế hoạch). */
+  /** Income minus planned budget (planned surplus). */
   plannedSurplusVnd: number
-  /** Thu nhập − chi thực tế. */
+  /** Income minus actual spend (actual surplus). */
   actualSurplusVnd: number
-  /** Tiết kiệm tích lũy (kế hoạch) từ đầu phạm vi. */
+  /** Cumulative planned savings from the start of the range. */
   plannedSavingsToDateVnd: number
 }
 

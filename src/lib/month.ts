@@ -1,17 +1,12 @@
 import { formatInTimeZone } from 'date-fns-tz'
 
-/** IANA timezone for month boundaries and "current month". */
 export const VN_TZ = 'Asia/Ho_Chi_Minh'
 
-/** Month key `yyyy-MM`, comparable lexicographically. */
 export function currentMonthKey(now = new Date()): string {
   return formatInTimeZone(now, VN_TZ, 'yyyy-MM')
 }
 
-/**
- * Tháng hiển thị thống kê: từ tháng hiện tại đến hết năm dương lịch,
- * sau đó thêm trọn 12 tháng của năm kế tiếp (tháng 1–12).
- */
+/** Stats grid: from current month through Dec, then all 12 months of next year. */
 export function statsMonthKeys(now = new Date()): string[] {
   const y = Number(formatInTimeZone(now, VN_TZ, 'yyyy'))
   const m = Number(formatInTimeZone(now, VN_TZ, 'MM'))
@@ -34,20 +29,19 @@ export function isMonthInRange(month: string, validFrom: string, validTo: null |
 
 export type MonthKey = string
 
-/** Có tháng kết thúc và kết thúc trước `asOfMonth` (so sánh chuỗi yyyy-MM). */
+/** Period ended before `asOfMonth` (`yyyy-MM` string compare). */
 export function isPeriodClosedBefore(validTo: MonthKey | null, asOfMonth: MonthKey): boolean {
   if (validTo === null) return false
   return validTo < asOfMonth
 }
 
-/** Hiển thị theo VN: MM/YYYY */
 export function formatMonthVi(month: MonthKey): string {
   const [y, m] = month.split('-')
   if (!y || !m) return month
   return `${m}/${y}`
 }
 
-/** Hiển thị theo UX hiện tại: T{tháng}/{năm} (ví dụ: T4/2026). */
+/** UI label `T{month}/{year}` (e.g. T4/2026). */
 export function formatMonthLabel(month: MonthKey): string {
   const [y, m] = month.split('-')
   if (!y || !m) return month

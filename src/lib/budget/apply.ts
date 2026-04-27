@@ -14,7 +14,6 @@ export function actualSpentForMonth(month: MonthKey, byMonth: Map<MonthKey, numb
   return byMonth.get(month) ?? 0
 }
 
-/** Tổng chi thực tế theo từng tháng (tất cả khoản). */
 export function buildActualByMonth(expenses: { spentMonth: MonthKey; amountVnd: number }[]): Map<MonthKey, number> {
   const map = new Map<MonthKey, number>()
   for (const e of expenses) {
@@ -23,7 +22,6 @@ export function buildActualByMonth(expenses: { spentMonth: MonthKey; amountVnd: 
   return map
 }
 
-/** Chi thực tế theo `budgetItemId` trong một tháng. */
 export function actualByBudgetItemMonth(
   expenses: { budgetItemId: string; spentMonth: MonthKey; amountVnd: number }[],
 ): Map<string, number> {

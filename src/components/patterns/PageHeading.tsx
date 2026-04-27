@@ -6,19 +6,14 @@ import { MobileBackButton } from './MobileBackButton'
 
 export type PageHeadingProps = {
   title: ReactNode
-  /** Có thể là đoạn văn hoặc khối HTML (nhiều thẻ p, danh sách). */
   description?: ReactNode
-  /** Icon cùng hàng với tiêu đề (ví dụ icon trùng sidebar). */
   icon?: ReactNode
-  /** Nút / nhóm hành động bên phải (desktop). */
   actions?: ReactNode
   className?: string
   descriptionClassName?: string
-  /** Ẩn nút quay lại trên mobile (mặc định hiện trừ khi đang ở trang chủ). */
   hideMobileBack?: boolean
 }
 
-/** Tiêu đề trang + mô tả + vùng actions — dùng chung mọi màn hình nội dung. */
 export function PageHeading({
   actions,
   className,

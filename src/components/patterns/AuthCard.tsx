@@ -11,7 +11,6 @@ export type AuthCardProps = {
   className?: string
 }
 
-/** Khối đăng nhập / đăng ký căn giữa — bọc Card sẵn. */
 export function AuthCard({ children, className, description, title }: AuthCardProps) {
   return (
     <Card className={cn('w-full max-w-md border-border', className)}>

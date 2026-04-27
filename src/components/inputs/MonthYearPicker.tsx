@@ -40,7 +40,6 @@ export function MonthYearPicker({
   className?: string
   minYear?: number
   maxYear?: number
-  /** Giới hạn số năm hiển thị (mặc định 5). */
   maxYears?: number
 }) {
   const [yStr, mStr] = value.split('-') as [string, string]

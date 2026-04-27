@@ -1,4 +1,3 @@
-/** Chuỗi giao diện tiếng Việt — tập trung một chỗ. */
 export const t = {
   appName: 'Dự chi hàng tháng',
   auth: {

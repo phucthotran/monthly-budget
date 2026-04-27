@@ -7,14 +7,11 @@ import { cn } from '@/lib/utils'
 import { Button, Label, Tooltip, TooltipContent, TooltipTrigger } from '../ui'
 
 export type InfoTooltipProps = {
-  /** Nội dung: văn bản hoặc HTML/JSX (đoạn, danh sách, nhấn mạnh). */
   content: ReactNode
-  /** Nhãn cho trình đọc màn hình (mặc định: `t.common.moreInfo`). */
   ariaLabel?: string
   className?: string
 }
 
-/** Icon thông tin kèm tooltip — dùng cạnh nhãn ngắn, nội dung khi hover. */
 export function InfoTooltip({ ariaLabel, className, content }: InfoTooltipProps) {
   return (
     <Tooltip>
@@ -40,7 +37,6 @@ export function InfoTooltip({ ariaLabel, className, content }: InfoTooltipProps)
 
 export type FormLabelWithHintProps = {
   children: ReactNode
-  /** Giải thích dạng văn hoặc JSX. */
   hint: ReactNode
   className?: string
 }

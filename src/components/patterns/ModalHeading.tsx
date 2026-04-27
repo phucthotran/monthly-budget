@@ -10,7 +10,6 @@ export type ModalHeadingProps = {
   className?: string
 }
 
-/** Phần đầu Dialog lặp lại — đổi typography/layout một chỗ. */
 export function ModalHeading({ className, description, title }: ModalHeadingProps) {
   return (
     <DialogHeader>

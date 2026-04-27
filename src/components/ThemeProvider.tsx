@@ -1,6 +1,5 @@
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
-/** Giống key mặc định của `next-themes` — có thể đồng bộ nếu sau này dùng thư viện. */
 export const THEME_STORAGE_KEY = 'theme'
 
 type Theme = 'dark' | 'light' | 'system'
@@ -20,7 +19,7 @@ function readStoredTheme(): Theme {
       return v
     }
   } catch {
-    /* ignore */
+    // localStorage may be unavailable (private mode, SSR).
   }
   return 'system'
 }
@@ -63,7 +62,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     try {
       localStorage.setItem(THEME_STORAGE_KEY, theme)
     } catch {
-      /* ignore */
+      // localStorage may be unavailable.
     }
   }, [theme])
 

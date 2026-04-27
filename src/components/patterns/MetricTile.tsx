@@ -9,11 +9,9 @@ export type MetricTileProps = {
   description?: ReactNode
   children: ReactNode
   className?: string
-  /** Class cho vùng hiển thị số liệu / nội dung chính (mặc định: số lớn). */
   contentClassName?: string
 }
 
-/** Thẻ chỉ số (KPI): tiêu đề + mô tả + vùng giá trị — dùng Tổng quan / Thống kê. */
 export function MetricTile({ children, className, contentClassName, description, title }: MetricTileProps) {
   return (
     <Card className={className}>
