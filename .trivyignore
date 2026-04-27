@@ -1,0 +1,11 @@
+# Local env (gitignored; avoid false positives on filesystem scans)
+.env
+.env.*
+**/.env
+**/.env.*
+
+node_modules
+dist
+dev-dist
+coverage
+.git
