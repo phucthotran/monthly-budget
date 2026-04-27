@@ -1,13 +1,16 @@
 import type { BudgetItem } from '@/lib/types'
 
 import { Plus, Wallet } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
+import { YearFilterSelect } from '@/components/inputs'
 import { ConfirmDeleteDialog, PageHeading, PageLoadingSkeleton, Panel } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
 import { useActualExpenses, useBudgetItems, useCategories } from '@/hooks/useUserCollections'
+import { useYearFilterPageState } from '@/hooks/useYearFilterPageState'
+import { asOfMonthForYearFilter, currentMonthKey } from '@/lib/month'
 import { budgetDeleteDialogP1, t } from '@/lib/strings'
 
 import { ActualExpenseDialog, type ActualExpenseDialogHandle } from './components/ActualExpenseDialog'
@@ -21,18 +24,23 @@ export function BudgetPage() {
   const uid = user?.uid
 
   const { data: categories = [], isHydrated: categoriesReady } = useCategories(uid)
-  const { data: items = [], isHydrated: itemsReady } = useBudgetItems(uid)
-  const { data: actuals = [], isHydrated: actualsReady } = useActualExpenses(uid)
+
+  const [itemToDelete, setItemToDelete] = useState<BudgetItem | null>(null)
+  const { filterYear, setFilterYear, yearOptions } = useYearFilterPageState()
+  const asOfMonth = useMemo(() => asOfMonthForYearFilter(filterYear), [filterYear])
+
+  const { data: items = [], isHydrated: itemsReady } = useBudgetItems(uid, filterYear)
+  const { data: actuals = [], isHydrated: actualsReady } = useActualExpenses(uid, asOfMonth)
   const dataLoading = !categoriesReady || !itemsReady || !actualsReady
 
-  const { actualMap, month } = useBudgetDerived(actuals)
+  const { actualMap } = useBudgetDerived(actuals)
 
   const mutations = uid ? budgetMutations(uid) : null
 
   const budgetDialogRef = useRef<BudgetItemDialogHandle>(null)
   const actualDialogRef = useRef<ActualExpenseDialogHandle>(null)
 
-  const [itemToDelete, setItemToDelete] = useState<BudgetItem | null>(null)
+  const dialogDefaultMonth = currentMonthKey()
 
   return (
     <RequireAuth>
@@ -60,31 +68,38 @@ export function BudgetPage() {
           <BudgetItemDialog
             ref={budgetDialogRef}
             categories={categories}
-            defaultMonth={month}
+            defaultMonth={dialogDefaultMonth}
             onSubmit={async (editing, value) => {
               if (!mutations) return
               await mutations.upsertBudgetItem(editing, value)
             }}
           />
 
-          <Panel title={<></>}>
-            <BudgetItemsTable
-              month={month}
-              items={items}
-              categories={categories}
-              actualMap={actualMap}
-              onAddActual={(item) => actualDialogRef.current?.openForItem(item)}
-              onEdit={(item) => budgetDialogRef.current?.openEdit(item)}
-              onDelete={(item) => setItemToDelete(item)}
-            />
-            {items.length === 0 ? (
-              <p className="text-sm text-muted-foreground py-6 text-center">{t.budget.emptyList}</p>
-            ) : null}
+          <Panel
+            title={
+              <div className="mb-4 flex justify-end">
+                <YearFilterSelect value={filterYear} years={yearOptions} onValueChange={setFilterYear} />
+              </div>
+            }
+          >
+            {items.length > 0 ? (
+              <BudgetItemsTable
+                month={asOfMonth}
+                items={items}
+                categories={categories}
+                actualMap={actualMap}
+                onAddActual={(item) => actualDialogRef.current?.openForItem(item)}
+                onEdit={(item) => budgetDialogRef.current?.openEdit(item)}
+                onDelete={(item) => setItemToDelete(item)}
+              />
+            ) : (
+              <p className="text-sm text-muted-foreground py-6 text-center">{t.common.noItemsInSelectedYear}</p>
+            )}
           </Panel>
 
           <ActualExpenseDialog
             ref={actualDialogRef}
-            defaultMonth={month}
+            defaultMonth={dialogDefaultMonth}
             onSubmit={async (item, value) => {
               if (!mutations) return
               await mutations.addActualExpense(item, value)

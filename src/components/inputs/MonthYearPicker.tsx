@@ -2,28 +2,11 @@ import { Calendar } from 'lucide-react'
 import { useMemo } from 'react'
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui'
-import { currentMonthKey, type MonthKey } from '@/lib/month'
+import { clampYearRangeAsc, currentCalendarYear, currentMonthKey, type MonthKey } from '@/lib/month'
 import { t } from '@/lib/strings'
 import { cn } from '@/lib/utils'
 
 const MONTHS = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'))
-
-function clampYearRange(years: number[], { centerYear, maxYears }: { maxYears: number; centerYear: number }): number[] {
-  if (years.length <= maxYears) return years
-
-  const idx = Math.max(
-    0,
-    years.findIndex((y) => y === centerYear),
-  )
-  const half = Math.floor(maxYears / 2)
-  let start = Math.max(0, idx - half)
-  let end = start + maxYears
-  if (end > years.length) {
-    end = years.length
-    start = Math.max(0, end - maxYears)
-  }
-  return years.slice(start, end)
-}
 
 export function MonthYearPicker({
   className,
@@ -59,7 +42,7 @@ export function MonthYearPicker({
   const month = mStr
 
   const years = useMemo(() => {
-    const nowYear = new Date().getFullYear()
+    const nowYear = currentCalendarYear()
     const minMonthYear = minMonth ? Number(minMonth.split('-')[0]) : undefined
     const maxMonthYear = maxMonth ? Number(maxMonth.split('-')[0]) : undefined
     const start = minYear ?? minMonthYear ?? nowYear - 2
@@ -67,7 +50,7 @@ export function MonthYearPicker({
     if (end < start) end = start + Math.max(0, maxYears - 1)
     const ys: number[] = []
     for (let y = start; y <= end; y++) ys.push(y)
-    return clampYearRange(ys, { centerYear: year, maxYears: Math.max(1, maxYears) })
+    return clampYearRangeAsc(ys, { centerYear: year, maxYears: Math.max(1, maxYears) })
   }, [minMonth, minYear, maxMonth, maxYear, maxYears, year])
 
   const availableMonths = useMemo(

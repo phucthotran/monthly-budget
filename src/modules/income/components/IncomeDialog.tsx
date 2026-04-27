@@ -1,12 +1,13 @@
 import type { IncomePeriod, MonthKey } from '@/lib/types'
 
 import { useForm } from '@tanstack/react-form'
-import { type ForwardedRef, forwardRef, useImperativeHandle, useState } from 'react'
+import { type ForwardedRef, forwardRef, useImperativeHandle, useMemo, useState } from 'react'
 import { z } from 'zod'
 
 import { MonthYearPicker, VndAmountInput } from '@/components/inputs'
 import { FormLabelWithHint, ModalHeading } from '@/components/patterns'
 import { Button, Dialog, DialogContent, DialogFooter, Input, Label } from '@/components/ui'
+import { monthYearPickerYearConstraints } from '@/lib/month'
 import { t } from '@/lib/strings'
 
 const schema = z.object({
@@ -37,6 +38,8 @@ function IncomeDialogImpl(
 ) {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<IncomePeriod | null>(null)
+
+  const yearPick = useMemo(() => monthYearPickerYearConstraints(editing), [editing])
 
   const form = useForm({
     defaultValues: {
@@ -132,7 +135,13 @@ function IncomeDialogImpl(
             {(field) => (
               <div className="space-y-2">
                 <Label>{t.income.validFrom}</Label>
-                <MonthYearPicker value={field.state.value} onChange={(v) => field.handleChange(v)} />
+                <MonthYearPicker
+                  value={field.state.value}
+                  maxYear={yearPick.maxYear}
+                  maxYears={yearPick.maxYears}
+                  minYear={yearPick.minYear}
+                  onChange={(v) => field.handleChange(v)}
+                />
               </div>
             )}
           </form.Field>
@@ -142,7 +151,13 @@ function IncomeDialogImpl(
                 <FormLabelWithHint hint={<p className="text-pretty">{t.income.validToHint}</p>}>
                   {t.income.validTo}
                 </FormLabelWithHint>
-                <MonthYearPicker value={field.state.value} onChange={(v) => field.handleChange(v)} />
+                <MonthYearPicker
+                  value={field.state.value}
+                  maxYear={yearPick.maxYear}
+                  maxYears={yearPick.maxYears}
+                  minYear={yearPick.minYear}
+                  onChange={(v) => field.handleChange(v)}
+                />
               </div>
             )}
           </form.Field>

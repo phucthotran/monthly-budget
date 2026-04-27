@@ -1,14 +1,16 @@
 import type { IncomePeriod } from '@/lib/types'
 
 import { PiggyBank, Plus } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
+import { YearFilterSelect } from '@/components/inputs'
 import { ConfirmDeleteDialog, PageHeading, PageLoadingSkeleton, Panel } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
 import { useIncomePeriods } from '@/hooks/useUserCollections'
-import { currentMonthKey } from '@/lib/month'
+import { useYearFilterPageState } from '@/hooks/useYearFilterPageState'
+import { asOfMonthForYearFilter, currentMonthKey } from '@/lib/month'
 import { incomeDeleteDialogP1, t } from '@/lib/strings'
 
 import { IncomeDialog, type IncomeDialogHandle } from './components/IncomeDialog'
@@ -18,15 +20,17 @@ import { incomeMutations } from './hooks/useIncomeMutations'
 export function IncomePage() {
   const { user } = useAuthContext()
   const uid = user?.uid
-  const { data: rows = [], isHydrated: incomeReady } = useIncomePeriods(uid)
+  const [rowToDelete, setRowToDelete] = useState<IncomePeriod | null>(null)
+  const { filterYear, setFilterYear, yearOptions } = useYearFilterPageState()
+  const asOfMonth = useMemo(() => asOfMonthForYearFilter(filterYear), [filterYear])
+
+  const { data: rows = [], isHydrated: incomeReady } = useIncomePeriods(uid, filterYear)
   const dataLoading = !incomeReady
 
-  const month = currentMonthKey()
+  const dialogDefaultMonth = currentMonthKey()
   const mutations = uid ? incomeMutations(uid) : null
 
   const dialogRef = useRef<IncomeDialogHandle>(null)
-
-  const [rowToDelete, setRowToDelete] = useState<IncomePeriod | null>(null)
 
   return (
     <RequireAuth>
@@ -53,23 +57,30 @@ export function IncomePage() {
 
           <IncomeDialog
             ref={dialogRef}
-            defaultMonth={month}
+            defaultMonth={dialogDefaultMonth}
             onSubmit={async (editing, value) => {
               if (!mutations) return
               await mutations.upsertIncome(editing, value)
             }}
           />
 
-          <Panel title={<></>}>
-            <IncomeTable
-              asOfMonth={month}
-              rows={rows}
-              onEdit={(row) => dialogRef.current?.openEdit(row)}
-              onDelete={(row) => setRowToDelete(row)}
-            />
-            {rows.length === 0 ? (
-              <p className="text-sm text-muted-foreground py-6 text-center">{t.income.emptyList}</p>
-            ) : null}
+          <Panel
+            title={
+              <div className="mb-4 flex justify-end">
+                <YearFilterSelect value={filterYear} years={yearOptions} onValueChange={setFilterYear} />
+              </div>
+            }
+          >
+            {rows.length > 0 ? (
+              <IncomeTable
+                asOfMonth={asOfMonth}
+                rows={rows}
+                onEdit={(row) => dialogRef.current?.openEdit(row)}
+                onDelete={(row) => setRowToDelete(row)}
+              />
+            ) : (
+              <p className="text-sm text-muted-foreground py-6 text-center">{t.common.noItemsInSelectedYear}</p>
+            )}
           </Panel>
 
           <ConfirmDeleteDialog

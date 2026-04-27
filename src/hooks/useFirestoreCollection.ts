@@ -1,3 +1,5 @@
+import type { FirestoreQueryChunk } from '@/lib/firestore/queryTypes'
+
 import { type QueryKey, useQuery, useQueryClient } from '@tanstack/react-query'
 import { collection, type DocumentData, type Firestore, onSnapshot, orderBy, query } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
@@ -5,6 +7,9 @@ import { useEffect, useState } from 'react'
 import { getFirestoreDb } from '@/lib/firebase'
 
 type Options = {
+  constraints?: FirestoreQueryChunk[]
+  /** When set, hydration + skeleton reuse this key so filter variants (year/month) do not reset loading state. */
+  hydrationQueryKey?: QueryKey
   orderByField?: string
   orderDirection?: 'asc' | 'desc'
 }
@@ -12,6 +17,15 @@ type Options = {
 function collectionFromSegments(db: Firestore, segments: readonly string[]) {
   const [a, b, ...rest] = segments
   return collection(db, a, b, ...(rest as string[]))
+}
+
+/** Firestore supports `or()` here; `query` typings omit some composite overloads. */
+function queryWithChunks(cref: ReturnType<typeof collectionFromSegments>, chunks: FirestoreQueryChunk[]) {
+  const q = query as (
+    ref: ReturnType<typeof collectionFromSegments>,
+    ...filters: FirestoreQueryChunk[]
+  ) => ReturnType<typeof query>
+  return q(cref, ...chunks)
 }
 
 /** Avoid skeleton flash when remounting hooks for the same Firestore query (client navigation). */
@@ -30,7 +44,8 @@ export function useFirestoreCollection<T extends { id: string }>(
   const qc = useQueryClient()
   const db = getFirestoreDb()
   const enabled = Boolean(uid && segments?.length)
-  const hydrationId = hydrationIdForQueryKey(queryKey)
+  const hydrationSourceKey = options.hydrationQueryKey ?? queryKey
+  const hydrationId = hydrationIdForQueryKey(hydrationSourceKey)
   const [isHydrated, setIsHydrated] = useState(() => {
     if (!enabled) return true
     return firestoreHydratedKeys.has(hydrationId)
@@ -57,9 +72,11 @@ export function useFirestoreCollection<T extends { id: string }>(
 
     const cref = collectionFromSegments(db, segments)
     const q =
-      options.orderByField != null
-        ? query(cref, orderBy(options.orderByField, options.orderDirection ?? 'asc'))
-        : query(cref)
+      options.constraints != null && options.constraints.length > 0
+        ? queryWithChunks(cref, options.constraints)
+        : options.orderByField != null
+          ? query(cref, orderBy(options.orderByField, options.orderDirection ?? 'asc'))
+          : query(cref)
 
     const unsub = onSnapshot(
       q,
@@ -71,16 +88,28 @@ export function useFirestoreCollection<T extends { id: string }>(
       (err) => {
         // Avoid failing silently: this is usually permission / index / network.
         console.error('[useFirestoreCollection] onSnapshot error', { err, queryKey, segments })
-        qc.setQueryData(queryKey, [])
+        // Do not wipe cache: transient errors and listener churn otherwise flash empty UI.
         markHydrated()
       },
     )
     return unsub
-  }, [db, hydrationId, qc, uid, segments, options.orderByField, options.orderDirection, queryKey])
+  }, [
+    db,
+    hydrationId,
+    qc,
+    uid,
+    segments,
+    options.constraints,
+    options.hydrationQueryKey,
+    options.orderByField,
+    options.orderDirection,
+    queryKey,
+  ])
 
   const queryResult = useQuery({
     enabled,
     initialData: [] as T[],
+    placeholderData: (previousData) => previousData,
     queryFn: async () => [] as T[],
     queryKey,
     staleTime: Infinity,

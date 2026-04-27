@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui'
-import { currentMonthKey } from '@/lib/month'
+import { currentMonthKey, monthYearPickerYearConstraints } from '@/lib/month'
 import { t } from '@/lib/strings'
 
 const schema = z.object({
@@ -55,6 +55,7 @@ function BudgetItemDialogImpl(
   const [editing, setEditing] = useState<BudgetItem | null>(null)
 
   const defaultCategoryId = useMemo(() => categories.find((c) => !c.archived)?.id ?? '', [categories])
+  const yearPick = useMemo(() => monthYearPickerYearConstraints(editing), [editing])
 
   const form = useForm({
     defaultValues: {
@@ -188,7 +189,10 @@ function BudgetItemDialogImpl(
                 )}
                 <MonthYearPicker
                   value={field.state.value}
+                  maxYear={yearPick.maxYear}
+                  maxYears={yearPick.maxYears}
                   minMonth={editing ? undefined : defaultMonth}
+                  minYear={yearPick.minYear}
                   onChange={(v) => {
                     field.handleChange(v)
                     const to = form.state.values.validTo?.trim() ?? ''
@@ -212,7 +216,10 @@ function BudgetItemDialogImpl(
                       </FormLabelWithHint>
                       <MonthYearPicker
                         value={field.state.value}
+                        maxYear={yearPick.maxYear}
+                        maxYears={yearPick.maxYears}
                         minMonth={fromKey}
+                        minYear={yearPick.minYear}
                         onChange={(v) => field.handleChange(v)}
                       />
                     </div>

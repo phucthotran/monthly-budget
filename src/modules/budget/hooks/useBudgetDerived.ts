@@ -3,10 +3,8 @@ import type { ActualExpense } from '@/lib/types'
 import { useMemo } from 'react'
 
 import { actualByBudgetItemMonth } from '@/lib/budget/apply'
-import { currentMonthKey } from '@/lib/month'
 
 export function useBudgetDerived(actuals: ActualExpense[]) {
-  const month = currentMonthKey()
   const actualMap = useMemo(
     () =>
       actualByBudgetItemMonth(
@@ -15,5 +13,5 @@ export function useBudgetDerived(actuals: ActualExpense[]) {
     [actuals],
   )
 
-  return { actualMap, month }
+  return { actualMap }
 }

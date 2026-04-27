@@ -59,6 +59,7 @@ export const t = {
     month: 'Tháng',
     monthsUnit: 'tháng',
     moreInfo: 'Mô tả thêm',
+    noItemsInSelectedYear: 'Không có mục nào trong năm đã chọn.',
     noScopeMonths: 'Không có tháng nào trong phạm vi này',
     note: 'Ghi chú',
     orSeparator: 'hoặc',
@@ -73,6 +74,7 @@ export const t = {
     themeLight: 'Sáng',
     themeSystem: 'Theo hệ thống',
     visible: 'Hiển thị',
+    year: 'Năm',
   },
   home: {
     actualSpent: 'Thực chi',
