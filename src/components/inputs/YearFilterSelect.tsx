@@ -1,6 +1,7 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui'
 import { t } from '@/lib/strings'
 import { cn } from '@/lib/utils'
+
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui'
 
 export function YearFilterSelect({
   className,

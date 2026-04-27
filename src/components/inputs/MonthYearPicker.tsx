@@ -1,12 +1,30 @@
 import { Calendar } from 'lucide-react'
 import { useMemo } from 'react'
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui'
-import { clampYearRangeAsc, currentCalendarYear, currentMonthKey, type MonthKey } from '@/lib/month'
+import { currentCalendarYear, currentMonthKey, type MonthKey } from '@/lib/month'
 import { t } from '@/lib/strings'
 import { cn } from '@/lib/utils'
 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui'
+
 const MONTHS = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'))
+
+/** When the allowed year range is wider than `maxYears` (e.g. actual spend on a long budget item), show a centered window. */
+function visibleYearsAsc(yearsAsc: number[], centerYear: number, maxYears: number): number[] {
+  if (yearsAsc.length <= maxYears) return yearsAsc
+  const idx = Math.max(
+    0,
+    yearsAsc.findIndex((y) => y === centerYear),
+  )
+  const half = Math.floor(maxYears / 2)
+  let start = Math.max(0, idx - half)
+  let end = start + maxYears
+  if (end > yearsAsc.length) {
+    end = yearsAsc.length
+    start = Math.max(0, end - maxYears)
+  }
+  return yearsAsc.slice(start, end)
+}
 
 export function MonthYearPicker({
   className,
@@ -50,7 +68,7 @@ export function MonthYearPicker({
     if (end < start) end = start + Math.max(0, maxYears - 1)
     const ys: number[] = []
     for (let y = start; y <= end; y++) ys.push(y)
-    return clampYearRangeAsc(ys, { centerYear: year, maxYears: Math.max(1, maxYears) })
+    return visibleYearsAsc(ys, year, Math.max(1, maxYears))
   }, [minMonth, minYear, maxMonth, maxYear, maxYears, year])
 
   const availableMonths = useMemo(

@@ -2,9 +2,12 @@ import { Link, useRouterState } from '@tanstack/react-router'
 import { LayoutDashboard, Menu, PiggyBank, Settings, TrendingUp, Wallet, WalletCards, X } from 'lucide-react'
 import { type ReactNode, useEffect, useState } from 'react'
 
-import { AppShellUserCard } from '@/components/AppShellUserCard'
-import { useAuthContext } from '@/components/AuthProvider'
-import { ThemeToggle } from '@/components/ThemeToggle'
+import { t } from '@/lib/strings'
+import { cn } from '@/lib/utils'
+
+import { AppShellUserCard } from './AppShellUserCard'
+import { useAuthContext } from './AuthProvider'
+import { ThemeToggle } from './ThemeToggle'
 import {
   Button,
   Drawer,
@@ -14,9 +17,7 @@ import {
   DrawerTrigger,
   Separator,
   TooltipProvider,
-} from '@/components/ui'
-import { t } from '@/lib/strings'
-import { cn } from '@/lib/utils'
+} from './ui'
 
 const nav = [
   { icon: LayoutDashboard, label: t.nav.home, to: '/' },

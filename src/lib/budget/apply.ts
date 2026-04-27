@@ -14,10 +14,6 @@ export function canRecordActualExpenseForBudgetItem(item: BudgetItem, month: Mon
   return isMonthInRange(month, item.validFrom, item.validTo)
 }
 
-export function actualSpentForMonth(month: MonthKey, byMonth: Map<MonthKey, number>): number {
-  return byMonth.get(month) ?? 0
-}
-
 export function buildActualByMonth(expenses: { spentMonth: MonthKey; amountVnd: number }[]): Map<MonthKey, number> {
   const map = new Map<MonthKey, number>()
   for (const e of expenses) {
@@ -35,14 +31,4 @@ export function actualByBudgetItemMonth(
     map.set(key, (map.get(key) ?? 0) + e.amountVnd)
   }
   return map
-}
-
-export function remainingForBudgetItem(
-  item: BudgetItem,
-  month: MonthKey,
-  actualMap: Map<string, number>,
-): null | number {
-  if (!isMonthInRange(month, item.validFrom, item.validTo)) return null
-  const spent = actualMap.get(`${item.id}|${month}`) ?? 0
-  return item.amountVnd - spent
 }

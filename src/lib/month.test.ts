@@ -2,10 +2,8 @@ import { describe, expect, it } from 'vitest'
 
 import {
   asOfMonthForYearFilter,
-  clampYearRangeAsc,
   formatMonthLabelShort,
   monthYearPickerYearConstraints,
-  periodOverlapsCalendarYear,
   statsMonthKeys,
   yearFilterRange,
 } from '@/lib/month'
@@ -33,23 +31,6 @@ describe('formatMonthLabelShort', () => {
   })
 })
 
-describe('periodOverlapsCalendarYear', () => {
-  it('is true when the period spans the year', () => {
-    expect(periodOverlapsCalendarYear('2025-06', '2026-03', 2025)).toBe(true)
-    expect(periodOverlapsCalendarYear('2025-06', '2026-03', 2026)).toBe(true)
-  })
-
-  it('is false when the period is entirely before or after the year', () => {
-    expect(periodOverlapsCalendarYear('2024-01', '2024-12', 2025)).toBe(false)
-    expect(periodOverlapsCalendarYear('2026-01', null, 2025)).toBe(false)
-  })
-
-  it('treats open-ended periods as overlapping when they start on or before year end', () => {
-    expect(periodOverlapsCalendarYear('2025-01', null, 2025)).toBe(true)
-    expect(periodOverlapsCalendarYear('2025-01', null, 2026)).toBe(true)
-  })
-})
-
 describe('asOfMonthForYearFilter', () => {
   it('uses current month when the filter year matches the calendar year (VN TZ)', () => {
     const now = new Date('2026-04-15T12:00:00Z')
@@ -60,13 +41,6 @@ describe('asOfMonthForYearFilter', () => {
     const now = new Date('2026-04-15T12:00:00Z')
     expect(asOfMonthForYearFilter(2025, now)).toBe('2025-12')
     expect(asOfMonthForYearFilter(2027, now)).toBe('2027-01')
-  })
-})
-
-describe('clampYearRangeAsc', () => {
-  it('returns at most maxYears centered on centerYear', () => {
-    const ys = [2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028]
-    expect(clampYearRangeAsc(ys, { centerYear: 2026, maxYears: 5 })).toEqual([2024, 2025, 2026, 2027, 2028])
   })
 })
 

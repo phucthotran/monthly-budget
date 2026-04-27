@@ -1,6 +1,7 @@
 import type { BudgetItem, Category, MonthKey } from '@/lib/types'
 
 import { HandCoinsIcon, Pencil, Trash2 } from 'lucide-react'
+import { useMemo } from 'react'
 
 import { ActionTooltipButton, InfoTooltip } from '@/components/patterns'
 import { Badge, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
@@ -26,6 +27,10 @@ export function BudgetItemsTable({
   onEdit: (item: BudgetItem) => void
   onDelete: (item: BudgetItem) => void
 }) {
+  const categoryMap = useMemo(() => {
+    return new Map(categories.map((c) => [c.id, c]))
+  }, [categories])
+
   return (
     <Table>
       <TableHeader>
@@ -56,7 +61,7 @@ export function BudgetItemsTable({
       </TableHeader>
       <TableBody>
         {items.map((item) => {
-          const cat = categories.find((c) => c.id === item.categoryId)
+          const cat = categoryMap.get(item.categoryId)
           const spent = actualMap.get(`${item.id}|${month}`) ?? 0
           const remaining = item.amountVnd - spent
           const locked = isPeriodClosedBefore(item.validTo, month)

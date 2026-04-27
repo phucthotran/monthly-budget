@@ -1,9 +1,10 @@
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 
-import { Button } from '@/components/ui'
 import { t } from '@/lib/strings'
 import { cn } from '@/lib/utils'
+
+import { Button } from '../ui'
 
 export type MobileBackButtonProps = {
   className?: string

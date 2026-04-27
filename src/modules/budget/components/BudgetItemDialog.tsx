@@ -23,7 +23,7 @@ import { currentMonthKey, monthYearPickerYearConstraints } from '@/lib/month'
 import { t } from '@/lib/strings'
 
 const schema = z.object({
-  amountVnd: z.number().min(0),
+  amountVnd: z.number().min(1),
   categoryId: z.string().min(1),
   title: z.string().min(1),
   validFrom: z.string().regex(/^\d{4}-\d{2}$/),

@@ -1,38 +1,19 @@
 import { useNavigate } from '@tanstack/react-router'
-import { useEffect } from 'react'
+import { useCallback } from 'react'
 
 import { LoginForm } from './components/LoginForm'
-import { LoginLoadingSkeleton } from './components/LoginLoadingSkeleton'
-import { useEmailAuth } from './hooks/useEmailAuth'
 import { useGoogleAuth } from './hooks/useGoogleAuth'
 
 export function LoginPage() {
   const navigate = useNavigate()
-  const { email, error, loading, mode, password, pending, setEmail, setMode, setPassword, submit, user } =
-    useEmailAuth()
   const google = useGoogleAuth()
 
-  useEffect(() => {
-    if (!loading && user) void navigate({ to: '/' })
-  }, [loading, user, navigate])
+  const handleGoogleSignIn = useCallback(async () => {
+    const result = await google.submitGoogle()
+    if (result.ok) {
+      void navigate({ to: '/' })
+    }
+  }, [google])
 
-  if (loading) {
-    return <LoginLoadingSkeleton />
-  }
-
-  return (
-    <LoginForm
-      mode={mode}
-      email={email}
-      password={password}
-      error={error ?? google.error}
-      pending={pending}
-      googlePending={google.pending}
-      onEmailChange={setEmail}
-      onGoogleSignIn={() => void google.submitGoogle()}
-      onPasswordChange={setPassword}
-      onToggleMode={() => setMode(mode === 'signin' ? 'signup' : 'signin')}
-      onSubmit={() => void submit()}
-    />
-  )
+  return <LoginForm googlePending={google.pending} onGoogleSignIn={handleGoogleSignIn} />
 }

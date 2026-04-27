@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import { Input } from '@/components/ui'
 import { formatVndNumber, parseVndInput } from '@/lib/vnd'
+
+import { Input } from '../ui'
 
 export function VndAmountInput({
   onValueChange,

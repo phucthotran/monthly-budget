@@ -14,27 +14,6 @@ export function currentCalendarYear(now = new Date()): number {
   return Number(formatInTimeZone(now, VN_TZ, 'yyyy'))
 }
 
-/** Keeps at most `maxYears` entries, centered on `centerYear` in a sorted ascending year list. */
-export function clampYearRangeAsc(
-  yearsAsc: number[],
-  { centerYear, maxYears }: { centerYear: number; maxYears: number },
-): number[] {
-  if (yearsAsc.length <= maxYears) return yearsAsc
-
-  const idx = Math.max(
-    0,
-    yearsAsc.findIndex((y) => y === centerYear),
-  )
-  const half = Math.floor(maxYears / 2)
-  let start = Math.max(0, idx - half)
-  let end = start + maxYears
-  if (end > yearsAsc.length) {
-    end = yearsAsc.length
-    start = Math.max(0, end - maxYears)
-  }
-  return yearsAsc.slice(start, end)
-}
-
 /** Month used for “as of” calculations when viewing a specific calendar year in filters. */
 export function asOfMonthForYearFilter(filterYear: number, now = new Date()): MonthKey {
   const cy = currentCalendarYear(now)
@@ -46,14 +25,6 @@ export function asOfMonthForYearFilter(filterYear: number, now = new Date()): Mo
 /** First/last month keys for a calendar year (`yyyy-MM`, string-safe for Firestore + overlap checks). */
 export function calendarYearStartEndKeys(year: number): { end: MonthKey; start: MonthKey } {
   return { end: `${year}-12`, start: `${year}-01` }
-}
-
-/** Whether a budget/income period overlaps the given calendar year (inclusive). */
-export function periodOverlapsCalendarYear(validFrom: MonthKey, validTo: MonthKey | null, year: number): boolean {
-  const { end: yearEnd, start: yearStart } = calendarYearStartEndKeys(year)
-  if (validFrom > yearEnd) return false
-  if (validTo !== null && validTo < yearStart) return false
-  return true
 }
 
 /** Same forward window as page year filters (VN TZ). */
@@ -126,12 +97,6 @@ export function isMonthInRange(month: string, validFrom: string, validTo: null |
 export function isPeriodClosedBefore(validTo: MonthKey | null, asOfMonth: MonthKey): boolean {
   if (validTo === null) return false
   return validTo < asOfMonth
-}
-
-export function formatMonthVi(month: MonthKey): string {
-  const [y, m] = month.split('-')
-  if (!y || !m) return month
-  return `${m}/${y}`
 }
 
 /** UI label `T{month}/{year}` (e.g. T4/2026). */

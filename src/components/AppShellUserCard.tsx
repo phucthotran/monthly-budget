@@ -2,9 +2,10 @@ import { signOut, type User } from 'firebase/auth'
 import { LogOut } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-import { ActionTooltipButton } from '@/components/patterns'
 import { getFirebaseAuth } from '@/lib/firebase'
 import { t } from '@/lib/strings'
+
+import { ActionTooltipButton } from './patterns/ActionTooltipButton'
 
 function userInitials(user: User): string {
   const name = user.displayName?.trim()

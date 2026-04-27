@@ -1,8 +1,8 @@
 import { useNavigate } from '@tanstack/react-router'
 import { type ReactNode, useEffect } from 'react'
 
-import { useAuthContext } from '@/components/AuthProvider'
-import { PageLoadingSkeleton } from '@/components/patterns'
+import { useAuthContext } from './AuthProvider'
+import { PageLoadingSkeleton } from './patterns/PageLoadingSkeleton'
 
 export function RequireAuth({ children }: { children: ReactNode }) {
   const { loading, user } = useAuthContext()

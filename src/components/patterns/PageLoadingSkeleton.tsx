@@ -1,6 +1,7 @@
-import { Card, CardContent, CardHeader, Skeleton } from '@/components/ui'
 import { t } from '@/lib/strings'
 import { cn } from '@/lib/utils'
+
+import { Card, CardContent, CardHeader, Skeleton } from '../ui'
 
 export type PageLoadingSkeletonVariant = 'default' | 'home' | 'stats'
 
