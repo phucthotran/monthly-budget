@@ -1,13 +1,19 @@
 import type { MonthSnapshot } from '@/lib/budget/aggregate'
+import type { ActualExpense, BudgetItem, IncomePeriod, MonthKey } from '@/lib/types'
 import type { ReactNode } from 'react'
+
+import { Fragment, useMemo } from 'react'
 
 import { InfoTooltip } from '@/components/patterns'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
+import { buildHomeMonthLineItems } from '@/lib/budget/homeMonthBreakdown'
 import { formatMonthLabelShort } from '@/lib/month'
 import { t } from '@/lib/strings'
 
 import { groupSnapshotsByYear } from '../groupSnapshotsByYear'
+import { StatsTableColgroup } from '../statsTableColgroup'
 
+import { StatsMonthDetailRows } from './StatsMonthBreakdown'
 import { StatsYearHeaderRow } from './StatsYearHeaderRow'
 
 function HeadWithHint({
@@ -36,20 +42,34 @@ function HeadWithHint({
 }
 
 export function StatsTable({
+  actuals,
+  budget,
   formatVnd,
+  income,
   isYearOpen,
   rows,
   toggleYear,
 }: {
+  actuals: ActualExpense[]
+  budget: BudgetItem[]
   formatVnd: (n: number) => string
+  income: IncomePeriod[]
   isYearOpen: (year: string) => boolean
   rows: MonthSnapshot[]
   toggleYear: (year: string) => void
 }) {
   const byYear = groupSnapshotsByYear(rows)
+  const breakdownByMonth = useMemo(() => {
+    const map = new Map<MonthKey, ReturnType<typeof buildHomeMonthLineItems>>()
+    for (const s of rows) {
+      map.set(s.month, buildHomeMonthLineItems(s.month, income, budget, actuals, t.home.orphanedBudgetActual))
+    }
+    return map
+  }, [actuals, budget, income, rows])
   return (
     <div className="-mx-4 overflow-x-auto px-4">
-      <Table className="min-w-[760px]">
+      <Table className="min-w-[760px] w-full table-fixed">
+        <StatsTableColgroup />
         <TableHeader>
           <TableRow>
             <TableHead className="whitespace-nowrap">{t.stats.month}</TableHead>
@@ -82,23 +102,39 @@ export function StatsTable({
               }}
             />
             {isYearOpen(year)
-              ? yearRows.map((s) => (
-                  <TableRow key={s.month}>
-                    <TableCell className="whitespace-nowrap font-medium">{formatMonthLabelShort(s.month)}</TableCell>
-                    <TableCell className="whitespace-nowrap text-right tabular-nums">
-                      {formatVnd(s.incomeVnd)}
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap text-right tabular-nums">
-                      {formatVnd(s.plannedVnd)}
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap text-right tabular-nums">
-                      {formatVnd(s.actualSpentVnd)}
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap text-right tabular-nums text-primary">
-                      {formatVnd(s.plannedSurplusVnd)}
-                    </TableCell>
-                  </TableRow>
-                ))
+              ? yearRows.map((s) => {
+                  const bd = breakdownByMonth.get(s.month)!
+                  const hasBreakdownLines = bd.plannedLines.length > 0 || bd.actualLines.length > 0
+                  return (
+                    <Fragment key={s.month}>
+                      <TableRow className="border-b border-border">
+                        <TableCell className="whitespace-nowrap font-medium">
+                          {formatMonthLabelShort(s.month)}
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap text-right tabular-nums">
+                          {formatVnd(s.incomeVnd)}
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap text-right tabular-nums">
+                          {formatVnd(s.plannedVnd)}
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap text-right tabular-nums">
+                          {formatVnd(s.actualSpentVnd)}
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap text-right tabular-nums text-primary">
+                          {formatVnd(s.plannedSurplusVnd)}
+                        </TableCell>
+                      </TableRow>
+                      {hasBreakdownLines ? (
+                        <StatsMonthDetailRows
+                          actualLines={bd.actualLines}
+                          actualMonthTotalVnd={s.actualSpentVnd}
+                          formatVnd={formatVnd}
+                          plannedLines={bd.plannedLines}
+                        />
+                      ) : null}
+                    </Fragment>
+                  )
+                })
               : null}
           </TableBody>
         ))}

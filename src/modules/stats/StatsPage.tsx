@@ -6,7 +6,7 @@ import { InfoTooltip, PageHeading, PageLoadingSkeleton, Panel } from '@/componen
 import { RequireAuth } from '@/components/RequireAuth'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 import { useActualExpenses, useBudgetItems, useIncomePeriods } from '@/hooks/useUserCollections'
-import { monthCountLabel, t } from '@/lib/strings'
+import { t } from '@/lib/strings'
 import { formatVnd } from '@/lib/vnd'
 
 import { SavingsTable } from './components/SavingsTable'
@@ -25,7 +25,7 @@ export function StatsPage() {
   const { data: actuals = [], isHydrated: actualsReady } = useActualExpenses(uid)
   const dataLoading = !budgetReady || !incomeReady || !actualsReady
 
-  const { actualAvg, months, plannedAvg, snaps } = useStatsData({ actuals, budget, income })
+  const { actualAvg, plannedAvg, snaps } = useStatsData({ actuals, budget, income })
   const byYear = useMemo(() => groupSnapshotsByYear(snaps), [snaps])
   const { isYearOpen, toggleYear } = useStatsYearCollapse(byYear)
 
@@ -50,20 +50,27 @@ export function StatsPage() {
 
           <Panel title={<></>}>
             <Tabs defaultValue="detail" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 h-10">
-                <TabsTrigger value="detail" className="gap-2">
-                  <Table2 className="h-4 w-4" />
-                  {t.stats.tabDetail} <InfoTooltip content={t.stats.tabDetailTooltip} />
+              <TabsList className="flex flex-col sm:grid w-full sm:grid-cols-2 h:auto gap-2 sm:h-10">
+                <TabsTrigger value="detail" className="gap-2 whitespace-nowrap min-w-52 w-full sm:w-auto">
+                  <Table2 className="size-4" />
+                  {t.stats.tabDetail} <InfoTooltip content={t.stats.tabDetailTooltip} htmlTag="span" />
                 </TabsTrigger>
-                <TabsTrigger value="savings" className="gap-2">
-                  <PiggyBank className="h-4 w-4" /> {t.stats.tabSavings}{' '}
-                  <InfoTooltip content={t.stats.tabSavingsTooltip} />
+                <TabsTrigger value="savings" className="gap-2 whitespace-nowrap min-w-52 w-full sm:w-auto">
+                  <PiggyBank className="size-4" /> {t.stats.tabSavings}
+                  <InfoTooltip content={t.stats.tabSavingsTooltip} htmlTag="span" />
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="detail" className="mt-4">
-                <div className="text-sm text-muted-foreground mb-3">{monthCountLabel(months.length)}</div>
-                <StatsTable formatVnd={formatVnd} isYearOpen={isYearOpen} rows={snaps} toggleYear={toggleYear} />
+                <StatsTable
+                  actuals={actuals}
+                  budget={budget}
+                  formatVnd={formatVnd}
+                  income={income}
+                  isYearOpen={isYearOpen}
+                  rows={snaps}
+                  toggleYear={toggleYear}
+                />
               </TabsContent>
 
               <TabsContent value="savings" className="mt-4">

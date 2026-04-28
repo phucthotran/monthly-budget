@@ -160,7 +160,7 @@ function ActualExpenseDialogImpl(
                     aria-invalid={!!err}
                     id={`${formId}-note`}
                     value={field.state.value}
-                    maxLength={60}
+                    maxLength={45}
                     onChange={(e) => field.handleChange(e.target.value)}
                   />
                   <FieldError id={errId}>{err}</FieldError>

@@ -1,9 +1,11 @@
 import { CalendarDays, LayoutDashboard } from 'lucide-react'
+import { useMemo } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
 import { PageHeading, PageLoadingSkeleton } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { useActualExpenses, useBudgetItems, useIncomePeriods } from '@/hooks/useUserCollections'
+import { buildHomeMonthLineItems } from '@/lib/budget/homeMonthBreakdown'
 import { formatMonthLabel } from '@/lib/month'
 import { t } from '@/lib/strings'
 import { formatVnd } from '@/lib/vnd'
@@ -21,6 +23,16 @@ export function HomePage() {
   const dataLoading = !incomeReady || !budgetReady || !actualsReady
 
   const { cur, currentMonth, next, nextMonth } = useHomeData({ actuals, budget, income })
+
+  const breakdownThisMonth = useMemo(
+    () => buildHomeMonthLineItems(currentMonth, income, budget, actuals, t.home.orphanedBudgetActual),
+    [actuals, budget, currentMonth, income],
+  )
+
+  const breakdownNextMonth = useMemo(
+    () => (nextMonth ? buildHomeMonthLineItems(nextMonth, income, budget, actuals, t.home.orphanedBudgetActual) : null),
+    [actuals, budget, income, nextMonth],
+  )
 
   return (
     <RequireAuth>
@@ -51,11 +63,12 @@ export function HomePage() {
               </div>
             </div>
             <HomeSummaryTiles
+              actualSpentLabel={cur ? formatVnd(cur.actualSpentVnd) : '—'}
+              breakdown={breakdownThisMonth}
               incomeLabel={cur ? formatVnd(cur.incomeVnd) : '—'}
               plannedBudgetLabel={cur ? formatVnd(cur.plannedVnd) : '—'}
-              actualSpentLabel={cur ? formatVnd(cur.actualSpentVnd) : '—'}
-              plannedSurplusLabel={cur ? formatVnd(cur.plannedSurplusVnd) : '—'}
               plannedSavingsToDateLabel={cur ? formatVnd(cur.plannedSavingsToDateVnd) : '—'}
+              plannedSurplusLabel={cur ? formatVnd(cur.plannedSurplusVnd) : '—'}
             />
           </div>
 
@@ -71,11 +84,22 @@ export function HomePage() {
                 </div>
               </div>
               <HomeSummaryTiles
+                actualSpentLabel={formatVnd(next.actualSpentVnd)}
+                breakdown={breakdownNextMonth!}
                 incomeLabel={formatVnd(next.incomeVnd)}
                 plannedBudgetLabel={formatVnd(next.plannedVnd)}
-                actualSpentLabel={formatVnd(next.actualSpentVnd)}
-                plannedSurplusLabel={formatVnd(next.plannedSurplusVnd)}
+                plannedSavingsComposition={
+                  cur
+                    ? {
+                        amountLabel: formatVnd(next.plannedSurplusVnd),
+                        monthLabel: formatMonthLabel(nextMonth),
+                        priorAmountLabel: formatVnd(cur.plannedSavingsToDateVnd),
+                        priorMonthLabel: formatMonthLabel(currentMonth),
+                      }
+                    : undefined
+                }
                 plannedSavingsToDateLabel={formatVnd(next.plannedSavingsToDateVnd)}
+                plannedSurplusLabel={formatVnd(next.plannedSurplusVnd)}
               />
             </div>
           ) : null}

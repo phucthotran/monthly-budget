@@ -81,12 +81,16 @@ export const t = {
     actualSpentHint: 'Tổng số tiền thực tế đã chi trong tháng này.',
     actualSurplus: 'Còn lại theo thực chi',
     actualSurplusHint: 'Thu nhập trừ thực chi trong tháng đang xem.',
+    breakdownEmpty: 'Chưa có mục nào trong tháng này.',
     income: 'Thu nhập của tháng',
     incomeHint: 'Tổng các kỳ thu nhập còn hiệu lực trong tháng này.',
     nextMonth: 'Tháng sau',
+    orphanedBudgetActual: 'Khoản dự chi đã xóa',
     plannedBudget: 'Dự chi',
     plannedBudgetHint: 'Tổng các khoản dự chi có hiệu lực trong tháng này.',
     plannedSavingsHint: 'Cộng dồn phần dư theo kế hoạch từ các tháng trước đến tháng này.',
+    plannedSavingsToDatePlusSurplusLine: '+ Dư theo dự tính {{monthLabel}}: {{amount}}',
+    plannedSavingsToDatePriorLine: 'Tích lũy đến hết {{monthLabel}}: {{amount}}',
     plannedSurplus: 'Dư theo dự tính',
     plannedSurplusHint: 'Số tiền còn lại sau khi dự chi trong tháng này.',
     savingsToDatePlanned: 'Dư tích lũy theo dự tính',
@@ -151,7 +155,9 @@ export const t = {
     actualSurplus: 'Dư thực tế bình quân',
     actualSurplusHint: 'Bình quân mỗi tháng: thu nhập trừ thực chi.',
     averagePerMonth: 'Trung bình mỗi tháng',
+    collapseMonthBreakdown: 'Thu gọn chi tiết',
     collapseYearGroup: 'Thu gọn các tháng',
+    expandMonthBreakdown: 'Xem thêm chi tiết',
     expandYearGroup: 'Mở các tháng',
     income: 'Thu nhập',
     incomeColumnHint: 'Tổng các kỳ thu nhập còn hiệu lực trong tháng đó.',
@@ -166,10 +172,10 @@ export const t = {
     plannedSurplusColumnHint: 'Thu nhập trừ tổng dự chi trong tháng đó.',
     plannedSurplusHint: 'Bình quân mỗi tháng: thu nhập trừ dự chi.',
     savingsAccumulatedColumnHint: 'Cộng dồn phần dư theo kế hoạch qua từng tháng.',
-    savingsAccumulatedMonthly: 'Tích lũy theo dự',
+    savingsAccumulatedMonthly: 'Tích lũy theo dự tính',
     tabDetail: 'Chi tiết theo tháng',
     tabDetailTooltip: 'Thu nhập, dự chi, thực chi và phần dư từng tháng.',
-    tabSavings: 'Tích lũy',
+    tabSavings: 'Tích lũy theo tháng',
     tabSavingsTooltip: 'Phần dư theo kế hoạch và số tích lũy qua thời gian.',
     title: 'Thống kê',
   },
@@ -180,6 +186,7 @@ export const t = {
     labelRequired: 'Nhập tên kỳ thu nhập.',
     monthFormat: 'Chọn tháng hợp lệ.',
     nameRequired: 'Nhập tên danh mục.',
+    noteRequired: 'Nhập ghi chú.',
     titleRequired: 'Nhập tên khoản.',
     validFromNotBeforeCurrent: 'Khi tạo mới, chỉ chọn từ tháng hiện tại trở đi.',
     validToBeforeFrom: 'Tháng kết thúc không được trước tháng bắt đầu.',
@@ -192,11 +199,4 @@ export function budgetDeleteDialogP1(title: string) {
 
 export function incomeDeleteDialogP1(label: string) {
   return `Bạn sắp xóa kỳ thu nhập “${label}”. Thao tác này không thể hoàn tác.`
-}
-
-export function monthCountLabel(count: number) {
-  if (count === 0) {
-    return t.common.noScopeMonths
-  }
-  return `${String(count)} ${t.common.monthsUnit}`
 }
