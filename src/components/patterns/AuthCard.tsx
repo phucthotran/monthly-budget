@@ -7,12 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, Separator } 
 
 export type AuthCardProps = {
   title: ReactNode
-  description?: ReactNode
   children: ReactNode
   className?: string
 }
 
-export function AuthCard({ children, className, description, title }: AuthCardProps) {
+export function AuthCard({ children, className, title }: AuthCardProps) {
   return (
     <Card className={cn('w-full max-w-md border-border', className)}>
       <CardHeader>
@@ -21,7 +20,9 @@ export function AuthCard({ children, className, description, title }: AuthCardPr
           {title}
         </CardTitle>
         <Separator className="my-6 h-[1px]" />
-        {description != null && description !== '' ? <CardDescription>{description}</CardDescription> : null}
+        <CardDescription className="items-center justify-center flex">
+          <img src="./logo.png" alt="Money" className="max-w-full h-80" />
+        </CardDescription>
       </CardHeader>
       <CardContent>{children}</CardContent>
     </Card>

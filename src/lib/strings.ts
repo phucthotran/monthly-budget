@@ -127,7 +127,6 @@ export const t = {
     drawerTitle: 'Menu điều hướng',
     home: 'Tổng quan',
     income: 'Thu nhập',
-    login: 'Đăng nhập',
     logout: 'Đăng xuất',
     openMenu: 'Mở menu điều hướng',
     settings: 'Phân loại',
