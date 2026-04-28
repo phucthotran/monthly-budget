@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       VitePWA({
-        includeAssets: ['favicon.jpg'],
+        includeAssets: ['favicon.png'],
         manifest: {
           background_color: '#0f172a',
           description: 'Quản lý dự chi, thu nhập và tiết kiệm (VND)',
@@ -22,8 +22,8 @@ export default defineConfig(({ mode }) => {
             {
               purpose: 'any',
               sizes: 'any',
-              src: 'favicon.jpg',
-              type: 'image/jpg',
+              src: 'favicon.png',
+              type: 'image/png',
             },
           ],
           lang: 'vi',

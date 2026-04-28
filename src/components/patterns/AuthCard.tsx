@@ -1,8 +1,8 @@
-import { WalletCards } from 'lucide-react'
 import { type ReactNode } from 'react'
 
 import { cn } from '@/lib/utils'
 
+import Logo from '../../../public/header-logo.png'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Separator } from '../ui'
 
 export type AuthCardProps = {
@@ -16,7 +16,7 @@ export function AuthCard({ children, className, title }: AuthCardProps) {
     <Card className={cn('w-full max-w-md border-border', className)}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <WalletCards className="size-6 shrink-0 text-primary" />
+          <img src={Logo} alt="Money" className="size-6 shrink-0 text-primary" />
           {title}
         </CardTitle>
         <Separator className="my-6 h-[1px]" />

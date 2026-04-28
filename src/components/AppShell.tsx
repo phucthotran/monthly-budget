@@ -1,9 +1,11 @@
 import { Link, useRouterState } from '@tanstack/react-router'
-import { LayoutDashboard, Menu, PiggyBank, Settings, TrendingUp, Wallet, WalletCards, X } from 'lucide-react'
+import { LayoutDashboard, Menu, PiggyBank, Settings, TrendingUp, Wallet, X } from 'lucide-react'
 import { type ReactNode, useEffect, useState } from 'react'
 
 import { t } from '@/lib/strings'
 import { cn } from '@/lib/utils'
+
+import Logo from '../../public/header-logo.png'
 
 import { AppShellUserCard } from './AppShellUserCard'
 import { useAuthContext } from './AuthProvider'
@@ -18,12 +20,11 @@ import {
   Separator,
   TooltipProvider,
 } from './ui'
-
 const nav = [
   { icon: LayoutDashboard, label: t.nav.home, to: '/' },
+  { icon: TrendingUp, label: t.nav.stats, to: '/stats' },
   { icon: Wallet, label: t.nav.budget, to: '/budget' },
   { icon: PiggyBank, label: t.nav.income, to: '/income' },
-  { icon: TrendingUp, label: t.nav.stats, to: '/stats' },
   { icon: Settings, label: t.nav.settings, to: '/settings' },
 ] as const
 
@@ -38,7 +39,7 @@ function AppShellSidebarBody({ headerStart }: { headerStart?: ReactNode }) {
         <>
           <div className="flex min-h-9 shrink-0 items-center gap-2 border-b border-border px-3 py-2 font-semibold tracking-tight">
             {headerStart}
-            <WalletCards className="h-5 w-5 shrink-0 text-primary" />
+            <img src={Logo} alt="Money" className="size-6 shrink-0" />
             <span className="min-w-0 flex-1 truncate">{t.appName}</span>
           </div>
           <div className="flex flex-col gap-2 px-3 pb-1.5 pt-2.5">{user ? <AppShellUserCard user={user} /> : null}</div>
@@ -46,7 +47,7 @@ function AppShellSidebarBody({ headerStart }: { headerStart?: ReactNode }) {
       ) : (
         <div className="flex flex-col gap-2 px-3 pt-2.5 pb-1.5 md:px-4 md:pt-3 md:pb-2">
           <div className="flex min-h-9 items-center gap-2 font-semibold tracking-tight">
-            <WalletCards className="h-5 w-5 shrink-0 text-primary" />
+            <img src={Logo} alt="Money" className="size-6 shrink-0" />
             <span className="min-w-0 flex-1 truncate">{t.appName}</span>
           </div>
           {<AppShellUserCard user={user} />}
@@ -119,7 +120,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </DrawerContent>
           </Drawer>
           <div className="flex min-h-9 min-w-0 flex-1 items-center gap-2 font-semibold tracking-tight">
-            <WalletCards className="h-5 w-5 shrink-0 text-primary" />
+            <img src={Logo} alt="Money" className="size-6 shrink-0" />
             <span className="truncate">{t.appName}</span>
           </div>
         </header>
