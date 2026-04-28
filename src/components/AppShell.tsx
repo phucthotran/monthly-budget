@@ -49,7 +49,7 @@ function AppShellSidebarBody({ headerStart }: { headerStart?: ReactNode }) {
             <WalletCards className="h-5 w-5 shrink-0 text-primary" />
             <span className="min-w-0 flex-1 truncate">{t.appName}</span>
           </div>
-          {user ? <AppShellUserCard user={user} /> : null}
+          {<AppShellUserCard user={user} />}
         </div>
       )}
       <Separator />
@@ -73,11 +73,6 @@ function AppShellSidebarBody({ headerStart }: { headerStart?: ReactNode }) {
         })}
       </nav>
       <div className="mt-auto flex flex-col gap-1 border-t border-border p-2">
-        {!user ? (
-          <Button variant="ghost" className="w-full justify-start gap-2" asChild>
-            <Link to="/login">{t.nav.login}</Link>
-          </Button>
-        ) : null}
         <ThemeToggle fullWidth />
       </div>
     </>
@@ -129,7 +124,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <aside className="hidden min-h-0 w-72 shrink-0 flex-col border-r border-border bg-card/50 md:flex md:min-h-dvh">
+        <aside className="hidden min-h-0 w-72 shrink-0 flex-col border-r border-border bg-card/50 md:flex md:min-h-dvh max-h-screen fixed top-0 left-0">
           <AppShellSidebarBody />
         </aside>
 

@@ -17,7 +17,7 @@ export function StatsYearHeaderRow({
 }) {
   return (
     <TableRow className="hover:bg-transparent">
-      <TableCell className="bg-slate-200 p-0" colSpan={colSpan}>
+      <TableCell className="bg-slate-200 p-0 dark:bg-slate-800" colSpan={colSpan}>
         <Button
           type="button"
           variant="ghost"

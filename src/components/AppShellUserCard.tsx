@@ -6,6 +6,7 @@ import { getFirebaseAuth } from '@/lib/firebase'
 import { t } from '@/lib/strings'
 
 import { ActionTooltipButton } from './patterns/ActionTooltipButton'
+import { Skeleton } from './ui'
 
 function userInitials(user: User): string {
   const name = user.displayName?.trim()
@@ -25,7 +26,7 @@ function userInitials(user: User): string {
 }
 
 export type AppShellUserCardProps = {
-  user: User
+  user?: User
 }
 
 export function AppShellUserCard({ user }: AppShellUserCardProps) {
@@ -33,7 +34,19 @@ export function AppShellUserCard({ user }: AppShellUserCardProps) {
 
   useEffect(() => {
     setAvatarBroken(false)
-  }, [user.uid, user.photoURL])
+  }, [user?.uid, user?.photoURL])
+
+  if (!user) {
+    return (
+      <div className="flex items-center gap-1.5 rounded-md border border-border/60 bg-muted/30 px-1.5 py-1">
+        <Skeleton className="size-7 rounded-full" />
+        <div className="min-w-0 flex-1 leading-tight h-8">
+          <Skeleton className="w-16 h-4" />
+          <Skeleton className="w-24 h-3" />
+        </div>
+      </div>
+    )
+  }
 
   const primaryName = user.displayName?.trim() || user.email?.trim() || t.nav.account
   const secondaryEmail = user.displayName?.trim() && user.email?.trim() ? user.email.trim() : null
@@ -58,7 +71,7 @@ export function AppShellUserCard({ user }: AppShellUserCardProps) {
           {userInitials(user)}
         </div>
       )}
-      <div className="min-w-0 flex-1 leading-tight">
+      <div className="min-w-0 flex-1 leading-tight h-8">
         <p className="truncate text-xs font-medium">{primaryName}</p>
         {secondaryEmail ? <p className="truncate text-[11px] text-muted-foreground">{secondaryEmail}</p> : null}
       </div>
