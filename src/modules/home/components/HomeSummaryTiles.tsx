@@ -1,44 +1,12 @@
 import { HandCoinsIcon, PiggyBank, TrendingUp, Wallet } from 'lucide-react'
-import { type ReactNode } from 'react'
 
-import { InfoTooltip, MetricTile } from '@/components/patterns'
+import { MetricTile } from '@/components/patterns'
 import { type HomeMonthLineItem } from '@/lib/budget/homeMonthBreakdown'
 import { t } from '@/lib/strings'
-import { formatVnd } from '@/lib/vnd'
 
-function TileTitleWithHint({ content, label }: { content: ReactNode; label: string }) {
-  return (
-    <span className="inline-flex items-center gap-0.5 min-w-0">
-      {label}
-      <InfoTooltip content={content} className="h-5 w-5 shrink-0" />
-    </span>
-  )
-}
-
-function BreakdownLines({ lines }: { lines: readonly HomeMonthLineItem[] }) {
-  if (lines.length === 0) {
-    return <p className="text-sm leading-snug text-muted-foreground">{t.home.breakdownEmpty}</p>
-  }
-  return (
-    <ul className="max-h-56 space-y-1.5 overflow-y-auto text-sm leading-snug bg-slate-100 dark:bg-slate-800 rounded-md p-2 ">
-      {lines.map((line) => (
-        <li key={line.id} className="flex min-w-0 justify-between gap-3 tabular-nums">
-          <span className="min-w-0 shrink truncate text-foreground font-normal">{line.label}</span>
-          <span className="shrink-0 tabular-nums text-muted-foreground font-semibold">{formatVnd(line.amountVnd)}</span>
-        </li>
-      ))}
-    </ul>
-  )
-}
-
-function AggregateTileContents({ children, footer }: { children: ReactNode; footer: ReactNode }) {
-  return (
-    <div className="space-y-3">
-      <div className="text-2xl font-semibold tabular-nums">{children}</div>
-      <div className="border-t border-border pt-3">{footer}</div>
-    </div>
-  )
-}
+import { AggregateTileContents } from './AggregateTileContents'
+import { BreakdownLines } from './BreakdownLines'
+import { TileTitleWithHint } from './TileTitleWithHint'
 
 function fillMonthAmountTemplate(template: string, monthLabel: string, amountLabel: string) {
   return (

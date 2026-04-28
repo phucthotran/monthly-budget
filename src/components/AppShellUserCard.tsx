@@ -26,7 +26,7 @@ function userInitials(user: User): string {
 }
 
 export type AppShellUserCardProps = {
-  user?: User
+  user?: null | User
 }
 
 export function AppShellUserCard({ user }: AppShellUserCardProps) {

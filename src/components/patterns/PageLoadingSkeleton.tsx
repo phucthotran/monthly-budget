@@ -53,7 +53,7 @@ function TablePanelSkeleton({ rows }: { rows: number }) {
   )
 }
 
-/** Matches HomePage `PageHeading`: h1 icon+title (gap-2.5), then description with mt-1 (base + sm). */
+/** Matches HomePage `PageHeading` + `description` / `descriptionClassName="text-base"`. */
 function HomeHeadingSkeleton() {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -68,51 +68,86 @@ function HomeHeadingSkeleton() {
             </span>
           </span>
         </h1>
-        <div className="text-muted-foreground mt-1 max-w-2xl space-y-2 text-pretty text-base">
-          <Skeleton className="h-5 w-full" />
-          <div className="text-sm">
-            <Skeleton className="h-4 w-[92%]" />
-          </div>
+        <div className="mt-1 space-y-2 text-pretty text-base text-muted-foreground">
+          <Skeleton className="h-6 w-full max-w-2xl" />
+          <p className="text-sm text-muted-foreground">
+            <Skeleton className="h-4 w-full max-w-xl" />
+          </p>
         </div>
       </div>
     </div>
   )
 }
 
-/** One MetricTile-shaped card (icon + label row, large amount below). */
-function HomeMetricTileSkeleton() {
+type HomeMetricTileFooter = 'breakdown' | 'compact' | 'savings'
+
+/** Matches `MetricTile` + `TileTitleWithHint` + optional `AggregateTileContents` footers (HomeSummaryTiles). */
+function HomeMetricTileSkeleton({ footer }: { footer: HomeMetricTileFooter }) {
   return (
     <Card>
       <CardHeader>
         <div className="flex min-w-0 items-center gap-2">
-          <Skeleton className="size-5 shrink-0 rounded" />
-          <Skeleton className="h-4 min-w-0 flex-1 max-w-[11rem]" />
-          <Skeleton className="size-5 shrink-0 rounded-full" />
+          <Skeleton className="size-5 shrink-0 rounded-md" />
+          <Skeleton className="h-6 min-w-0 flex-1 max-w-[12rem]" />
+          <Skeleton className="h-5 w-5 shrink-0 rounded-sm" />
         </div>
       </CardHeader>
-      <CardContent>
-        <Skeleton className="h-8 w-40 max-w-[85%] rounded-md" />
+      <CardContent className={footer === 'compact' ? undefined : 'font-normal'}>
+        {footer === 'breakdown' ? (
+          <div className="space-y-3">
+            <div className="text-2xl font-semibold tabular-nums">
+              <Skeleton className="h-8 w-[min(100%,12rem)] max-w-full rounded-md" />
+            </div>
+            <div className="border-t border-border pt-3">
+              <Skeleton className="h-16 w-full rounded-md" />
+            </div>
+          </div>
+        ) : null}
+        {footer === 'compact' ? (
+          <div className="text-2xl font-semibold tabular-nums">
+            <Skeleton className="h-8 w-[min(100%,12rem)] max-w-full rounded-md" />
+          </div>
+        ) : null}
+        {footer === 'savings' ? (
+          <div className="space-y-3">
+            <div className="text-2xl font-semibold tabular-nums">
+              <Skeleton className="h-8 w-[min(100%,12rem)] max-w-full rounded-md" />
+            </div>
+            <div className="space-y-1.5 border-t border-border pt-3 text-sm leading-snug">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-[94%]" />
+            </div>
+          </div>
+        ) : null}
       </CardContent>
     </Card>
   )
 }
 
+const HOME_SUMMARY_TILE_FOOTERS: readonly HomeMetricTileFooter[] = [
+  'breakdown',
+  'breakdown',
+  'breakdown',
+  'compact',
+  'savings',
+]
+
 /**
- * Matches HomePage `space-y-4` month block: CalendarDays + title | pill, then HomeSummaryTiles grid (5 tiles).
+ * Matches HomePage `space-y-4` month block: CalendarDays + heading | pill (`formatMonthLabel`), then HomeSummaryTiles.
  */
 function HomeMonthSectionSkeleton({ monthTitleWidth }: { monthTitleWidth: string }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <div className="inline-flex min-w-0 items-center gap-2">
+        <div className="inline-flex items-center gap-2">
           <Skeleton className="h-4 w-4 shrink-0 rounded-sm" />
-          <Skeleton className={cn('h-5 shrink-0', monthTitleWidth)} />
+          <Skeleton className={cn('h-6 shrink-0', monthTitleWidth)} />
         </div>
-        <Skeleton className="h-7 w-[4.75rem] shrink-0 rounded-full" />
+        <Skeleton className="h-8 min-w-[4.75rem] shrink-0 rounded-full" />
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {Array.from({ length: 5 }, (_, i) => (
-          <HomeMetricTileSkeleton key={i} />
+        {HOME_SUMMARY_TILE_FOOTERS.map((footer, i) => (
+          <HomeMetricTileSkeleton key={i} footer={footer} />
         ))}
       </div>
     </div>
