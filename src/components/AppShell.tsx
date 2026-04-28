@@ -73,7 +73,7 @@ function AppShellSidebarBody({ headerStart }: { headerStart?: ReactNode }) {
           )
         })}
       </nav>
-      <div className="mt-auto flex flex-col gap-1 border-t border-border p-2">
+      <div className="mt-auto flex flex-col gap-1 border-t border-border bg-gray-100 dark:bg-gray-800 p-2">
         <ThemeToggle fullWidth />
       </div>
     </>
@@ -90,7 +90,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <TooltipProvider delayDuration={200}>
-      <div className="flex min-h-dvh flex-col md:flex-row">
+      <div className="flex min-h-dvh flex-col md:flex-row bg-slate-100 dark:bg-slate-900">
         <header className="flex shrink-0 items-center gap-2 border-b border-border bg-card/50 px-3 py-2 md:hidden">
           <Drawer direction="left" open={mobileNavOpen} onOpenChange={setMobileNavOpen} shouldScaleBackground={false}>
             <DrawerTrigger asChild>

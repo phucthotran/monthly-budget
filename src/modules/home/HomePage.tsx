@@ -58,7 +58,7 @@ export function HomePage() {
                 <CalendarDays className="h-4 w-4 text-primary" />
                 <div className="text-base font-semibold tracking-tight">{t.home.thisMonth}</div>
               </div>
-              <div className="rounded-full border border-border bg-muted px-3 py-1 text-sm text-muted-foreground tabular-nums">
+              <div className="rounded-full border border-border bg-gray-50 dark:bg-gray-800 px-3 py-1 text-sm text-muted-foreground tabular-nums">
                 {formatMonthLabel(currentMonth)}
               </div>
             </div>
@@ -79,7 +79,7 @@ export function HomePage() {
                   <CalendarDays className="h-4 w-4 text-primary" />
                   <div className="text-base font-semibold tracking-tight">{t.home.nextMonth}</div>
                 </div>
-                <div className="rounded-full border border-border bg-muted px-3 py-1 text-sm text-muted-foreground tabular-nums">
+                <div className="rounded-full border border-border bg-gray-50 dark:bg-gray-800 px-3 py-1 text-sm text-muted-foreground tabular-nums">
                   {formatMonthLabel(nextMonth)}
                 </div>
               </div>
