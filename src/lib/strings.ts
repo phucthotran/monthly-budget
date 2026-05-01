@@ -1,15 +1,8 @@
 export const t = {
   appName: 'Monthly Budget',
   auth: {
-    email: 'Email',
-    error: 'Đăng nhập không thành công. Kiểm tra lại email và mật khẩu.',
     errorGoogle: 'Không thể đăng nhập bằng Google. Thử lại sau.',
     googleSignIn: 'Tiếp tục với Google',
-    password: 'Mật khẩu',
-    signIn: 'Đăng nhập',
-    signUp: 'Tạo tài khoản',
-    switchToSignIn: 'Đã có tài khoản? Đăng nhập',
-    switchToSignUp: 'Chưa có tài khoản? Đăng ký',
   },
   budget: {
     actualExpenseLineDeleteDialogTitle: 'Xóa dòng chi thực tế?',
@@ -165,7 +158,7 @@ export const t = {
     incomeColumnHint: 'Tổng các kỳ thu nhập còn hiệu lực trong tháng đó.',
     month: 'Tháng',
     monthly: 'Theo tháng',
-    pageDetail: 'Hiển thị từ tháng hiện tại đến hết năm sau; các tháng được gom theo từng năm.',
+    pageDetail: 'Hiển thị đủ các tháng của năm hiện tại và năm sau; các tháng được gom theo từng năm.',
     pageLead: 'Xem thu, chi và phần dư theo từng tháng.',
     planned: 'Dự chi (tổng)',
     plannedAvgTagline: 'Tính theo các tháng trong bảng.',

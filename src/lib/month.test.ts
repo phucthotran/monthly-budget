@@ -18,18 +18,18 @@ describe('compareMonthKeys', () => {
 })
 
 describe('statsMonthKeys', () => {
-  it('covers from current month through next calendar year (12 months)', () => {
+  it('covers full current calendar year then full next year (VN)', () => {
     const keys = statsMonthKeys(new Date('2026-04-15T12:00:00Z'))
-    expect(keys[0]).toBe('2026-04')
-    expect(keys).toContain('2026-12')
+    expect(keys[0]).toBe('2026-01')
+    expect(keys[11]).toBe('2026-12')
     expect(keys[keys.length - 1]).toBe('2027-12')
-    expect(keys).toHaveLength(9 + 12)
+    expect(keys).toHaveLength(24)
   })
 
-  it('starts January when current is January', () => {
+  it('still starts January when viewing January', () => {
     const keys = statsMonthKeys(new Date('2026-01-10T12:00:00Z'))
     expect(keys[0]).toBe('2026-01')
-    expect(keys).toHaveLength(12 + 12)
+    expect(keys).toHaveLength(24)
   })
 })
 

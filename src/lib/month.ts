@@ -96,17 +96,17 @@ export function monthYearPickerYearConstraints(
   }
 }
 
-/** Stats grid: from current month through Dec, then all 12 months of next year. */
+/**
+ * Stats/home month range (VN TZ): full current calendar year (Jan–Dec) plus full next calendar year.
+ * Needed so averages, YTD accumulation, and past months are not omitted mid-year.
+ */
 export function statsMonthKeys(now = new Date()): string[] {
   const y = Number(formatInTimeZone(now, VN_TZ, 'yyyy'))
-  const m = Number(formatInTimeZone(now, VN_TZ, 'MM'))
   const keys: string[] = []
-  for (let month = m; month <= 12; month++) {
-    keys.push(`${y}-${String(month).padStart(2, '0')}`)
-  }
-  const nextYear = y + 1
-  for (let month = 1; month <= 12; month++) {
-    keys.push(`${nextYear}-${String(month).padStart(2, '0')}`)
+  for (let yy = y; yy <= y + 1; yy++) {
+    for (let month = 1; month <= 12; month++) {
+      keys.push(`${yy}-${String(month).padStart(2, '0')}`)
+    }
   }
   return keys
 }
