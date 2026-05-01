@@ -1,5 +1,5 @@
 export const t = {
-  appName: 'Dự chi hàng tháng',
+  appName: 'Monthly Budget',
   auth: {
     email: 'Email',
     error: 'Đăng nhập không thành công. Kiểm tra lại email và mật khẩu.',
