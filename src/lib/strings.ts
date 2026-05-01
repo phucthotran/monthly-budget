@@ -12,7 +12,10 @@ export const t = {
     switchToSignUp: 'Chưa có tài khoản? Đăng ký',
   },
   budget: {
-    actualPeriodHint: 'Chỉ ghi chi thực tế cho các tháng khoản dự chi còn hiệu lực.',
+    actualExpenseLineDeleteDialogTitle: 'Xóa dòng chi thực tế?',
+    actualLinesEmpty: 'Chưa có dòng chi thực tế trong tháng đã chọn.',
+    actualLinesHeading: 'Các khoản đã ghi',
+    actualPeriodHint: 'Chỉ ghi chi thực tế cho tháng hiện tại của khoản dự chi còn hiệu lực.',
     actualPeriodInactiveLocked: 'Chỉ ghi chi thực tế trong kỳ áp dụng của khoản này.',
     actuals: 'Chi thực tế',
     add: 'Thêm khoản dự chi',
@@ -191,6 +194,10 @@ export const t = {
     validToBeforeFrom: 'Tháng kết thúc không được trước tháng bắt đầu.',
   },
 } as const
+
+export function actualExpenseLineDeleteDialogP1(formattedAmount: string, monthLabel: string) {
+  return `Bạn sắp xóa dòng chi ${formattedAmount} (${monthLabel}). Thao tác này không thể hoàn tác.`
+}
 
 export function budgetDeleteDialogP1(title: string) {
   return `Bạn sắp xóa khoản dự chi “${title}”. Thao tác này không thể hoàn tác.`

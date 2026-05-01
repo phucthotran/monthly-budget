@@ -1,4 +1,4 @@
-import type { BudgetItem } from '@/lib/types'
+import type { ActualExpense, BudgetItem } from '@/lib/types'
 
 import { Plus, Wallet } from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
@@ -10,8 +10,9 @@ import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
 import { useActualExpenses, useBudgetItems, useCategories } from '@/hooks/useUserCollections'
 import { useYearFilterPageState } from '@/hooks/useYearFilterPageState'
-import { asOfMonthForYearFilter, currentMonthKey } from '@/lib/month'
-import { budgetDeleteDialogP1, t } from '@/lib/strings'
+import { asOfMonthForYearFilter, currentMonthKey, formatMonthLabel } from '@/lib/month'
+import { actualExpenseLineDeleteDialogP1, budgetDeleteDialogP1, t } from '@/lib/strings'
+import { formatVnd } from '@/lib/vnd'
 
 import { ActualExpenseDialog, type ActualExpenseDialogHandle } from './components/ActualExpenseDialog'
 import { BudgetItemDialog, type BudgetItemDialogHandle } from './components/BudgetItemDialog'
@@ -26,11 +27,12 @@ export function BudgetPage() {
   const { data: categories = [], isHydrated: categoriesReady } = useCategories(uid)
 
   const [itemToDelete, setItemToDelete] = useState<BudgetItem | null>(null)
+  const [actualLineToDelete, setActualLineToDelete] = useState<ActualExpense | null>(null)
   const { filterYear, setFilterYear, yearOptions } = useYearFilterPageState()
   const asOfMonth = useMemo(() => asOfMonthForYearFilter(filterYear), [filterYear])
 
   const { data: items = [], isHydrated: itemsReady } = useBudgetItems(uid, filterYear)
-  const { data: actuals = [], isHydrated: actualsReady } = useActualExpenses(uid, asOfMonth)
+  const { data: actuals = [], isHydrated: actualsReady } = useActualExpenses(uid)
   const dataLoading = !categoriesReady || !itemsReady || !actualsReady
 
   const { actualMap } = useBudgetDerived(actuals)
@@ -99,7 +101,10 @@ export function BudgetPage() {
 
           <ActualExpenseDialog
             ref={actualDialogRef}
+            actuals={actuals}
             defaultMonth={dialogDefaultMonth}
+            snapshotMonth={asOfMonth}
+            onDeleteLine={(expense) => setActualLineToDelete(expense)}
             onSubmit={async (item, value) => {
               if (!mutations) return
               await mutations.addActualExpense(item, value)
@@ -117,6 +122,28 @@ export function BudgetPage() {
             onConfirm={async () => {
               if (!mutations || !itemToDelete) return
               await mutations.deleteBudgetItem(itemToDelete.id)
+            }}
+          />
+
+          <ConfirmDeleteDialog
+            open={actualLineToDelete !== null}
+            title={t.budget.actualExpenseLineDeleteDialogTitle}
+            description={
+              actualLineToDelete ? (
+                <p>
+                  {actualExpenseLineDeleteDialogP1(
+                    formatVnd(actualLineToDelete.amountVnd),
+                    formatMonthLabel(actualLineToDelete.spentMonth),
+                  )}
+                </p>
+              ) : null
+            }
+            onOpenChange={(open) => {
+              if (!open) setActualLineToDelete(null)
+            }}
+            onConfirm={async () => {
+              if (!mutations || !actualLineToDelete) return
+              await mutations.deleteActualExpense(actualLineToDelete.id)
             }}
           />
         </div>

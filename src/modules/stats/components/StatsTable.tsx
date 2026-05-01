@@ -104,7 +104,7 @@ export function StatsTable({
             {isYearOpen(year)
               ? yearRows.map((s) => {
                   const bd = breakdownByMonth.get(s.month)!
-                  const hasBreakdownLines = bd.plannedLines.length > 0 || bd.actualLines.length > 0
+                  const hasBreakdownLines = bd.plannedLines.length > 0
                   return (
                     <Fragment key={s.month}>
                       <TableRow className="border-b border-border">
@@ -126,7 +126,6 @@ export function StatsTable({
                       </TableRow>
                       {hasBreakdownLines ? (
                         <StatsMonthDetailRows
-                          actualLines={bd.actualLines}
                           actualMonthTotalVnd={s.actualSpentVnd}
                           formatVnd={formatVnd}
                           plannedLines={bd.plannedLines}

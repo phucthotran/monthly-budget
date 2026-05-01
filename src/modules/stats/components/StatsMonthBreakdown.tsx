@@ -13,11 +13,8 @@ const PREVIEW_LINE_CAP = 2
 
 type Tagged = { kind: 'actual' | 'planned'; line: HomeMonthLineItem }
 
-function buildTagged(plannedLines: readonly HomeMonthLineItem[], actualLines: readonly HomeMonthLineItem[]): Tagged[] {
-  return [
-    ...plannedLines.map((line) => ({ kind: 'planned' as const, line })),
-    ...actualLines.map((line) => ({ kind: 'actual' as const, line })),
-  ]
+function buildTagged(lines: readonly HomeMonthLineItem[]): Tagged[] {
+  return lines.map((line) => ({ kind: 'planned' as const, line }))
 }
 
 function BreakdownNestedTable({
@@ -59,17 +56,15 @@ function BreakdownNestedTable({
 }
 
 export function StatsMonthDetailRows({
-  actualLines,
   actualMonthTotalVnd,
   formatVnd,
   plannedLines,
 }: {
-  actualLines: readonly HomeMonthLineItem[]
   actualMonthTotalVnd: number
   formatVnd: (n: number) => string
   plannedLines: readonly HomeMonthLineItem[]
 }) {
-  const taggedRows = useMemo(() => buildTagged(plannedLines, actualLines), [actualLines, plannedLines])
+  const taggedRows = useMemo(() => buildTagged(plannedLines), [plannedLines])
   const rowCount = taggedRows.length
   const needsToggle = rowCount > PREVIEW_LINE_CAP
   const [expanded, setExpanded] = useState(false)

@@ -46,6 +46,10 @@ export function budgetMutations(uid: string) {
     await deleteDoc(doc(db, 'users', uid, 'budgetItems', id))
   }
 
+  async function deleteActualExpense(id: string) {
+    await deleteDoc(doc(db, 'users', uid, 'actualExpenses', id))
+  }
+
   async function addActualExpense(
     item: BudgetItem,
     input: { amountVnd: number; spentMonth: MonthKey; note: null | string },
@@ -63,5 +67,5 @@ export function budgetMutations(uid: string) {
     })
   }
 
-  return { addActualExpense, deleteBudgetItem, upsertBudgetItem }
+  return { addActualExpense, deleteActualExpense, deleteBudgetItem, upsertBudgetItem }
 }

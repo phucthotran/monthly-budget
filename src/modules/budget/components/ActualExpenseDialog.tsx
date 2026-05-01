@@ -1,14 +1,31 @@
-import type { BudgetItem, MonthKey } from '@/lib/types'
+import type { ActualExpense, BudgetItem, MonthKey } from '@/lib/types'
 
 import { useForm } from '@tanstack/react-form'
+import { Trash2 } from 'lucide-react'
 import { type ForwardedRef, forwardRef, type ReactNode, useId, useImperativeHandle, useState } from 'react'
 
 import { MonthYearPicker, VndAmountInput } from '@/components/inputs'
-import { FormLabelWithHint, ModalHeading } from '@/components/patterns'
-import { Button, Dialog, DialogContent, DialogFooter, Field, FieldError, FieldLabel, Input } from '@/components/ui'
+import { ActionTooltipButton, FormLabelWithHint, ModalHeading } from '@/components/patterns'
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  Field,
+  FieldError,
+  FieldLabel,
+  Input,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui'
 import { firstFieldErrorMessage } from '@/lib/form/fieldMeta'
-import { isMonthInRange } from '@/lib/month'
+import { compareMonthKeys, currentMonthKey, isMonthInRange, isPeriodClosedBefore } from '@/lib/month'
 import { t } from '@/lib/strings'
+import { formatVnd } from '@/lib/vnd'
 
 import { actualExpenseFormSchema } from '../schemas/actualExpenseFormSchema'
 
@@ -21,14 +38,20 @@ export type ActualExpenseDialogHandle = {
 
 function ActualExpenseDialogImpl(
   {
+    actuals,
     defaultMonth,
+    onDeleteLine,
     onSubmit,
+    snapshotMonth,
   }: {
+    actuals: ActualExpense[]
     defaultMonth: MonthKey
+    onDeleteLine: (expense: ActualExpense) => void
     onSubmit: (
       item: BudgetItem,
       value: { amountVnd: number; spentMonth: MonthKey; note: null | string },
     ) => Promise<void>
+    snapshotMonth: MonthKey
   },
   ref: ForwardedRef<ActualExpenseDialogHandle>,
 ) {
@@ -61,23 +84,36 @@ function ActualExpenseDialogImpl(
     },
   })
 
-  useImperativeHandle(ref, () => ({
-    close() {
-      setOpen(false)
-      setItem(null)
-    },
-    openForItem(next) {
-      setItem(next)
-      form.reset({
-        amountVnd: 0,
-        note: '',
-        spentMonth: isMonthInRange(defaultMonth, next.validFrom, next.validTo) ? defaultMonth : next.validFrom,
-      })
-      setOpen(true)
-    },
-  }))
+  useImperativeHandle(
+    ref,
+    () => ({
+      close() {
+        setOpen(false)
+        setItem(null)
+      },
+      openForItem(next) {
+        const nowMonth = currentMonthKey()
+        const initialMonth = isMonthInRange(nowMonth, next.validFrom, next.validTo) ? nowMonth : next.validFrom
+
+        const hasLinesForMonth = actuals.some(
+          (a) => a.budgetItemId === next.id && compareMonthKeys(a.spentMonth, initialMonth) === 0,
+        )
+
+        const defaultAmountForFirstLines = hasLinesForMonth ? 0 : next.amountVnd
+
+        setItem(next)
+        form.setFieldValue('spentMonth', initialMonth)
+        form.setFieldValue('note', '')
+        form.setFieldValue('amountVnd', defaultAmountForFirstLines)
+        setOpen(true)
+      },
+    }),
+    [actuals, form],
+  )
 
   if (!item) return null
+
+  const deleteLocked = isPeriodClosedBefore(item.validTo, snapshotMonth)
 
   return (
     <Dialog
@@ -87,7 +123,7 @@ function ActualExpenseDialogImpl(
         if (!v) setItem(null)
       }}
     >
-      <DialogContent>
+      <DialogContent className="max-h-[min(90vh,46rem)] overflow-y-auto sm:max-w-lg">
         <ModalHeading
           title={t.budget.addActual}
           description={
@@ -106,6 +142,63 @@ function ActualExpenseDialogImpl(
             void form.handleSubmit()
           }}
         >
+          <form.Subscribe selector={(s) => s.values.spentMonth}>
+            {(spentMonth) => {
+              const rows = [...actuals]
+                .filter((a) => a.budgetItemId === item.id && compareMonthKeys(a.spentMonth, spentMonth) === 0)
+                .sort((a, b) => {
+                  const t = a.createdAt - b.createdAt
+                  if (t !== 0) return t
+                  return a.amountVnd - b.amountVnd
+                })
+
+              return (
+                <div className="space-y-2 rounded-md border p-3">
+                  <div className="text-sm font-medium">{t.budget.actualLinesHeading}</div>
+                  {rows.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">{t.budget.actualLinesEmpty}</p>
+                  ) : (
+                    <div className="overflow-x-auto -mx-1 px-1">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="whitespace-nowrap">{t.budget.amount}</TableHead>
+                            <TableHead>{t.common.note}</TableHead>
+                            <TableHead className="w-12" />
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {rows.map((row) => (
+                            <TableRow key={row.id}>
+                              <TableCell className="tabular-nums whitespace-nowrap text-sm font-medium">
+                                {formatVnd(row.amountVnd)}
+                              </TableCell>
+                              <TableCell className="max-w-[10rem] truncate text-sm">
+                                {row.note?.trim() || '—'}
+                              </TableCell>
+                              <TableCell className="text-right whitespace-nowrap p-1 align-middle">
+                                <ActionTooltipButton
+                                  aria-label={t.common.delete}
+                                  variant="ghost"
+                                  className="h-8 w-8 shrink-0 p-0"
+                                  disabled={deleteLocked}
+                                  label={deleteLocked ? t.budget.periodEndedLocked : t.common.delete}
+                                  onClick={() => onDeleteLine(row)}
+                                >
+                                  <Trash2 className="h-4 w-4 text-destructive" />
+                                </ActionTooltipButton>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  )}
+                </div>
+              )
+            }}
+          </form.Subscribe>
+
           <form.Field name="amountVnd">
             {(field) => {
               const err = firstFieldErrorMessage(field.state.meta)
@@ -139,7 +232,7 @@ function ActualExpenseDialogImpl(
                     invalid={!!err}
                     value={field.state.value}
                     minMonth={item.validFrom}
-                    maxMonth={item.validTo ?? undefined}
+                    maxMonth={item.validFrom}
                     onChange={(v) => field.handleChange(v)}
                   />
                   <FieldError id={errId}>{err}</FieldError>
