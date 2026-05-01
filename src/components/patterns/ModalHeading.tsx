@@ -18,7 +18,7 @@ export function ModalHeading({ className, description, title }: ModalHeadingProp
         <DialogDescription asChild>
           <div
             className={cn(
-              'space-y-2 text-pretty pr-2 text-sm text-muted-foreground',
+              'space-y-2 text-pretty pr-2 text-sm text-muted-foreground text-left',
               '[&_strong]:font-medium [&_strong]:text-foreground/90',
             )}
           >
