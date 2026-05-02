@@ -126,9 +126,9 @@ export function StatsTable({
                       </TableRow>
                       {hasBreakdownLines ? (
                         <StatsMonthDetailRows
-                          actualMonthTotalVnd={s.actualSpentVnd}
                           formatVnd={formatVnd}
                           plannedLines={bd.plannedLines}
+                          actualLines={bd.actualLines}
                         />
                       ) : null}
                     </Fragment>

@@ -10,15 +10,15 @@ function HeadingBlock({ showAction }: { showAction?: boolean }) {
     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
       <div className="min-w-0 flex-1 space-y-3">
         <div className="flex items-center gap-2.5">
-          <Skeleton className="h-9 w-9 shrink-0 rounded-lg bg-slate-200" />
-          <Skeleton className="h-8 w-[min(100%,17rem)] max-w-full bg-slate-200" />
+          <Skeleton className="h-9 w-9 shrink-0 rounded-lg bg-slate-200 dark:bg-slate-800" />
+          <Skeleton className="h-8 w-[min(100%,17rem)] max-w-full bg-slate-200 dark:bg-slate-800" />
         </div>
         <div className="max-w-2xl space-y-2">
-          <Skeleton className="h-4 w-full bg-slate-200" />
-          <Skeleton className="h-4 w-[88%] bg-slate-200" />
+          <Skeleton className="h-4 w-full bg-slate-200 dark:bg-slate-800" />
+          <Skeleton className="h-4 w-[88%] bg-slate-200 dark:bg-slate-800" />
         </div>
       </div>
-      {showAction ? <Skeleton className="h-10 w-[7.5rem] shrink-0 rounded-md bg-slate-200" /> : null}
+      {showAction ? <Skeleton className="h-10 w-[7.5rem] shrink-0 rounded-md bg-slate-200 dark:bg-slate-800" /> : null}
     </div>
   )
 }
@@ -62,16 +62,16 @@ function HomeHeadingSkeleton() {
           <span className="flex min-w-0 items-center gap-2">
             <span className="min-w-0 flex-1">
               <span className="inline-flex min-w-0 items-center gap-2.5">
-                <Skeleton className="h-7 w-7 shrink-0 rounded-md bg-slate-200" />
-                <Skeleton className="h-8 w-[min(100%,14rem)] max-w-full bg-slate-200" />
+                <Skeleton className="h-7 w-7 shrink-0 rounded-md bg-slate-200 dark:bg-slate-800" />
+                <Skeleton className="h-8 w-[min(100%,14rem)] max-w-full bg-slate-200 dark:bg-slate-800" />
               </span>
             </span>
           </span>
         </h1>
         <div className="mt-1 space-y-2 text-pretty text-base text-muted-foreground">
-          <Skeleton className="h-6 w-full max-w-2xl bg-slate-200" />
+          <Skeleton className="h-6 w-full max-w-2xl bg-slate-200 dark:bg-slate-800" />
           <p className="text-sm text-muted-foreground">
-            <Skeleton className="h-4 w-full max-w-xl bg-slate-200" />
+            <Skeleton className="h-4 w-full max-w-xl bg-slate-200 dark:bg-slate-800" />
           </p>
         </div>
       </div>
@@ -140,10 +140,10 @@ function HomeMonthSectionSkeleton({ monthTitleWidth }: { monthTitleWidth: string
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
         <div className="inline-flex items-center gap-2">
-          <Skeleton className="h-4 w-4 shrink-0 rounded-sm bg-slate-200" />
-          <Skeleton className={cn('h-6 shrink-0 bg-slate-200', monthTitleWidth)} />
+          <Skeleton className="h-4 w-4 shrink-0 rounded-sm bg-slate-200 dark:bg-slate-800" />
+          <Skeleton className={cn('h-6 shrink-0 bg-slate-200 dark:bg-slate-800', monthTitleWidth)} />
         </div>
-        <Skeleton className="h-8 min-w-[4.75rem] shrink-0 rounded-full bg-slate-200" />
+        <Skeleton className="h-8 min-w-[4.75rem] shrink-0 rounded-full bg-slate-200 dark:bg-slate-800" />
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {HOME_SUMMARY_TILE_FOOTERS.map((footer, i) => (
@@ -158,10 +158,10 @@ function StatsExtraBlock() {
   return (
     <>
       <div className="grid gap-4 md:grid-cols-2">
-        <Skeleton className="h-[148px] w-full rounded-lg bg-slate-200" />
-        <Skeleton className="h-[148px] w-full rounded-lg bg-slate-200" />
+        <Skeleton className="h-[148px] w-full rounded-lg bg-slate-200 dark:bg-slate-800" />
+        <Skeleton className="h-[148px] w-full rounded-lg bg-slate-200 dark:bg-slate-800" />
       </div>
-      <Skeleton className="h-10 w-full rounded-md bg-slate-200" />
+      <Skeleton className="h-10 w-full rounded-md bg-slate-200 dark:bg-slate-800" />
       <TablePanelSkeleton rows={5} />
     </>
   )
