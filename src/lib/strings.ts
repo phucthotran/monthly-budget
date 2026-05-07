@@ -18,6 +18,7 @@ export const t = {
     addActualContext: 'ghi số tiền đã chi cho khoản này',
     amount: 'Số tiền (VND)',
     category: 'Phân loại',
+    createdAt: 'Ngày ghi',
     delete: 'Xóa',
     deleteAction: 'Xóa khoản dự chi',
     deleteDialogP2:

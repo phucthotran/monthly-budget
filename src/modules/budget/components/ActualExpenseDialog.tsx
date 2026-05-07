@@ -22,6 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui'
+import { formatDateLong } from '@/lib/datetime'
 import { firstFieldErrorMessage } from '@/lib/form/fieldMeta'
 import { compareMonthKeys, currentMonthKey, isMonthInRange, isPeriodClosedBefore } from '@/lib/month'
 import { t } from '@/lib/strings'
@@ -75,7 +76,6 @@ function ActualExpenseDialogImpl(
         spentMonth,
       })
 
-      setOpen(false)
       setItem(null)
       form.reset()
     },
@@ -163,7 +163,8 @@ function ActualExpenseDialogImpl(
                         <TableHeader>
                           <TableRow>
                             <TableHead className="whitespace-nowrap">{t.budget.amount}</TableHead>
-                            <TableHead>{t.common.note}</TableHead>
+                            <TableHead className="whitespace-nowrap">{t.common.note}</TableHead>
+                            <TableHead className="whitespace-nowrap">{t.budget.createdAt}</TableHead>
                             <TableHead className="w-12" />
                           </TableRow>
                         </TableHeader>
@@ -176,6 +177,7 @@ function ActualExpenseDialogImpl(
                               <TableCell className="max-w-[10rem] truncate text-sm">
                                 {row.note?.trim() || '—'}
                               </TableCell>
+                              <TableCell className="text-sm">{formatDateLong(row.createdAt)}</TableCell>
                               <TableCell className="text-right whitespace-nowrap p-1 align-middle">
                                 <ActionTooltipButton
                                   aria-label={t.common.delete}
