@@ -38,6 +38,7 @@ export const t = {
     periodEndedLocked: 'Kỳ đã kết thúc — không sửa, xóa hay ghi chi thực tế.',
     remaining: 'Còn lại (VND)',
     remainingHint: 'Số tiền còn lại sau khi dự chi trong tháng đang xem.',
+    saveActualAction: 'Thêm chi thực tế',
     termRemaining: 'Còn lại',
     title: 'Dự chi',
     titleLabel: 'Tên khoản',

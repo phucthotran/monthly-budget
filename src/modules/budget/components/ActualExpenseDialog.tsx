@@ -1,7 +1,7 @@
 import type { ActualExpense, BudgetItem, MonthKey } from '@/lib/types'
 
 import { useForm } from '@tanstack/react-form'
-import { Trash2 } from 'lucide-react'
+import { Loader2, Trash2 } from 'lucide-react'
 import { type ForwardedRef, forwardRef, type ReactNode, useId, useImperativeHandle, useState } from 'react'
 
 import { MonthYearPicker, VndAmountInput } from '@/components/inputs'
@@ -10,7 +10,6 @@ import {
   Button,
   Dialog,
   DialogContent,
-  DialogFooter,
   Field,
   FieldError,
   FieldLabel,
@@ -76,7 +75,6 @@ function ActualExpenseDialogImpl(
         spentMonth,
       })
 
-      setItem(null)
       form.reset()
     },
     validators: {
@@ -123,7 +121,7 @@ function ActualExpenseDialogImpl(
         if (!v) setItem(null)
       }}
     >
-      <DialogContent className="max-h-[min(90vh,46rem)] overflow-y-auto sm:max-w-lg">
+      <DialogContent className="max-h-[min(90vh,46rem)] overflow-y-auto sm:max-w-3xl">
         <ModalHeading
           title={t.budget.addActual}
           description={
@@ -158,7 +156,7 @@ function ActualExpenseDialogImpl(
                   {rows.length === 0 ? (
                     <p className="text-sm text-muted-foreground">{t.budget.actualLinesEmpty}</p>
                   ) : (
-                    <div className="overflow-x-auto -mx-1 px-1">
+                    <div className="overflow-x-auto -mx-1 px-1 max-h-[12rem] overflow-y-auto">
                       <Table>
                         <TableHeader>
                           <TableRow>
@@ -201,75 +199,74 @@ function ActualExpenseDialogImpl(
             }}
           </form.Subscribe>
 
-          <form.Field name="amountVnd">
-            {(field) => {
-              const err = firstFieldErrorMessage(field.state.meta)
-              const errId = `${formId}-amount-err`
-              return (
-                <Field invalid={!!err}>
-                  <FieldLabel htmlFor={`${formId}-amount`}>{t.budget.amount}</FieldLabel>
-                  <VndAmountInput
-                    aria-describedby={err ? errId : undefined}
-                    id={`${formId}-amount`}
-                    invalid={!!err}
-                    value={field.state.value}
-                    onValueChange={(n) => field.handleChange(n)}
-                  />
-                  <FieldError id={errId}>{err}</FieldError>
-                </Field>
-              )
-            }}
-          </form.Field>
+          <div className="space-y-2 rounded-md border p-3 border-border/60 bg-muted/30 shadow-sm dark:bg-muted/50 dark:border-border/80">
+            <form.Field name="amountVnd">
+              {(field) => {
+                const err = firstFieldErrorMessage(field.state.meta)
+                const errId = `${formId}-amount-err`
+                return (
+                  <Field invalid={!!err}>
+                    <FieldLabel htmlFor={`${formId}-amount`}>{t.budget.amount}</FieldLabel>
+                    <VndAmountInput
+                      aria-describedby={err ? errId : undefined}
+                      id={`${formId}-amount`}
+                      invalid={!!err}
+                      value={field.state.value}
+                      onValueChange={(n) => field.handleChange(n)}
+                    />
+                    <FieldError id={errId}>{err}</FieldError>
+                  </Field>
+                )
+              }}
+            </form.Field>
 
-          <form.Field name="spentMonth">
-            {(field) => {
-              const err = firstFieldErrorMessage(field.state.meta)
-              const errId = `${formId}-spentMonth-err`
-              return (
-                <Field invalid={!!err}>
-                  <FormLabelWithHint hint={<p className="text-pretty">{t.budget.actualPeriodHint}</p>}>
-                    {t.common.month}
-                  </FormLabelWithHint>
-                  <MonthYearPicker
-                    invalid={!!err}
-                    value={field.state.value}
-                    minMonth={item.validFrom}
-                    maxMonth={item.validFrom}
-                    onChange={(v) => field.handleChange(v)}
-                  />
-                  <FieldError id={errId}>{err}</FieldError>
-                </Field>
-              )
-            }}
-          </form.Field>
+            <form.Field name="spentMonth">
+              {(field) => {
+                const err = firstFieldErrorMessage(field.state.meta)
+                const errId = `${formId}-spentMonth-err`
+                return (
+                  <Field invalid={!!err}>
+                    <FormLabelWithHint hint={<p className="text-pretty">{t.budget.actualPeriodHint}</p>}>
+                      {t.common.month}
+                    </FormLabelWithHint>
+                    <MonthYearPicker
+                      invalid={!!err}
+                      value={field.state.value}
+                      minMonth={item.validFrom}
+                      maxMonth={item.validFrom}
+                      onChange={(v) => field.handleChange(v)}
+                    />
+                    <FieldError id={errId}>{err}</FieldError>
+                  </Field>
+                )
+              }}
+            </form.Field>
 
-          <form.Field name="note">
-            {(field) => {
-              const err = firstFieldErrorMessage(field.state.meta)
-              const errId = `${formId}-note-err`
-              return (
-                <Field invalid={!!err}>
-                  <FieldLabel htmlFor={`${formId}-note`}>{t.common.note}</FieldLabel>
-                  <Input
-                    aria-describedby={err ? errId : undefined}
-                    aria-invalid={!!err}
-                    id={`${formId}-note`}
-                    value={field.state.value}
-                    maxLength={45}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                  <FieldError id={errId}>{err}</FieldError>
-                </Field>
-              )
-            }}
-          </form.Field>
+            <form.Field name="note">
+              {(field) => {
+                const err = firstFieldErrorMessage(field.state.meta)
+                const errId = `${formId}-note-err`
+                return (
+                  <Field invalid={!!err}>
+                    <FieldLabel htmlFor={`${formId}-note`}>{t.common.note}</FieldLabel>
+                    <Input
+                      aria-describedby={err ? errId : undefined}
+                      aria-invalid={!!err}
+                      id={`${formId}-note`}
+                      value={field.state.value}
+                      maxLength={45}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                    <FieldError id={errId}>{err}</FieldError>
+                  </Field>
+                )
+              }}
+            </form.Field>
 
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              {t.common.cancel}
+            <Button type="submit" disabled={form.state.isSubmitting} className="w-full">
+              {form.state.isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : t.budget.saveActualAction}
             </Button>
-            <Button type="submit">{t.common.save}</Button>
-          </DialogFooter>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

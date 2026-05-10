@@ -38,7 +38,7 @@ function BreakdownNestedTable({ formatVnd, rows }: { formatVnd: (n: number) => s
               <td className="p-2 text-right align-middle tabular-nums">{formatVnd(plannedVnd)}</td>
               <td className="align-middle whitespace-nowrap p-2 text-right tabular-nums">{formatVnd(actualVnd)}</td>
               <td className="align-middle whitespace-nowrap p-2 text-right tabular-nums">
-                {formatVnd(Math.abs(plannedVnd - actualVnd))}
+                {formatVnd(plannedVnd - actualVnd)}
               </td>
             </tr>
           )
