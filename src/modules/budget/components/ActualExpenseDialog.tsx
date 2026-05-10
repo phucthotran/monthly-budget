@@ -121,7 +121,7 @@ function ActualExpenseDialogImpl(
         if (!v) setItem(null)
       }}
     >
-      <DialogContent className="max-h-[min(90vh,46rem)] overflow-y-auto sm:max-w-3xl">
+      <DialogContent className="max-h-[min(90vh,46rem)] overflow-y-auto sm:max-w-lg md:max-w-3xl max-w-full">
         <ModalHeading
           title={t.budget.addActual}
           description={
@@ -134,7 +134,7 @@ function ActualExpenseDialogImpl(
           }
         />
         <form
-          className="space-y-4"
+          className="space-y-4 overflow-hidden"
           onSubmit={(e) => {
             e.preventDefault()
             void form.handleSubmit()
@@ -156,7 +156,7 @@ function ActualExpenseDialogImpl(
                   {rows.length === 0 ? (
                     <p className="text-sm text-muted-foreground">{t.budget.actualLinesEmpty}</p>
                   ) : (
-                    <div className="overflow-x-auto -mx-1 px-1 max-h-[12rem] overflow-y-auto">
+                    <div className="overflow-x-auto -mx-1 px-1">
                       <Table>
                         <TableHeader>
                           <TableRow>
