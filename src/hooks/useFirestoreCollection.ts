@@ -110,7 +110,7 @@ export function useFirestoreCollection<T extends { id: string }>(
     enabled,
     initialData: [] as T[],
     placeholderData: (previousData) => previousData,
-    queryFn: async () => [] as T[],
+    queryFn: async () => qc.getQueryData<T[]>(queryKey) ?? ([] as T[]),
     queryKey,
     staleTime: Infinity,
   })

@@ -15,7 +15,7 @@ import { incomeDeleteDialogP1, t } from '@/lib/strings'
 
 import { IncomeDialog, type IncomeDialogHandle } from './components/IncomeDialog'
 import { IncomeTable } from './components/IncomeTable'
-import { incomeMutations } from './hooks/useIncomeMutations'
+import { useIncomeMutations } from './hooks/useIncomeMutations'
 
 export function IncomePage() {
   const { user } = useAuthContext()
@@ -28,7 +28,7 @@ export function IncomePage() {
   const dataLoading = !incomeReady
 
   const dialogDefaultMonth = currentMonthKey()
-  const mutations = uid ? incomeMutations(uid) : null
+  const mutations = useIncomeMutations(uid)
 
   const dialogRef = useRef<IncomeDialogHandle>(null)
 

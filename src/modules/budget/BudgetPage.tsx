@@ -18,7 +18,7 @@ import { ActualExpenseDialog, type ActualExpenseDialogHandle } from './component
 import { BudgetItemDialog, type BudgetItemDialogHandle } from './components/BudgetItemDialog'
 import { BudgetItemsTable } from './components/BudgetItemsTable'
 import { useBudgetDerived } from './hooks/useBudgetDerived'
-import { budgetMutations } from './hooks/useBudgetMutations'
+import { useBudgetMutations } from './hooks/useBudgetMutations'
 
 export function BudgetPage() {
   const { user } = useAuthContext()
@@ -37,7 +37,7 @@ export function BudgetPage() {
 
   const { actualMap } = useBudgetDerived(actuals)
 
-  const mutations = uid ? budgetMutations(uid) : null
+  const mutations = useBudgetMutations(uid)
 
   const budgetDialogRef = useRef<BudgetItemDialogHandle>(null)
   const actualDialogRef = useRef<ActualExpenseDialogHandle>(null)

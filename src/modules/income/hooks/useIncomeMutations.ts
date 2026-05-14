@@ -1,8 +1,11 @@
 import type { IncomePeriod, MonthKey } from '@/lib/types'
 
+import { useQueryClient } from '@tanstack/react-query'
 import { addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore'
+import { useMemo } from 'react'
 
 import { getFirestoreDb } from '@/lib/firebase'
+import { queryKeys } from '@/lib/queryKeys'
 
 export type IncomeInput = {
   label: string
@@ -11,32 +14,41 @@ export type IncomeInput = {
   validTo: MonthKey | null
 }
 
-export function incomeMutations(uid: string) {
-  const db = getFirestoreDb()
+export function useIncomeMutations(uid: string | undefined) {
+  const qc = useQueryClient()
 
-  async function upsertIncome(editing: IncomePeriod | null, input: IncomeInput) {
-    const payload = {
-      amountVnd: input.amountVnd,
-      label: input.label.trim(),
-      updatedAt: Date.now(),
-      validFrom: input.validFrom,
-      validTo: input.validTo,
+  return useMemo(() => {
+    if (uid === undefined) return null
+
+    const db = getFirestoreDb()
+    const userId = uid
+
+    async function upsertIncome(editing: IncomePeriod | null, input: IncomeInput) {
+      const payload = {
+        amountVnd: input.amountVnd,
+        label: input.label.trim(),
+        updatedAt: Date.now(),
+        validFrom: input.validFrom,
+        validTo: input.validTo,
+      }
+
+      if (editing) {
+        await updateDoc(doc(db, 'users', userId, 'incomePeriods', editing.id), payload)
+      } else {
+        await addDoc(collection(db, 'users', userId, 'incomePeriods'), {
+          ...payload,
+          createdAt: Date.now(),
+        })
+      }
+
+      await qc.invalidateQueries({ queryKey: queryKeys.incomePeriods(userId) })
     }
 
-    if (editing) {
-      await updateDoc(doc(db, 'users', uid, 'incomePeriods', editing.id), payload)
-      return
+    async function deleteIncome(id: string) {
+      await deleteDoc(doc(db, 'users', userId, 'incomePeriods', id))
+      await qc.invalidateQueries({ queryKey: queryKeys.incomePeriods(userId) })
     }
 
-    await addDoc(collection(db, 'users', uid, 'incomePeriods'), {
-      ...payload,
-      createdAt: Date.now(),
-    })
-  }
-
-  async function deleteIncome(id: string) {
-    await deleteDoc(doc(db, 'users', uid, 'incomePeriods', id))
-  }
-
-  return { deleteIncome, upsertIncome }
+    return { deleteIncome, upsertIncome }
+  }, [qc, uid])
 }

@@ -10,7 +10,7 @@ import { t } from '@/lib/strings'
 
 import { CategoriesTable } from './components/CategoriesTable'
 import { CategoryDialog } from './components/CategoryDialog'
-import { categoryMutations } from './hooks/useCategoryMutations'
+import { useCategoryMutations } from './hooks/useCategoryMutations'
 
 export function SettingsPage() {
   const { user } = useAuthContext()
@@ -20,7 +20,7 @@ export function SettingsPage() {
 
   const [open, setOpen] = useState(false)
 
-  const mutations = uid ? categoryMutations(uid) : null
+  const mutations = useCategoryMutations(uid)
 
   return (
     <RequireAuth>
@@ -58,9 +58,9 @@ export function SettingsPage() {
           <Panel title={<></>}>
             <CategoriesTable
               categories={categories}
-              onToggleArchive={(c) => {
+              onToggleArchive={async (c) => {
                 if (!mutations) return
-                void mutations.toggleArchive(c)
+                await mutations.toggleArchive(c)
               }}
             />
             {categories.length === 0 ? (
