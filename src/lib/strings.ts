@@ -5,9 +5,6 @@ export const t = {
     googleSignIn: 'Tiếp tục với Google',
   },
   budget: {
-    actualAmountQuickPickHint:
-      'Chạm một mức để điền nhanh. Gợi ý thay đổi theo số đang nhập (ví dụ 25 → 25.000, 250.000…).',
-    actualAmountQuickPickLabel: 'Gợi ý nhập nhanh',
     actualAmountQuickPickRemainingTitle: 'Phần còn lại chưa chi trong tháng đã chọn (dự chi trừ tổng đã ghi).',
     actualExpenseLineDeleteDialogTitle: 'Xóa dòng chi thực tế?',
     actualLinesEmpty: 'Chưa có dòng chi thực tế trong tháng đã chọn.',
@@ -52,6 +49,8 @@ export const t = {
     validToHint: 'Có thể trùng tháng với từ tháng hoặc chọn tháng sau.',
   },
   common: {
+    amountQuickPickHint: 'Chạm một mức để điền nhanh. Gợi ý thay đổi theo số đang nhập (ví dụ 25 → 25.000, 250.000…).',
+    amountQuickPickLabel: 'Gợi ý nhập nhanh',
     back: 'Quay lại',
     cancel: 'Hủy',
     close: 'Đóng',

@@ -3,7 +3,7 @@ import type { BudgetItem, Category, MonthKey } from '@/lib/types'
 import { useForm } from '@tanstack/react-form'
 import { type ForwardedRef, forwardRef, useId, useImperativeHandle, useMemo, useState } from 'react'
 
-import { MonthYearPicker, VndAmountInput } from '@/components/inputs'
+import { MonthYearPicker, VndAmountInput, VndAmountQuickPick } from '@/components/inputs'
 import { FormLabelWithHint, ModalHeading } from '@/components/patterns'
 import {
   Button,
@@ -157,17 +157,27 @@ function BudgetItemDialogImpl(
             {(field) => {
               const err = firstFieldErrorMessage(field.state.meta)
               const errId = `${formId}-amount-err`
+              const quickPickDescId = `${formId}-amount-quick`
+              const describedBy = [err ? errId : null, quickPickDescId].filter(Boolean).join(' ') || undefined
               return (
                 <Field invalid={!!err}>
                   <FieldLabel htmlFor={`${formId}-amount`}>{t.budget.amount}</FieldLabel>
                   <VndAmountInput
-                    aria-describedby={err ? errId : undefined}
+                    aria-describedby={describedBy}
                     id={`${formId}-amount`}
                     invalid={!!err}
                     value={field.state.value}
                     onValueChange={(n) => field.handleChange(n)}
                   />
                   <FieldError id={errId}>{err}</FieldError>
+                  <div className="pt-2" id={quickPickDescId}>
+                    <p className="text-xs text-muted-foreground mb-1.5">{t.common.amountQuickPickHint}</p>
+                    <VndAmountQuickPick
+                      currentAmountVnd={field.state.value}
+                      plannedHintVnd={editing?.amountVnd}
+                      onPick={(n) => field.handleChange(n)}
+                    />
+                  </div>
                 </Field>
               )
             }}

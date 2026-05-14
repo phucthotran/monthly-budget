@@ -220,7 +220,7 @@ function ActualExpenseDialogImpl(
                     />
                     <FieldError id={errId}>{err}</FieldError>
                     <div className="pt-2" id={quickPickDescId}>
-                      <p className="text-xs text-muted-foreground mb-1.5">{t.budget.actualAmountQuickPickHint}</p>
+                      <p className="text-xs text-muted-foreground mb-1.5">{t.common.amountQuickPickHint}</p>
                       <form.Subscribe selector={(s) => s.values.spentMonth}>
                         {(spentMonth) => (
                           <ActualAmountQuickPick
