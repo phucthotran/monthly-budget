@@ -40,6 +40,7 @@ function BreakdownNestedTable({ formatVnd, rows }: { formatVnd: (n: number) => s
               <td className="align-middle whitespace-nowrap p-2 text-right tabular-nums">
                 {formatVnd(plannedVnd - actualVnd)}
               </td>
+              <td className="align-middle whitespace-nowrap p-2 text-right tabular-nums">{'\u200b'}</td>
             </tr>
           )
         })}
@@ -71,7 +72,7 @@ export function StatsMonthDetailRows({
 
   return (
     <TableRow className="hover:bg-muted/30">
-      <TableCell className="p-0" colSpan={5}>
+      <TableCell className="p-0" colSpan={6}>
         <div className="border-b border-border bg-muted/30">
           {!needsToggle ? (
             <div>

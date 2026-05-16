@@ -11,8 +11,10 @@ export interface MonthSnapshot {
   plannedSurplusVnd: number
   /** Income minus actual spend (actual surplus). */
   actualSurplusVnd: number
-  /** Cumulative planned savings from the start of the range. */
+  /** Cumulative planned surplus from the start of the range. */
   plannedSavingsToDateVnd: number
+  /** Cumulative actual surplus from the start of the range. */
+  actualSavingsToDateVnd: number
 }
 
 export function buildMonthSnapshots(
@@ -23,6 +25,7 @@ export function buildMonthSnapshots(
 ): MonthSnapshot[] {
   const actualByMonth = buildActualByMonth(expenses)
   let plannedToDate = 0
+  let actualToDate = 0
 
   return months.map((month) => {
     const incomeVnd = incomeForMonth(month, income)
@@ -33,8 +36,10 @@ export function buildMonthSnapshots(
     const actualSurplusVnd = incomeVnd - actualSpentVnd
 
     plannedToDate += plannedSurplusVnd
+    actualToDate += actualSurplusVnd
 
     return {
+      actualSavingsToDateVnd: actualToDate,
       actualSpentVnd,
       actualSurplusVnd,
       incomeVnd,

@@ -5,12 +5,13 @@
 export function StatsTableColgroup() {
   return (
     <colgroup>
-      {/* Tháng | Thu nhập | Dự chi | Thực chi | Dư — sum 100% */}
+      {/* Tháng | Thu nhập | Dự chi | Thực chi | Dư kế hoạch | Dư thực — sum 100% */}
+      <col style={{ width: '15%' }} />
+      <col style={{ width: '14%' }} />
+      <col style={{ width: '16%' }} />
+      <col style={{ width: '16%' }} />
+      <col style={{ width: '20%' }} />
       <col style={{ width: '19%' }} />
-      <col style={{ width: '17%' }} />
-      <col style={{ width: '20%' }} />
-      <col style={{ width: '20%' }} />
-      <col style={{ width: '24%' }} />
     </colgroup>
   )
 }

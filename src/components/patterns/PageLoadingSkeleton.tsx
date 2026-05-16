@@ -124,8 +124,18 @@ function HomeMetricTileSkeleton({ footer }: { footer: HomeMetricTileFooter }) {
   )
 }
 
-const HOME_SUMMARY_TILE_FOOTERS: readonly HomeMetricTileFooter[] = [
+/** Order matches `HomeSummaryTiles`: income, dự chi, dư dự tính, tích lũy dự, thực chi, dư thực tế, tích lũy thực tế. */
+const HOME_SUMMARY_TILE_FOOTERS_FULL: readonly HomeMetricTileFooter[] = [
   'breakdown',
+  'breakdown',
+  'compact',
+  'savings',
+  'breakdown',
+  'compact',
+  'savings',
+]
+
+const HOME_SUMMARY_TILE_FOOTERS_PLANNED_ONLY: readonly HomeMetricTileFooter[] = [
   'breakdown',
   'breakdown',
   'compact',
@@ -135,7 +145,13 @@ const HOME_SUMMARY_TILE_FOOTERS: readonly HomeMetricTileFooter[] = [
 /**
  * Matches HomePage `space-y-4` month block: CalendarDays + heading | pill (`formatMonthLabel`), then HomeSummaryTiles.
  */
-function HomeMonthSectionSkeleton({ monthTitleWidth }: { monthTitleWidth: string }) {
+function HomeMonthSectionSkeleton({
+  monthTitleWidth,
+  tiles,
+}: {
+  monthTitleWidth: string
+  tiles: readonly HomeMetricTileFooter[]
+}) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
@@ -145,10 +161,18 @@ function HomeMonthSectionSkeleton({ monthTitleWidth }: { monthTitleWidth: string
         </div>
         <Skeleton className="h-8 min-w-[4.75rem] shrink-0 rounded-full bg-slate-200 dark:bg-slate-800" />
       </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {HOME_SUMMARY_TILE_FOOTERS.map((footer, i) => (
-          <HomeMetricTileSkeleton key={i} footer={footer} />
-        ))}
+      <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {tiles.map((footer, i) =>
+          i === 0 ? (
+            <div key={i} className="min-w-0 lg:col-span-3">
+              <HomeMetricTileSkeleton footer={footer} />
+            </div>
+          ) : (
+            <div key={i} className="min-w-0">
+              <HomeMetricTileSkeleton footer={footer} />
+            </div>
+          ),
+        )}
       </div>
     </div>
   )
@@ -183,8 +207,8 @@ export function PageLoadingSkeleton({
       {variant === 'home' ? (
         <>
           <HomeHeadingSkeleton />
-          <HomeMonthSectionSkeleton monthTitleWidth="w-[6.5rem]" />
-          <HomeMonthSectionSkeleton monthTitleWidth="w-[5.75rem]" />
+          <HomeMonthSectionSkeleton monthTitleWidth="w-[6.5rem]" tiles={HOME_SUMMARY_TILE_FOOTERS_FULL} />
+          <HomeMonthSectionSkeleton monthTitleWidth="w-[5.75rem]" tiles={HOME_SUMMARY_TILE_FOOTERS_PLANNED_ONLY} />
         </>
       ) : (
         <HeadingBlock showAction={showHeadingAction} />

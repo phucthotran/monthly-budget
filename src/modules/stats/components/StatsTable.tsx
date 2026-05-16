@@ -68,7 +68,7 @@ export function StatsTable({
   }, [actuals, budget, income, rows])
   return (
     <div className="-mx-4 overflow-x-auto px-4">
-      <Table className="min-w-[760px] w-full table-fixed">
+      <Table className="min-w-[920px] w-full table-fixed">
         <StatsTableColgroup />
         <TableHeader>
           <TableRow>
@@ -89,12 +89,18 @@ export function StatsTable({
               label={t.stats.plannedSurplus}
               content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.stats.plannedSurplusColumnHint}</p>}
             />
+            <HeadWithHint
+              label={t.stats.actualMonthlySurplus}
+              content={
+                <p className="max-w-xs text-pretty text-sm leading-snug">{t.stats.actualMonthlySurplusColumnHint}</p>
+              }
+            />
           </TableRow>
         </TableHeader>
         {byYear.map(({ rows: yearRows, year }) => (
           <TableBody key={year}>
             <StatsYearHeaderRow
-              colSpan={5}
+              colSpan={6}
               isOpen={isYearOpen(year)}
               year={year}
               onToggle={() => {
@@ -122,6 +128,9 @@ export function StatsTable({
                         </TableCell>
                         <TableCell className="whitespace-nowrap text-right tabular-nums text-primary">
                           {formatVnd(s.plannedSurplusVnd)}
+                        </TableCell>
+                        <TableCell className="whitespace-nowrap text-right tabular-nums text-primary">
+                          {formatVnd(s.actualSurplusVnd)}
                         </TableCell>
                       </TableRow>
                       {hasBreakdownLines ? (

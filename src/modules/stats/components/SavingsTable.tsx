@@ -23,7 +23,7 @@ export function SavingsTable({
   const byYear = groupSnapshotsByYear(rows)
   return (
     <div className="-mx-4 overflow-x-auto px-4">
-      <Table className="min-w-[520px]">
+      <Table className="min-w-[880px]">
         <TableHeader>
           <TableRow>
             <TableHead className="whitespace-nowrap">{t.stats.month}</TableHead>
@@ -40,6 +40,19 @@ export function SavingsTable({
             </TableHead>
             <TableHead className="text-right whitespace-nowrap">
               <span className="inline-flex w-full items-center justify-end gap-0.5">
+                {t.stats.actualMonthlySurplus}
+                <InfoTooltip
+                  className="h-4 w-4 shrink-0"
+                  content={
+                    <p className="max-w-xs text-pretty text-sm leading-snug">
+                      {t.stats.actualMonthlySurplusColumnHint}
+                    </p>
+                  }
+                />
+              </span>
+            </TableHead>
+            <TableHead className="text-right whitespace-nowrap">
+              <span className="inline-flex w-full items-center justify-end gap-0.5">
                 {t.stats.savingsAccumulatedMonthly}
                 <InfoTooltip
                   className="h-4 w-4 shrink-0"
@@ -49,12 +62,23 @@ export function SavingsTable({
                 />
               </span>
             </TableHead>
+            <TableHead className="text-right whitespace-nowrap">
+              <span className="inline-flex w-full items-center justify-end gap-0.5">
+                {t.stats.actualAccumulatedMonthly}
+                <InfoTooltip
+                  className="h-4 w-4 shrink-0"
+                  content={
+                    <p className="max-w-xs text-pretty text-sm leading-snug">{t.stats.actualAccumulatedColumnHint}</p>
+                  }
+                />
+              </span>
+            </TableHead>
           </TableRow>
         </TableHeader>
         {byYear.map(({ rows: yearRows, year }) => (
           <TableBody key={year}>
             <StatsYearHeaderRow
-              colSpan={3}
+              colSpan={5}
               isOpen={isYearOpen(year)}
               year={year}
               onToggle={() => {
@@ -68,8 +92,14 @@ export function SavingsTable({
                     <TableCell className="whitespace-nowrap text-right tabular-nums text-primary">
                       {formatVnd(s.plannedSurplusVnd)}
                     </TableCell>
+                    <TableCell className="whitespace-nowrap text-right tabular-nums text-primary">
+                      {formatVnd(s.actualSurplusVnd)}
+                    </TableCell>
                     <TableCell className="whitespace-nowrap text-right tabular-nums">
                       {formatVnd(s.plannedSavingsToDateVnd)}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-right tabular-nums">
+                      {formatVnd(s.actualSavingsToDateVnd)}
                     </TableCell>
                   </TableRow>
                 ))

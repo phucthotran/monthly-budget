@@ -63,7 +63,9 @@ export function HomePage() {
               </div>
             </div>
             <HomeSummaryTiles
+              actualSavingsToDateLabel={cur ? formatVnd(cur.actualSavingsToDateVnd) : '—'}
               actualSpentLabel={cur ? formatVnd(cur.actualSpentVnd) : '—'}
+              actualSurplusLabel={cur ? formatVnd(cur.actualSurplusVnd) : '—'}
               breakdown={breakdownThisMonth}
               incomeLabel={cur ? formatVnd(cur.incomeVnd) : '—'}
               plannedBudgetLabel={cur ? formatVnd(cur.plannedVnd) : '—'}
@@ -83,22 +85,29 @@ export function HomePage() {
                   {formatMonthLabel(nextMonth)}
                 </div>
               </div>
+              <p className="text-sm text-muted-foreground text-pretty">{t.home.nextMonthPlannedOnlyNote}</p>
               <HomeSummaryTiles
-                actualSpentLabel={formatVnd(next.actualSpentVnd)}
                 breakdown={breakdownNextMonth!}
                 incomeLabel={formatVnd(next.incomeVnd)}
                 plannedBudgetLabel={formatVnd(next.plannedVnd)}
+                plannedOverviewOnly
                 plannedSavingsComposition={
                   cur
                     ? {
                         amountLabel: formatVnd(next.plannedSurplusVnd),
                         monthLabel: formatMonthLabel(nextMonth),
-                        priorAmountLabel: formatVnd(cur.plannedSavingsToDateVnd),
+                        priorAmountLabel: formatVnd(cur.actualSavingsToDateVnd),
+                        priorBasis: 'actual',
                         priorMonthLabel: formatMonthLabel(currentMonth),
                       }
                     : undefined
                 }
-                plannedSavingsToDateLabel={formatVnd(next.plannedSavingsToDateVnd)}
+                plannedSavingsHint={t.home.nextMonthPlannedAccumulationHint}
+                plannedSavingsToDateLabel={
+                  cur
+                    ? formatVnd(cur.actualSavingsToDateVnd + next.plannedSurplusVnd)
+                    : formatVnd(next.plannedSavingsToDateVnd)
+                }
                 plannedSurplusLabel={formatVnd(next.plannedSurplusVnd)}
               />
             </div>
