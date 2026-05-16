@@ -126,7 +126,7 @@ function BudgetItemDialogImpl(
           }
         />
         <form
-          className="space-y-4"
+          className="min-w-0 space-y-4"
           onSubmit={(e) => {
             e.preventDefault()
             void form.handleSubmit()
@@ -170,7 +170,7 @@ function BudgetItemDialogImpl(
                     onValueChange={(n) => field.handleChange(n)}
                   />
                   <FieldError id={errId}>{err}</FieldError>
-                  <div className="pt-2" id={quickPickDescId}>
+                  <div className="min-w-0 pt-2" id={quickPickDescId}>
                     <p className="text-xs text-muted-foreground mb-1.5">{t.common.amountQuickPickHint}</p>
                     <VndAmountQuickPick
                       currentAmountVnd={field.state.value}

@@ -136,7 +136,7 @@ function ActualExpenseDialogImpl(
           }
         />
         <form
-          className="space-y-4 overflow-hidden"
+          className="min-w-0 space-y-4 overflow-hidden"
           onSubmit={(e) => {
             e.preventDefault()
             void form.handleSubmit()
@@ -219,7 +219,7 @@ function ActualExpenseDialogImpl(
                       onValueChange={(n) => field.handleChange(n)}
                     />
                     <FieldError id={errId}>{err}</FieldError>
-                    <div className="pt-2" id={quickPickDescId}>
+                    <div className="min-w-0 pt-2" id={quickPickDescId}>
                       <p className="text-xs text-muted-foreground mb-1.5">{t.common.amountQuickPickHint}</p>
                       <form.Subscribe selector={(s) => s.values.spentMonth}>
                         {(spentMonth) => (
