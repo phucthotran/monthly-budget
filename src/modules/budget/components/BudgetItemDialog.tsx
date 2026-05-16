@@ -115,7 +115,7 @@ function BudgetItemDialogImpl(
         if (!v) setEditing(null)
       }}
     >
-      <DialogContent>
+      <DialogContent className="max-h-[min(90vh,46rem)] overflow-y-auto sm:max-w-lg md:max-w-3xl max-w-full">
         <ModalHeading
           title={editing ? t.budget.edit : t.budget.add}
           description={

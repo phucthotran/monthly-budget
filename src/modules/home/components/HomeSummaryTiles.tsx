@@ -3,7 +3,6 @@ import { Banknote, HandCoinsIcon, Landmark, PiggyBank, TrendingUp, Wallet } from
 import { MetricTile } from '@/components/patterns'
 import { type HomeMonthLineItem } from '@/lib/budget/homeMonthBreakdown'
 import { t } from '@/lib/strings'
-import { cn } from '@/lib/utils'
 
 import { AggregateTileContents } from './AggregateTileContents'
 import { BreakdownLines } from './BreakdownLines'
@@ -82,9 +81,9 @@ export function HomeSummaryTiles(props: HomeSummaryTilesProps) {
   const actualSurplusLabel = 'actualSurplusLabel' in props ? props.actualSurplusLabel : ''
 
   return (
-    <div className={cn('grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3')}>
+    <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <MetricTile
-        className={cn('min-w-0 lg:col-span-3')}
+        className="min-w-0 lg:col-span-3"
         title={
           <span className="inline-flex items-center gap-2">
             <Wallet className="size-5 text-muted-foreground shrink-0" />
