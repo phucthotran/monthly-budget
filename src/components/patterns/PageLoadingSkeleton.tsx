@@ -124,33 +124,52 @@ function HomeMetricTileSkeleton({ footer }: { footer: HomeMetricTileFooter }) {
   )
 }
 
-/** Order matches `HomeSummaryTiles`: income, dự chi, dư dự tính, tích lũy dự, thực chi, dư thực tế, tích lũy thực tế. */
-const HOME_SUMMARY_TILE_FOOTERS_FULL: readonly HomeMetricTileFooter[] = [
-  'breakdown',
-  'breakdown',
-  'compact',
-  'savings',
-  'breakdown',
-  'compact',
-  'savings',
-]
+/** Stacked surplus + savings-to-date column (planned or actual stacks in `HomeSummaryTiles`). */
+function HomeTwinMetricStackSkeleton() {
+  return (
+    <div className="flex min-w-0 flex-col gap-4">
+      <HomeMetricTileSkeleton footer="compact" />
+      <HomeMetricTileSkeleton footer="savings" />
+    </div>
+  )
+}
 
-const HOME_SUMMARY_TILE_FOOTERS_PLANNED_ONLY: readonly HomeMetricTileFooter[] = [
-  'breakdown',
-  'breakdown',
-  'compact',
-  'savings',
-]
+/** Matches `HomeSummaryTiles` grid: full-width income on lg, pair rows with a stacked column. */
+function HomeSummaryTilesSkeleton({ plannedOverviewOnly }: { plannedOverviewOnly?: boolean }) {
+  return (
+    <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="min-w-0 lg:col-span-2">
+        <HomeMetricTileSkeleton footer="breakdown" />
+      </div>
+      <div className="min-w-0">
+        <HomeMetricTileSkeleton footer="breakdown" />
+      </div>
+      <HomeTwinMetricStackSkeleton />
+      {!plannedOverviewOnly ? (
+        <>
+          <div className="min-w-0">
+            <HomeMetricTileSkeleton footer="breakdown" />
+          </div>
+          <HomeTwinMetricStackSkeleton />
+        </>
+      ) : null}
+    </div>
+  )
+}
 
 /**
- * Matches HomePage `space-y-4` month block: CalendarDays + heading | pill (`formatMonthLabel`), then HomeSummaryTiles.
+ * Matches HomePage month block: CalendarDays + heading | pill (`formatMonthLabel`),
+ * optional next-month helper copy, then `HomeSummaryTiles`.
  */
 function HomeMonthSectionSkeleton({
   monthTitleWidth,
-  tiles,
+  plannedOverviewOnly,
+  showPlannedNote,
 }: {
   monthTitleWidth: string
-  tiles: readonly HomeMetricTileFooter[]
+  plannedOverviewOnly?: boolean
+  /** Skeleton for `nextMonthPlannedOnlyNote` above tiles. */
+  showPlannedNote?: boolean
 }) {
   return (
     <div className="space-y-4">
@@ -161,19 +180,13 @@ function HomeMonthSectionSkeleton({
         </div>
         <Skeleton className="h-8 min-w-[4.75rem] shrink-0 rounded-full bg-slate-200 dark:bg-slate-800" />
       </div>
-      <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {tiles.map((footer, i) =>
-          i === 0 ? (
-            <div key={i} className="min-w-0 lg:col-span-3">
-              <HomeMetricTileSkeleton footer={footer} />
-            </div>
-          ) : (
-            <div key={i} className="min-w-0">
-              <HomeMetricTileSkeleton footer={footer} />
-            </div>
-          ),
-        )}
-      </div>
+      {showPlannedNote ? (
+        <div className="max-w-xl space-y-2">
+          <Skeleton className="h-4 w-full bg-slate-200 dark:bg-slate-800" />
+          <Skeleton className="h-4 w-[90%] bg-slate-200 dark:bg-slate-800" />
+        </div>
+      ) : null}
+      <HomeSummaryTilesSkeleton plannedOverviewOnly={plannedOverviewOnly} />
     </div>
   )
 }
@@ -207,8 +220,8 @@ export function PageLoadingSkeleton({
       {variant === 'home' ? (
         <>
           <HomeHeadingSkeleton />
-          <HomeMonthSectionSkeleton monthTitleWidth="w-[6.5rem]" tiles={HOME_SUMMARY_TILE_FOOTERS_FULL} />
-          <HomeMonthSectionSkeleton monthTitleWidth="w-[5.75rem]" tiles={HOME_SUMMARY_TILE_FOOTERS_PLANNED_ONLY} />
+          <HomeMonthSectionSkeleton monthTitleWidth="w-[6.5rem]" />
+          <HomeMonthSectionSkeleton monthTitleWidth="w-[5.75rem]" plannedOverviewOnly showPlannedNote />
         </>
       ) : (
         <HeadingBlock showAction={showHeadingAction} />

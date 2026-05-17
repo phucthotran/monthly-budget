@@ -81,9 +81,9 @@ export function HomeSummaryTiles(props: HomeSummaryTilesProps) {
   const actualSurplusLabel = 'actualSurplusLabel' in props ? props.actualSurplusLabel : ''
 
   return (
-    <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
       <MetricTile
-        className="min-w-0 lg:col-span-3"
+        className="min-w-0 lg:col-span-2"
         title={
           <span className="inline-flex items-center gap-2">
             <Wallet className="size-5 text-muted-foreground shrink-0" />
@@ -116,58 +116,61 @@ export function HomeSummaryTiles(props: HomeSummaryTilesProps) {
           <span className="text-primary">{plannedBudgetLabel}</span>
         </AggregateTileContents>
       </MetricTile>
-      <MetricTile
-        className="min-w-0"
-        title={
-          <span className="inline-flex items-center gap-2">
-            <PiggyBank className="size-5 text-muted-foreground shrink-0" />
-            <TileTitleWithHint
-              content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.home.plannedSurplusHint}</p>}
-              label={t.home.plannedSurplus}
-            />
-          </span>
-        }
-      >
-        <span className="text-primary">{plannedSurplusLabel}</span>
-      </MetricTile>
-      <MetricTile
-        className="min-w-0"
-        title={
-          <span className="inline-flex items-center gap-2">
-            <PiggyBank className="size-5 text-muted-foreground shrink-0" />
-            <TileTitleWithHint
-              content={<p className="max-w-xs text-pretty text-sm leading-snug">{plannedSavingsHintText}</p>}
-              label={t.home.savingsToDatePlanned}
-            />
-          </span>
-        }
-        contentClassName={plannedSavingsComposition ? 'font-normal' : undefined}
-      >
-        {plannedSavingsComposition ? (
-          <AggregateTileContents
-            footer={
-              <div className="space-y-1.5 text-sm leading-snug">
-                {fillMonthAmountTemplate(
-                  plannedSavingsComposition.priorBasis === 'actual'
-                    ? t.home.actualSavingsToDatePriorLine
-                    : t.home.plannedSavingsToDatePriorLine,
-                  plannedSavingsComposition.priorMonthLabel,
-                  plannedSavingsComposition.priorAmountLabel,
-                )}
-                {fillMonthAmountTemplate(
-                  t.home.plannedSavingsToDatePlusSurplusLine,
-                  plannedSavingsComposition.monthLabel,
-                  plannedSavingsComposition.amountLabel,
-                )}
-              </div>
-            }
-          >
-            <span className="text-primary">{plannedSavingsToDateLabel}</span>
-          </AggregateTileContents>
-        ) : (
-          plannedSavingsToDateLabel
-        )}
-      </MetricTile>
+      <div className="flex flex-col gap-4">
+        <MetricTile
+          className="min-w-0 flex-1"
+          title={
+            <span className="inline-flex items-center gap-2">
+              <PiggyBank className="size-5 text-muted-foreground shrink-0" />
+              <TileTitleWithHint
+                content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.home.plannedSurplusHint}</p>}
+                label={t.home.plannedSurplus}
+              />
+            </span>
+          }
+        >
+          <span className="text-primary">{plannedSurplusLabel}</span>
+        </MetricTile>
+        <MetricTile
+          className="min-w-0 flex-1"
+          title={
+            <span className="inline-flex items-center gap-2">
+              <PiggyBank className="size-5 text-muted-foreground shrink-0" />
+              <TileTitleWithHint
+                content={<p className="max-w-xs text-pretty text-sm leading-snug">{plannedSavingsHintText}</p>}
+                label={t.home.savingsToDatePlanned}
+              />
+            </span>
+          }
+          contentClassName={plannedSavingsComposition ? 'font-normal' : undefined}
+        >
+          {plannedSavingsComposition ? (
+            <AggregateTileContents
+              footer={
+                <div className="space-y-1.5 text-sm leading-snug">
+                  {fillMonthAmountTemplate(
+                    plannedSavingsComposition.priorBasis === 'actual'
+                      ? t.home.actualSavingsToDatePriorLine
+                      : t.home.plannedSavingsToDatePriorLine,
+                    plannedSavingsComposition.priorMonthLabel,
+                    plannedSavingsComposition.priorAmountLabel,
+                  )}
+                  {fillMonthAmountTemplate(
+                    t.home.plannedSavingsToDatePlusSurplusLine,
+                    plannedSavingsComposition.monthLabel,
+                    plannedSavingsComposition.amountLabel,
+                  )}
+                </div>
+              }
+            >
+              <span className="text-primary">{plannedSavingsToDateLabel}</span>
+            </AggregateTileContents>
+          ) : (
+            plannedSavingsToDateLabel
+          )}
+        </MetricTile>
+      </div>
+
       {!plannedOverviewOnly ? (
         <MetricTile
           className="min-w-0"
@@ -187,60 +190,62 @@ export function HomeSummaryTiles(props: HomeSummaryTilesProps) {
           </AggregateTileContents>
         </MetricTile>
       ) : null}
-      {!plannedOverviewOnly ? (
-        <MetricTile
-          className="min-w-0"
-          title={
-            <span className="inline-flex items-center gap-2">
-              <Banknote className="size-5 text-muted-foreground shrink-0" />
-              <TileTitleWithHint
-                content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.home.actualSurplusHint}</p>}
-                label={t.home.actualSurplus}
-              />
-            </span>
-          }
-        >
-          <span className="text-primary">{actualSurplusLabel}</span>
-        </MetricTile>
-      ) : null}
-      {!plannedOverviewOnly ? (
-        <MetricTile
-          className="min-w-0"
-          title={
-            <span className="inline-flex items-center gap-2">
-              <Landmark className="size-5 text-muted-foreground shrink-0" />
-              <TileTitleWithHint
-                content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.home.actualSavingsHint}</p>}
-                label={t.home.savingsToDateActual}
-              />
-            </span>
-          }
-          contentClassName={actualSavingsComposition ? 'font-normal' : undefined}
-        >
-          {actualSavingsComposition ? (
-            <AggregateTileContents
-              footer={
-                <div className="space-y-1.5 text-sm leading-snug">
-                  {fillMonthAmountTemplate(
-                    t.home.actualSavingsToDatePriorLine,
-                    actualSavingsComposition.priorMonthLabel,
-                    actualSavingsComposition.priorAmountLabel,
-                  )}
-                  {fillMonthAmountTemplate(
-                    t.home.actualSavingsToDatePlusSurplusLine,
-                    actualSavingsComposition.monthLabel,
-                    actualSavingsComposition.amountLabel,
-                  )}
-                </div>
-              }
-            >
-              <span className="text-primary">{actualSavingsToDateLabel}</span>
-            </AggregateTileContents>
-          ) : (
-            actualSavingsToDateLabel
-          )}
-        </MetricTile>
-      ) : null}
+      <div className="flex flex-col gap-4">
+        {!plannedOverviewOnly ? (
+          <MetricTile
+            className="min-w-0 flex-1"
+            title={
+              <span className="inline-flex items-center gap-2">
+                <Banknote className="size-5 text-muted-foreground shrink-0" />
+                <TileTitleWithHint
+                  content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.home.actualSurplusHint}</p>}
+                  label={t.home.actualSurplus}
+                />
+              </span>
+            }
+          >
+            <span className="text-primary">{actualSurplusLabel}</span>
+          </MetricTile>
+        ) : null}
+        {!plannedOverviewOnly ? (
+          <MetricTile
+            className="min-w-0 flex-1"
+            title={
+              <span className="inline-flex items-center gap-2">
+                <Landmark className="size-5 text-muted-foreground shrink-0" />
+                <TileTitleWithHint
+                  content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.home.actualSavingsHint}</p>}
+                  label={t.home.savingsToDateActual}
+                />
+              </span>
+            }
+            contentClassName={actualSavingsComposition ? 'font-normal' : undefined}
+          >
+            {actualSavingsComposition ? (
+              <AggregateTileContents
+                footer={
+                  <div className="space-y-1.5 text-sm leading-snug">
+                    {fillMonthAmountTemplate(
+                      t.home.actualSavingsToDatePriorLine,
+                      actualSavingsComposition.priorMonthLabel,
+                      actualSavingsComposition.priorAmountLabel,
+                    )}
+                    {fillMonthAmountTemplate(
+                      t.home.actualSavingsToDatePlusSurplusLine,
+                      actualSavingsComposition.monthLabel,
+                      actualSavingsComposition.amountLabel,
+                    )}
+                  </div>
+                }
+              >
+                <span className="text-primary">{actualSavingsToDateLabel}</span>
+              </AggregateTileContents>
+            ) : (
+              actualSavingsToDateLabel
+            )}
+          </MetricTile>
+        ) : null}
+      </div>
     </div>
   )
 }
