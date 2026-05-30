@@ -77,21 +77,27 @@ export function useIncomePeriods(uid: string | undefined, calendarYear?: number)
   return { ...q, data }
 }
 
-export function useActualExpenses(uid: string | undefined, spentMonth?: MonthKey) {
+export function useActualExpenses(uid: string | undefined, spentMonth?: MonthKey, budgetItemId?: string) {
   const segments = useMemo(() => (uid ? (['users', uid, 'actualExpenses'] as const) : undefined), [uid])
-  const queryKey = useMemo(
-    () => (spentMonth != null ? (['actualExpenses', uid, spentMonth] as const) : (['actualExpenses', uid] as const)),
-    [spentMonth, uid],
-  )
-  const firestoreOptions = useMemo(
-    () =>
-      spentMonth != null
-        ? {
-            constraints: [where('spentMonth', '==', spentMonth)],
-            hydrationQueryKey: ['actualExpenses', uid] as const,
-          }
-        : {},
-    [spentMonth, uid],
-  )
+  const queryKey = useMemo(() => {
+    if (uid == null) return ['actualExpenses'] as const
+    if (spentMonth != null && budgetItemId != null) {
+      return ['actualExpenses', uid, spentMonth, budgetItemId] as const
+    }
+    if (spentMonth != null) return ['actualExpenses', uid, spentMonth] as const
+    if (budgetItemId != null) return ['actualExpenses', uid, 'item', budgetItemId] as const
+    return ['actualExpenses', uid] as const
+  }, [budgetItemId, spentMonth, uid])
+  const firestoreOptions = useMemo(() => {
+    const constraints = [
+      ...(spentMonth != null ? [where('spentMonth', '==', spentMonth)] : []),
+      ...(budgetItemId != null ? [where('budgetItemId', '==', budgetItemId)] : []),
+    ]
+    if (constraints.length === 0) return {}
+    return {
+      constraints,
+      hydrationQueryKey: ['actualExpenses', uid] as const,
+    }
+  }, [budgetItemId, spentMonth, uid])
   return useFirestoreCollection<ActualExpense>(uid, segments, queryKey, firestoreOptions)
 }

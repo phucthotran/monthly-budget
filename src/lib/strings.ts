@@ -12,6 +12,7 @@ export const t = {
     actualPeriodHint: 'Chỉ ghi chi thực tế cho tháng hiện tại của khoản dự chi còn hiệu lực.',
     actualPeriodInactiveLocked: 'Chỉ ghi chi thực tế trong kỳ áp dụng của khoản này.',
     actuals: 'Chi thực tế',
+    actualSpentMonthReadOnlyHint: 'Chỉ ghi chi thực tế cho tháng hiện tại.',
     add: 'Thêm khoản dự chi',
     addActual: 'Ghi chi thực tế',
     addActualAction: 'Ghi chi thực tế',
@@ -193,6 +194,7 @@ export const t = {
     title: 'Thống kê',
   },
   validation: {
+    actualSpentMonthCurrentOnly: 'Chỉ được ghi chi thực tế cho tháng hiện tại.',
     amountAtLeastOne: 'Nhập số tiền từ 1.000 VND trở lên.',
     amountNotNegative: 'Số tiền không được âm.',
     categoryRequired: 'Chọn phân loại.',

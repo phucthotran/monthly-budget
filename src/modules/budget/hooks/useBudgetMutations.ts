@@ -70,6 +70,10 @@ export function useBudgetMutations(uid: string | undefined) {
         throw new Error('Actual expense month is outside the budget item period')
       }
 
+      if (input.spentMonth !== currentMonthKey()) {
+        throw new Error('Actual expense can only be recorded for the current month')
+      }
+
       await addDoc(collection(db, 'users', userId, 'actualExpenses'), {
         amountVnd: input.amountVnd,
         budgetItemId: item.id,

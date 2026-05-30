@@ -101,9 +101,8 @@ export function BudgetPage() {
 
           <ActualExpenseDialog
             ref={actualDialogRef}
-            actuals={actuals}
-            defaultMonth={dialogDefaultMonth}
             snapshotMonth={asOfMonth}
+            uid={uid}
             onDeleteLine={(expense) => setActualLineToDelete(expense)}
             onSubmit={async (item, value) => {
               if (!mutations) return
