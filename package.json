@@ -69,14 +69,17 @@
     "typescript-eslint": "^8.18.2",
     "vite": "^6.0.5",
     "vite-plugin-pwa": "^0.21.1",
-    "vitest": "^2.1.8"
+    "vitest": "^3.2.6"
   },
   "pnpm": {
     "overrides": {
       "@babel/plugin-transform-modules-systemjs": "^7.29.4",
+      "@grpc/grpc-js": "^1.9.16",
+      "@remix-run/server-runtime": "^2.17.5",
       "fast-uri": "^3.1.2",
       "protobufjs": "^7.5.6",
-      "serialize-javascript": "7.0.3"
+      "serialize-javascript": "7.0.3",
+      "turbo-stream": "^3.0.0"
     }
   },
   "lint-staged": {

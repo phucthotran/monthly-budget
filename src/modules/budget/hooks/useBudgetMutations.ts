@@ -31,30 +31,41 @@ export function useBudgetMutations(uid: string | undefined) {
         throw new Error('New budget item validFrom must be current month or later')
       }
 
+      const now = Date.now()
       const payload = {
         amountVnd: input.amountVnd,
         categoryId: input.categoryId,
         title: input.title.trim(),
-        updatedAt: Date.now(),
+        updatedAt: now,
         validFrom: input.validFrom,
         validTo: input.validTo,
       }
 
       if (editing) {
         await updateDoc(doc(db, 'users', userId, 'budgetItems', editing.id), payload)
+        qc.setQueriesData<BudgetItem[]>({ queryKey: queryKeys.budgetItems(userId) }, (old) => {
+          if (!old) return old
+          return old.map((item) => (item.id === editing.id ? { ...item, ...payload } : item))
+        })
       } else {
-        await addDoc(collection(db, 'users', userId, 'budgetItems'), {
+        const docRef = await addDoc(collection(db, 'users', userId, 'budgetItems'), {
           ...payload,
-          createdAt: Date.now(),
+          createdAt: now,
+        })
+        const newItem: BudgetItem = { ...payload, createdAt: now, id: docRef.id }
+        qc.setQueriesData<BudgetItem[]>({ queryKey: queryKeys.budgetItems(userId) }, (old) => {
+          if (!old) return old
+          return [...old, newItem]
         })
       }
-
-      await qc.invalidateQueries({ queryKey: queryKeys.budgetItems(userId) })
     }
 
     async function deleteBudgetItem(id: string) {
       await deleteDoc(doc(db, 'users', userId, 'budgetItems', id))
-      await qc.invalidateQueries({ queryKey: queryKeys.budgetItems(userId) })
+      qc.setQueriesData<BudgetItem[]>({ queryKey: queryKeys.budgetItems(userId) }, (old) => {
+        if (!old) return old
+        return old.filter((item) => item.id !== id)
+      })
     }
 
     async function deleteActualExpense(id: string) {

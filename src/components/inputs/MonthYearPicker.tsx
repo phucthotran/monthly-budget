@@ -57,6 +57,8 @@ export function MonthYearPicker({
 }) {
   const trimmed = value?.trim() ?? ''
   const isValidKey = MONTH_KEY_REGEX.test(trimmed)
+  /** When outOfMinSync='empty' and value is '', show placeholder in selects rather than minMonth fallback. */
+  const displayEmpty = outOfMinSync === 'empty' && !trimmed
 
   const onChangeRef = useRef(onChange)
   onChangeRef.current = onChange
@@ -126,13 +128,13 @@ export function MonthYearPicker({
       <div className="relative min-w-0">
         <Calendar className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Select
-          value={month}
+          value={displayEmpty ? '' : month}
           onValueChange={(mm) => {
             onChange(`${yStr}-${mm}` as MonthKey)
           }}
         >
           <SelectTrigger aria-invalid={invalid || undefined} className="pl-8">
-            <SelectValue placeholder={placeholder}>{`T${Number(month)}`}</SelectValue>
+            <SelectValue placeholder={placeholder}>{displayEmpty ? null : `T${Number(month)}`}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {availableMonths.map((mm) => (
@@ -145,13 +147,13 @@ export function MonthYearPicker({
       </div>
 
       <Select
-        value={String(year)}
+        value={displayEmpty ? '' : String(year)}
         onValueChange={(y) => {
           onChange(`${y}-${monthForYear(y)}` as MonthKey)
         }}
       >
         <SelectTrigger aria-invalid={invalid || undefined}>
-          <SelectValue />
+          <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
           {years.map((y) => (
