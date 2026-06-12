@@ -60,10 +60,12 @@ export function BudgetPage() {
               </div>
             }
             actions={
-              <Button type="button" onClick={() => budgetDialogRef.current?.openCreate()}>
-                <Plus className="h-4 w-4" />
-                {t.budget.add}
-              </Button>
+              <span className="hidden sm:inline-flex">
+                <Button type="button" onClick={() => budgetDialogRef.current?.openCreate()}>
+                  <Plus className="h-4 w-4" />
+                  {t.budget.add}
+                </Button>
+              </span>
             }
           />
 
@@ -145,6 +147,16 @@ export function BudgetPage() {
               await mutations.deleteActualExpense(actualLineToDelete.id)
             }}
           />
+
+          <Button
+            type="button"
+            size="icon"
+            className="fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full shadow-lg sm:hidden"
+            onClick={() => budgetDialogRef.current?.openCreate()}
+            aria-label={t.budget.add}
+          >
+            <Plus className="h-6 w-6" />
+          </Button>
         </div>
       )}
     </RequireAuth>

@@ -48,10 +48,12 @@ export function IncomePage() {
               </div>
             }
             actions={
-              <Button type="button" onClick={() => dialogRef.current?.openCreate()}>
-                <Plus className="h-4 w-4" />
-                {t.income.add}
-              </Button>
+              <span className="hidden sm:inline-flex">
+                <Button type="button" onClick={() => dialogRef.current?.openCreate()}>
+                  <Plus className="h-4 w-4" />
+                  {t.income.add}
+                </Button>
+              </span>
             }
           />
 
@@ -96,6 +98,16 @@ export function IncomePage() {
               await mutations.deleteIncome(rowToDelete.id)
             }}
           />
+
+          <Button
+            type="button"
+            size="icon"
+            className="fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full shadow-lg sm:hidden"
+            onClick={() => dialogRef.current?.openCreate()}
+            aria-label={t.income.add}
+          >
+            <Plus className="h-6 w-6" />
+          </Button>
         </div>
       )}
     </RequireAuth>

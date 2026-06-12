@@ -18,36 +18,90 @@ function HeadingBlock({ showAction }: { showAction?: boolean }) {
           <Skeleton className="h-4 w-[88%] bg-slate-200 dark:bg-slate-800" />
         </div>
       </div>
-      {showAction ? <Skeleton className="h-10 w-[7.5rem] shrink-0 rounded-md bg-slate-200 dark:bg-slate-800" /> : null}
+      {showAction ? (
+        <Skeleton className="hidden h-10 w-[7.5rem] shrink-0 rounded-md bg-slate-200 dark:bg-slate-800 sm:block" />
+      ) : null}
     </div>
   )
 }
 
-function TablePanelSkeleton({ rows }: { rows: number }) {
+/** Single card skeleton matching the BudgetItemsMobileList / IncomeMobileList card shape. */
+function MobileCardRowSkeleton() {
+  return (
+    <div className="rounded-lg border border-border/60 bg-card p-4 space-y-3">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1 space-y-1.5">
+          <Skeleton className="h-4 w-[55%]" />
+          <Skeleton className="h-3 w-[35%]" />
+        </div>
+        <Skeleton className="h-5 w-16 shrink-0 rounded-full" />
+      </div>
+      <div className="grid grid-cols-2 gap-x-4">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-full" />
+      </div>
+      <div className="flex gap-2 pt-0.5">
+        <Skeleton className="h-8 flex-1 rounded-md" />
+        <Skeleton className="h-8 w-8 shrink-0 rounded-md" />
+        <Skeleton className="h-8 w-8 shrink-0 rounded-md" />
+      </div>
+    </div>
+  )
+}
+
+/** Single card skeleton matching the stats month card shape (StatsTableMobileList / SavingsMobileList). */
+function StatsMobileCardRowSkeleton() {
+  return (
+    <div className="rounded-lg border border-border/60 bg-card p-3.5 space-y-3">
+      <Skeleton className="h-4 w-14" />
+      <div className="grid grid-cols-3 gap-x-2 gap-y-2">
+        <Skeleton className="h-8 rounded-md" />
+        <Skeleton className="h-8 rounded-md" />
+        <Skeleton className="h-8 rounded-md" />
+      </div>
+      <div className="border-t border-border/60 pt-2.5 grid grid-cols-2 gap-x-2">
+        <Skeleton className="h-8 rounded-md" />
+        <Skeleton className="h-8 rounded-md" />
+      </div>
+    </div>
+  )
+}
+
+function TablePanelSkeleton({ rows, statsCards }: { rows: number; statsCards?: boolean }) {
   return (
     <Card>
       <CardHeader className="pb-2">
         <Skeleton className="h-5 w-28" />
       </CardHeader>
       <CardContent className="space-y-0">
-        <div className="flex gap-3 border-b border-border py-2.5" role="presentation">
-          <Skeleton className="h-3.5 min-w-[5rem] flex-[1.4]" />
-          <Skeleton className="h-3.5 min-w-[4rem] flex-1" />
-          <Skeleton className="h-3.5 w-20 shrink-0" />
-          <Skeleton className="hidden h-3.5 w-24 shrink-0 sm:block" />
-          <Skeleton className="h-3.5 w-16 shrink-0" />
-          <Skeleton className="h-3.5 w-24 shrink-0" />
-        </div>
-        {Array.from({ length: rows }, (_, i) => (
-          <div key={i} className="flex items-center gap-3 border-b border-border/60 py-3 last:border-b-0">
-            <Skeleton className="h-4 min-w-[5rem] flex-[1.4]" />
-            <Skeleton className="h-6 min-w-[4rem] flex-1 rounded-full" />
-            <Skeleton className="h-4 w-20 shrink-0" />
-            <Skeleton className="hidden h-4 w-24 shrink-0 sm:block" />
-            <Skeleton className="h-4 w-16 shrink-0" />
-            <Skeleton className="ml-auto h-8 w-20 shrink-0 rounded-md" />
+        {/* Desktop table skeleton */}
+        <div className="hidden md:block">
+          <div className="flex gap-3 border-b border-border py-2.5" role="presentation">
+            <Skeleton className="h-3.5 min-w-[5rem] flex-[1.4]" />
+            <Skeleton className="h-3.5 min-w-[4rem] flex-1" />
+            <Skeleton className="h-3.5 w-20 shrink-0" />
+            <Skeleton className="hidden h-3.5 w-24 shrink-0 sm:block" />
+            <Skeleton className="h-3.5 w-16 shrink-0" />
+            <Skeleton className="h-3.5 w-24 shrink-0" />
           </div>
-        ))}
+          {Array.from({ length: rows }, (_, i) => (
+            <div key={i} className="flex items-center gap-3 border-b border-border/60 py-3 last:border-b-0">
+              <Skeleton className="h-4 min-w-[5rem] flex-[1.4]" />
+              <Skeleton className="h-6 min-w-[4rem] flex-1 rounded-full" />
+              <Skeleton className="h-4 w-20 shrink-0" />
+              <Skeleton className="hidden h-4 w-24 shrink-0 sm:block" />
+              <Skeleton className="h-4 w-16 shrink-0" />
+              <Skeleton className="ml-auto h-8 w-20 shrink-0 rounded-md" />
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile card skeleton */}
+        <div className="md:hidden space-y-3">
+          {Array.from({ length: rows }, (_, i) =>
+            statsCards ? <StatsMobileCardRowSkeleton key={i} /> : <MobileCardRowSkeleton key={i} />,
+          )}
+        </div>
       </CardContent>
     </Card>
   )
@@ -199,7 +253,7 @@ function StatsExtraBlock() {
         <Skeleton className="h-[148px] w-full rounded-lg bg-slate-200 dark:bg-slate-800" />
       </div>
       <Skeleton className="h-10 w-full rounded-md bg-slate-200 dark:bg-slate-800" />
-      <TablePanelSkeleton rows={5} />
+      <TablePanelSkeleton rows={5} statsCards />
     </>
   )
 }

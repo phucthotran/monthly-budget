@@ -14,8 +14,8 @@ import {
 } from 'react'
 
 import { VndAmountInput } from '@/components/inputs'
-import { FormLabelWithHint, ModalHeading } from '@/components/patterns'
-import { Button, Dialog, DialogContent, Field, FieldError, FieldLabel, Input } from '@/components/ui'
+import { FormLabelWithHint, ModalHeading, ResponsiveSheet, ResponsiveSheetContent } from '@/components/patterns'
+import { Button, Field, FieldError, FieldLabel, Input } from '@/components/ui'
 import { useActualExpenses } from '@/hooks/useUserCollections'
 import { firstFieldErrorMessage } from '@/lib/form/fieldMeta'
 import { currentMonthKey, formatMonthLabel, isPeriodClosedBefore } from '@/lib/month'
@@ -121,14 +121,14 @@ function ActualExpenseDialogImpl(
   const deleteLocked = isPeriodClosedBefore(item.validTo, snapshotMonth)
 
   return (
-    <Dialog
+    <ResponsiveSheet
       open={open}
       onOpenChange={(v) => {
         setOpen(v)
         if (!v) setItem(null)
       }}
     >
-      <DialogContent className="max-h-[min(90vh,46rem)] max-w-full overflow-y-auto sm:max-w-lg md:max-w-3xl">
+      <ResponsiveSheetContent className="max-h-[min(90vh,46rem)] max-w-full overflow-y-auto sm:max-w-lg md:max-w-3xl">
         <ModalHeading
           title={t.budget.addActual}
           description={
@@ -220,8 +220,8 @@ function ActualExpenseDialogImpl(
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveSheetContent>
+    </ResponsiveSheet>
   )
 }
 

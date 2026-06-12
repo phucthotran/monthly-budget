@@ -4,11 +4,9 @@ import { useForm } from '@tanstack/react-form'
 import { type ForwardedRef, forwardRef, useId, useImperativeHandle, useMemo, useState } from 'react'
 
 import { MonthYearPicker, VndAmountInput, VndAmountQuickPick } from '@/components/inputs'
-import { FormLabelWithHint, ModalHeading } from '@/components/patterns'
+import { FormLabelWithHint, ModalHeading, ResponsiveSheet, ResponsiveSheetContent } from '@/components/patterns'
 import {
   Button,
-  Dialog,
-  DialogContent,
   DialogFooter,
   Field,
   FieldError,
@@ -108,14 +106,14 @@ function BudgetItemDialogImpl(
   }))
 
   return (
-    <Dialog
+    <ResponsiveSheet
       open={open}
       onOpenChange={(v) => {
         setOpen(v)
         if (!v) setEditing(null)
       }}
     >
-      <DialogContent className="max-h-[min(90vh,46rem)] overflow-y-auto sm:max-w-lg md:max-w-3xl max-w-full">
+      <ResponsiveSheetContent className="max-h-[min(90vh,46rem)] overflow-y-auto sm:max-w-lg md:max-w-3xl max-w-full">
         <ModalHeading
           title={editing ? t.budget.edit : t.budget.add}
           description={
@@ -287,8 +285,8 @@ function BudgetItemDialogImpl(
             <Button type="submit">{t.common.save}</Button>
           </DialogFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveSheetContent>
+    </ResponsiveSheet>
   )
 }
 

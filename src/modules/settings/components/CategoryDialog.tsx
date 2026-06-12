@@ -1,8 +1,8 @@
 import { useForm } from '@tanstack/react-form'
 import { useId } from 'react'
 
-import { ModalHeading } from '@/components/patterns'
-import { Button, Dialog, DialogContent, DialogFooter, Field, FieldError, FieldLabel, Input } from '@/components/ui'
+import { ModalHeading, ResponsiveSheet, ResponsiveSheetContent } from '@/components/patterns'
+import { Button, DialogFooter, Field, FieldError, FieldLabel, Input } from '@/components/ui'
 import { firstFieldErrorMessage } from '@/lib/form/fieldMeta'
 import { t } from '@/lib/strings'
 
@@ -31,14 +31,14 @@ export function CategoryDialog({
   })
 
   return (
-    <Dialog
+    <ResponsiveSheet
       open={open}
       onOpenChange={(v) => {
         onOpenChange(v)
         if (v) form.reset({ name: '' })
       }}
     >
-      <DialogContent>
+      <ResponsiveSheetContent>
         <ModalHeading
           title={t.settings.add}
           description={
@@ -81,7 +81,7 @@ export function CategoryDialog({
             <Button type="submit">{t.common.save}</Button>
           </DialogFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveSheetContent>
+    </ResponsiveSheet>
   )
 }

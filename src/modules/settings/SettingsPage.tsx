@@ -38,10 +38,12 @@ export function SettingsPage() {
               </div>
             }
             actions={
-              <Button type="button" onClick={() => setOpen(true)}>
-                <Plus className="h-4 w-4" />
-                {t.settings.add}
-              </Button>
+              <span className="hidden sm:inline-flex">
+                <Button type="button" onClick={() => setOpen(true)}>
+                  <Plus className="h-4 w-4" />
+                  {t.settings.add}
+                </Button>
+              </span>
             }
           />
 
@@ -67,6 +69,16 @@ export function SettingsPage() {
               <p className="text-sm text-muted-foreground py-6 text-center">{t.settings.emptyList}</p>
             ) : null}
           </Panel>
+
+          <Button
+            type="button"
+            size="icon"
+            className="fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full shadow-lg sm:hidden"
+            onClick={() => setOpen(true)}
+            aria-label={t.settings.add}
+          >
+            <Plus className="h-6 w-6" />
+          </Button>
         </div>
       )}
     </RequireAuth>
