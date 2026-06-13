@@ -10,6 +10,11 @@ export default defineConfig(({ mode }) => {
 
   return {
     base,
+    esbuild: {
+      supported: {
+        destructuring: true,
+      },
+    },
     plugins: [
       react(),
       VitePWA({
