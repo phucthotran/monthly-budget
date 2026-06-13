@@ -50,13 +50,13 @@ export function StatsPage() {
 
           <Panel title={<></>}>
             <Tabs defaultValue="detail" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="detail" className="gap-1.5">
+              <TabsList className="flex flex-col sm:grid w-full sm:grid-cols-2 h-20 gap-2 sm:h-10">
+                <TabsTrigger value="detail" className="gap-2 whitespace-nowrap min-w-52 w-full sm:w-auto">
                   <Table2 className="size-4 shrink-0" />
                   <span className="truncate">{t.stats.tabDetail}</span>
                   <InfoTooltip content={t.stats.tabDetailTooltip} htmlTag="span" />
                 </TabsTrigger>
-                <TabsTrigger value="savings" className="gap-1.5">
+                <TabsTrigger value="savings" className="gap-2 whitespace-nowrap min-w-52 w-full sm:w-auto">
                   <PiggyBank className="size-4 shrink-0" />
                   <span className="truncate">{t.stats.tabSavings}</span>
                   <InfoTooltip content={t.stats.tabSavingsTooltip} htmlTag="span" />

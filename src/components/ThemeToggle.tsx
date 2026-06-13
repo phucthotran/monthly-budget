@@ -29,7 +29,9 @@ export function ThemeToggle({ className, fullWidth = false }: { className?: stri
             key={item.value}
             label={item.label}
             aria-pressed={active}
-            className="shrink-0"
+            className={cn('shrink-0', {
+              '!bg-gray-300 dark:!bg-gray-700': active,
+            })}
             variant={active ? 'secondary' : 'ghost'}
             onClick={() => {
               setTheme(item.value)
