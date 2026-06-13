@@ -80,16 +80,16 @@ function MobileMonthCard({
                   <div key={planned.id} className="grid grid-cols-3 gap-x-2 text-xs py-1 border-t border-border/40">
                     <div className="col-span-3 text-foreground/80 truncate mb-0.5">{planned.label}</div>
                     <div>
-                      <span className="text-muted-foreground">{t.stats.planned}: </span>
-                      <span className="tabular-nums">{formatVnd(planned.amountVnd)}</span>
+                      <p className="text-muted-foreground">{t.stats.planned}: </p>
+                      <p className="tabular-nums">{formatVnd(planned.amountVnd)}</p>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">{t.stats.actual}: </span>
-                      <span className="tabular-nums">{formatVnd(actual?.amountVnd ?? 0)}</span>
+                      <p className="text-muted-foreground">{t.stats.actual}: </p>
+                      <p className="tabular-nums">{formatVnd(actual?.amountVnd ?? 0)}</p>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">{t.budget.termRemaining}: </span>
-                      <span className="tabular-nums">{formatVnd(planned.amountVnd - (actual?.amountVnd ?? 0))}</span>
+                      <p className="text-muted-foreground">{t.budget.termRemaining}: </p>
+                      <p className="tabular-nums">{formatVnd(planned.amountVnd - (actual?.amountVnd ?? 0))}</p>
                     </div>
                   </div>
                 )
