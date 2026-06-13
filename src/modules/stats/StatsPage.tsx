@@ -2,7 +2,7 @@ import { PiggyBank, Table2, TrendingUp } from 'lucide-react'
 import { useMemo } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
-import { InfoTooltip, PageHeading, PageLoadingSkeleton, Panel } from '@/components/patterns'
+import { InfoTooltip, PageHeading, PageLoadingSkeleton } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 import { useActualExpenses, useBudgetItems, useIncomePeriods } from '@/hooks/useUserCollections'
@@ -48,38 +48,36 @@ export function StatsPage() {
 
           <StatsSummaryTiles plannedAvgLabel={formatVnd(plannedAvg)} actualAvgLabel={formatVnd(actualAvg)} />
 
-          <Panel title={<></>}>
-            <Tabs defaultValue="detail" className="w-full">
-              <TabsList className="flex flex-col sm:grid w-full sm:grid-cols-2 h-20 gap-2 sm:h-10">
-                <TabsTrigger value="detail" className="gap-2 whitespace-nowrap min-w-52 w-full sm:w-auto">
-                  <Table2 className="size-4 shrink-0" />
-                  <span className="truncate">{t.stats.tabDetail}</span>
-                  <InfoTooltip content={t.stats.tabDetailTooltip} htmlTag="span" />
-                </TabsTrigger>
-                <TabsTrigger value="savings" className="gap-2 whitespace-nowrap min-w-52 w-full sm:w-auto">
-                  <PiggyBank className="size-4 shrink-0" />
-                  <span className="truncate">{t.stats.tabSavings}</span>
-                  <InfoTooltip content={t.stats.tabSavingsTooltip} htmlTag="span" />
-                </TabsTrigger>
-              </TabsList>
+          <Tabs defaultValue="detail" className="w-full">
+            <TabsList className="flex flex-col sm:grid w-full sm:grid-cols-2 h-20 gap-2 sm:h-10">
+              <TabsTrigger value="detail" className="gap-2 whitespace-nowrap min-w-52 w-full sm:w-auto">
+                <Table2 className="size-4 shrink-0" />
+                <span className="truncate">{t.stats.tabDetail}</span>
+                <InfoTooltip content={t.stats.tabDetailTooltip} htmlTag="span" />
+              </TabsTrigger>
+              <TabsTrigger value="savings" className="gap-2 whitespace-nowrap min-w-52 w-full sm:w-auto">
+                <PiggyBank className="size-4 shrink-0" />
+                <span className="truncate">{t.stats.tabSavings}</span>
+                <InfoTooltip content={t.stats.tabSavingsTooltip} htmlTag="span" />
+              </TabsTrigger>
+            </TabsList>
 
-              <TabsContent value="detail" className="mt-4">
-                <StatsTable
-                  actuals={actuals}
-                  budget={budget}
-                  formatVnd={formatVnd}
-                  income={income}
-                  isYearOpen={isYearOpen}
-                  rows={snaps}
-                  toggleYear={toggleYear}
-                />
-              </TabsContent>
+            <TabsContent value="detail" className="mt-4">
+              <StatsTable
+                actuals={actuals}
+                budget={budget}
+                formatVnd={formatVnd}
+                income={income}
+                isYearOpen={isYearOpen}
+                rows={snaps}
+                toggleYear={toggleYear}
+              />
+            </TabsContent>
 
-              <TabsContent value="savings" className="mt-4">
-                <SavingsTable formatVnd={formatVnd} isYearOpen={isYearOpen} rows={snaps} toggleYear={toggleYear} />
-              </TabsContent>
-            </Tabs>
-          </Panel>
+            <TabsContent value="savings" className="mt-4">
+              <SavingsTable formatVnd={formatVnd} isYearOpen={isYearOpen} rows={snaps} toggleYear={toggleYear} />
+            </TabsContent>
+          </Tabs>
         </div>
       )}
     </RequireAuth>
