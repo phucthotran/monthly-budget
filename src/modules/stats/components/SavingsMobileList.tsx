@@ -4,6 +4,7 @@ import { ChevronDown } from 'lucide-react'
 
 import { formatMonthLabelShort } from '@/lib/month'
 import { t } from '@/lib/strings'
+import { currencyClass } from '@/lib/style-classes'
 import { cn } from '@/lib/utils'
 
 import { groupSnapshotsByYear } from '../groupSnapshotsByYear'
@@ -34,22 +35,30 @@ export function SavingsMobileList({ formatVnd, isYearOpen, rows, toggleYear }: S
                   <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                     <div>
                       <p className="text-xs text-muted-foreground">{t.stats.plannedSurplus}</p>
-                      <p className="tabular-nums font-semibold text-primary">{formatVnd(s.plannedSurplusVnd)}</p>
+                      <p className={currencyClass({ positive: s.plannedSurplusVnd >= 0, primary: true })}>
+                        {formatVnd(s.plannedSurplusVnd)}
+                      </p>
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">{t.stats.actualMonthlySurplus}</p>
-                      <p className="tabular-nums font-semibold text-primary">{formatVnd(s.actualSurplusVnd)}</p>
+                      <p className={currencyClass({ positive: s.actualSurplusVnd >= 0, primary: true })}>
+                        {formatVnd(s.actualSurplusVnd)}
+                      </p>
                     </div>
                   </div>
 
                   <div className="border-t border-border/60 pt-2.5 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                     <div>
                       <p className="text-xs text-muted-foreground">{t.stats.savingsAccumulatedMonthly}</p>
-                      <p className="tabular-nums font-medium">{formatVnd(s.plannedSavingsToDateVnd)}</p>
+                      <p className={currencyClass({ positive: s.plannedSavingsToDateVnd >= 0 })}>
+                        {formatVnd(s.plannedSavingsToDateVnd)}
+                      </p>
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">{t.stats.actualAccumulatedMonthly}</p>
-                      <p className="tabular-nums font-medium">{formatVnd(s.actualSavingsToDateVnd)}</p>
+                      <p className={currencyClass({ positive: s.actualSavingsToDateVnd >= 0 })}>
+                        {formatVnd(s.actualSavingsToDateVnd)}
+                      </p>
                     </div>
                   </div>
                 </div>

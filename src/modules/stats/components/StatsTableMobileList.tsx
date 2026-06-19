@@ -9,6 +9,7 @@ import { Button } from '@/components/ui'
 import { buildHomeMonthLineItems } from '@/lib/budget/homeMonthBreakdown'
 import { formatMonthLabelShort } from '@/lib/month'
 import { t } from '@/lib/strings'
+import { currencyClass } from '@/lib/style-classes'
 import { cn } from '@/lib/utils'
 
 import { groupSnapshotsByYear } from '../groupSnapshotsByYear'
@@ -32,26 +33,32 @@ function MobileMonthCard({
       <div className="grid grid-cols-3 gap-x-2 gap-y-2 text-sm">
         <div>
           <p className="text-xs text-muted-foreground truncate">{t.stats.income}</p>
-          <p className="tabular-nums font-medium">{formatVnd(snapshot.incomeVnd)}</p>
+          <p className={currencyClass({ positive: snapshot.incomeVnd >= 0 })}>{formatVnd(snapshot.incomeVnd)}</p>
         </div>
         <div>
           <p className="text-xs text-muted-foreground truncate">{t.stats.planned}</p>
-          <p className="tabular-nums font-medium">{formatVnd(snapshot.plannedVnd)}</p>
+          <p className={currencyClass({ positive: snapshot.plannedVnd >= 0 })}>{formatVnd(snapshot.plannedVnd)}</p>
         </div>
         <div>
           <p className="text-xs text-muted-foreground truncate">{t.stats.actual}</p>
-          <p className="tabular-nums font-medium">{formatVnd(snapshot.actualSpentVnd)}</p>
+          <p className={currencyClass({ positive: snapshot.actualSpentVnd >= 0 })}>
+            {formatVnd(snapshot.actualSpentVnd)}
+          </p>
         </div>
       </div>
 
-      <div className="border-t border-border/60 pt-2.5 grid grid-cols-2 gap-x-2 text-sm">
+      <div className="border-t border-border/60 pt-2.5 grid grid-cols-3 gap-x-2 text-sm">
         <div>
           <p className="text-xs text-muted-foreground truncate">{t.stats.plannedSurplus}</p>
-          <p className="tabular-nums font-semibold text-primary">{formatVnd(snapshot.plannedSurplusVnd)}</p>
+          <p className={currencyClass({ positive: snapshot.plannedSurplusVnd >= 0, primary: true })}>
+            {formatVnd(snapshot.plannedSurplusVnd)}
+          </p>
         </div>
         <div>
           <p className="text-xs text-muted-foreground truncate">{t.stats.actualMonthlySurplus}</p>
-          <p className="tabular-nums font-semibold text-primary">{formatVnd(snapshot.actualSurplusVnd)}</p>
+          <p className={currencyClass({ positive: snapshot.actualSurplusVnd >= 0, primary: true })}>
+            {formatVnd(snapshot.actualSurplusVnd)}
+          </p>
         </div>
       </div>
 
@@ -76,20 +83,26 @@ function MobileMonthCard({
             <div className="mt-2 space-y-1.5">
               {lineItems.plannedLines.map((planned) => {
                 const actual = lineItems.actualLines.find((a) => a.id === planned.id)
+                const remaining = planned.amountVnd - (actual?.amountVnd ?? 0)
+
                 return (
                   <div key={planned.id} className="grid grid-cols-3 gap-x-2 text-xs py-1 border-t border-border/40">
-                    <div className="col-span-3 text-foreground/80 truncate mb-0.5">{planned.label}</div>
+                    <div className="col-span-3 text-foreground/80 truncate mb-0.5 font-medium">{planned.label}</div>
                     <div>
                       <p className="text-muted-foreground">{t.stats.planned}: </p>
-                      <p className="tabular-nums">{formatVnd(planned.amountVnd)}</p>
+                      <p className={currencyClass({ positive: planned.amountVnd >= 0 })}>
+                        {formatVnd(planned.amountVnd)}
+                      </p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">{t.stats.actual}: </p>
-                      <p className="tabular-nums">{formatVnd(actual?.amountVnd ?? 0)}</p>
+                      <p className={currencyClass({ positive: (actual?.amountVnd ?? 0) >= 0 })}>
+                        {formatVnd(actual?.amountVnd ?? 0)}
+                      </p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">{t.budget.termRemaining}: </p>
-                      <p className="tabular-nums">{formatVnd(planned.amountVnd - (actual?.amountVnd ?? 0))}</p>
+                      <p className={currencyClass({ positive: remaining >= 0 })}>{formatVnd(remaining)}</p>
                     </div>
                   </div>
                 )

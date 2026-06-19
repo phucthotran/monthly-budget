@@ -5,7 +5,7 @@ import { addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestor
 import { useMemo } from 'react'
 
 import { getFirestoreDb } from '@/lib/firebase'
-import { queryKeys } from '@/lib/queryKeys'
+import { queryKeys } from '@/lib/query-keys'
 
 export type IncomeInput = {
   label: string

@@ -5,7 +5,7 @@ import { addDoc, collection, doc, updateDoc } from 'firebase/firestore'
 import { useMemo } from 'react'
 
 import { getFirestoreDb } from '@/lib/firebase'
-import { queryKeys } from '@/lib/queryKeys'
+import { queryKeys } from '@/lib/query-keys'
 
 export function useCategoryMutations(uid: string | undefined) {
   const qc = useQueryClient()

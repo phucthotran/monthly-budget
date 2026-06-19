@@ -7,7 +7,7 @@ import { Badge, Button } from '@/components/ui'
 import { canRecordActualExpenseForBudgetItem } from '@/lib/budget/apply'
 import { formatMonthLabel, isPeriodClosedBefore } from '@/lib/month'
 import { t } from '@/lib/strings'
-import { cn } from '@/lib/utils'
+import { currencyClass } from '@/lib/style-classes'
 import { formatVnd } from '@/lib/vnd'
 
 export function BudgetItemsMobileList({
@@ -50,13 +50,11 @@ export function BudgetItemsMobileList({
             <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
               <div>
                 <p className="text-xs text-muted-foreground">{t.budget.amount}</p>
-                <p className="font-medium tabular-nums">{formatVnd(item.amountVnd)}</p>
+                <p className={currencyClass({ positive: item.amountVnd >= 0 })}>{formatVnd(item.amountVnd)}</p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">{t.budget.termRemaining}</p>
-                <p className={cn('font-medium tabular-nums', remaining < 0 ? 'text-destructive' : 'text-primary')}>
-                  {formatVnd(remaining)}
-                </p>
+                <p className={currencyClass({ positive: remaining >= 0, primary: true })}>{formatVnd(remaining)}</p>
               </div>
             </div>
 

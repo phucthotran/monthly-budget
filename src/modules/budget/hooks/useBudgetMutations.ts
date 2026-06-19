@@ -7,7 +7,7 @@ import { useMemo } from 'react'
 import { canRecordActualExpenseForBudgetItem } from '@/lib/budget/apply'
 import { getFirestoreDb } from '@/lib/firebase'
 import { compareMonthKeys, currentMonthKey } from '@/lib/month'
-import { queryKeys } from '@/lib/queryKeys'
+import { queryKeys } from '@/lib/query-keys'
 
 export type BudgetItemInput = {
   title: string
