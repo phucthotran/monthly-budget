@@ -15,6 +15,13 @@ export default defineConfig(({ mode }) => {
         destructuring: true,
       },
     },
+    optimizeDeps: {
+      esbuildOptions: {
+        supported: {
+          destructuring: true,
+        },
+      },
+    },
     plugins: [
       react(),
       VitePWA({
