@@ -1,0 +1,62 @@
+---
+description: Responsive dialog/modal shell — ResponsiveSheet, ModalHeading, DialogFooter, accessibility
+alwaysApply: true
+---
+
+# Responsive Dialog / Modal Shell
+
+## Required shell components
+
+Module components **never** use raw `Dialog` or `Drawer` directly. Always compose with:
+
+| Component | Source | Role |
+|---|---|---|
+| `ResponsiveSheet` | `@/components/patterns` | Root wrapper — renders `Dialog` on desktop, `Drawer` (bottom sheet) on mobile |
+| `ResponsiveSheetContent` | `@/components/patterns` | Content wrapper with scroll/safe-area handling |
+| `ModalHeading` | `@/components/patterns` | Title + description block |
+| `DialogFooter` | `@/components/ui` | Button row (Cancel + Submit) |
+
+## Minimal structure
+
+```tsx
+<ResponsiveSheet open={open} onOpenChange={onOpenChange}>
+  <ResponsiveSheetContent className="max-w-full sm:max-h-[min(90vh,46rem)] sm:overflow-y-auto sm:max-w-lg md:max-w-3xl">
+    <ModalHeading title={t.feature.dialogTitle} description={<p>{t.feature.dialogDescription}</p>} />
+    <form onSubmit={...}>
+      {/* fields */}
+      <DialogFooter>
+        <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+          {t.common.cancel}
+        </Button>
+        <Button type="submit">{t.common.save}</Button>
+      </DialogFooter>
+    </form>
+  </ResponsiveSheetContent>
+</ResponsiveSheet>
+```
+
+## Standard content sizing
+
+Use `className="max-w-full sm:max-h-[min(90vh,46rem)] sm:overflow-y-auto sm:max-w-lg md:max-w-3xl"` on `ResponsiveSheetContent` for dialogs with forms. Adjust `max-w-*` breakpoints if the form is wider (e.g. multi-column layouts).
+
+## Accessibility
+
+- Call `useId()` **once** per dialog component; use as an ID prefix for every form field: `${formId}-title`, `${formId}-amount`, etc.
+- Set `aria-invalid={!!err}` on every input control (`Input`, `SelectTrigger`, `VndAmountInput`, `MonthYearPicker`).
+- Assign `id={errId}` to each `FieldError`; set `aria-describedby={err ? errId : undefined}` on the control.
+
+## onOpenChange cleanup
+
+When the sheet closes (`onOpenChange(false)`), reset `editing` state to `null` so the dialog reverts to create mode if re-opened:
+
+```tsx
+onOpenChange={(v) => {
+  setOpen(v)
+  if (!v) setEditing(null)
+}}
+```
+
+## See also
+
+- Rule `02-forms-dialog-edit-pattern` — `useImperativeHandle` + `openCreate` / `openEdit` / `close` pattern.
+- Rule `05-tanstack-form-zod` — form wiring, `Field`/`FieldLabel`/`FieldError`, `useId()` accessibility details.

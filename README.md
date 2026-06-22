@@ -70,13 +70,26 @@ src/
 
 Quy ước đầy đủ nằm trong [`.cursor/rules/`](.cursor/rules/). Đây là nguồn tham chiếu cho cả developer và AI agent khi làm việc với codebase:
 
-| File                                                                                       | Nội dung ngắn gọn                                                                          |
-| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| [`00-core-project-standards.mdc`](.cursor/rules/00-core-project-standards.mdc)             | i18n VND, `formatMonthLabel`, route mỏng, sắp xếp list, Firestore `users/{uid}/…`          |
-| [`01-import-and-module-boundaries.mdc`](.cursor/rules/01-import-and-module-boundaries.mdc) | Alias `@/`, barrel `@/components/ui` & `@/components/patterns`                             |
-| [`02-forms-dialog-edit-pattern.mdc`](.cursor/rules/02-forms-dialog-edit-pattern.mdc)       | Form sửa: `useImperativeHandle` (`openCreate` / `openEdit`), không `useEffect` theo `open` |
-| [`03-month-and-money-inputs.mdc`](.cursor/rules/03-month-and-money-inputs.mdc)             | `MonthYearPicker`, `VndAmountInput`, không `input type="month"`                            |
-| [`04-strings-and-ui-text.mdc`](.cursor/rules/04-strings-and-ui-text.mdc)                   | Copy UI tiếng Việt trong `src/lib/strings.ts` (`t.*`), không hardcode trong component      |
+| File                                                                                       | Nội dung ngắn gọn                                                                                                         |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| [`00-core-project-standards.mdc`](.cursor/rules/00-core-project-standards.mdc)             | i18n VND, `formatMonthLabel`, route mỏng, utilities (`types.ts`, `vnd.ts`, `style-classes.ts`), Firestore `users/{uid}/…` |
+| [`01-import-and-module-boundaries.mdc`](.cursor/rules/01-import-and-module-boundaries.mdc) | Alias `@/`, barrel `@/components/ui`, `@/components/patterns`, `@/components/inputs`                                      |
+| [`02-forms-dialog-edit-pattern.mdc`](.cursor/rules/02-forms-dialog-edit-pattern.mdc)       | Form sửa: `useImperativeHandle` (`openCreate` / `openEdit`), không `useEffect` theo `open`                                |
+| [`03-month-and-money-inputs.mdc`](.cursor/rules/03-month-and-money-inputs.mdc)             | `MonthYearPicker`, `VndAmountInput`, `VndAmountQuickPick`, `YearFilterSelect`                                             |
+| [`04-strings-and-ui-text.mdc`](.cursor/rules/04-strings-and-ui-text.mdc)                   | Copy UI tiếng Việt trong `src/lib/strings.ts` (`t.*`); hàm helper cho chuỗi động                                          |
+| [`05-tanstack-form-zod.mdc`](.cursor/rules/05-tanstack-form-zod.mdc)                       | TanStack Form + Zod schema, `Field`/`FieldLabel`/`FieldError`, `useId()` + `aria-*`                                       |
+| [`06-security-precommit-ci.mdc`](.cursor/rules/06-security-precommit-ci.mdc)               | Pre-commit (audit, Gitleaks, Trivy), GitHub Actions CI                                                                    |
+| [`07-data-layer.mdc`](.cursor/rules/07-data-layer.mdc)                                     | `useFirestoreCollection`, domain hooks, mutation hook pattern, query keys, cache strategy                                 |
+| [`08-responsive-dialog.mdc`](.cursor/rules/08-responsive-dialog.mdc)                       | `ResponsiveSheet` + `ModalHeading` + `DialogFooter` shell, sizing, accessibility                                          |
+
+### Skills (AI agent)
+
+[`.cursor/skills/`](.cursor/skills/) chứa các skill hỗ trợ AI agent scaffold nhanh theo đúng pattern của repo:
+
+| Skill                                              | Khi nào dùng                                                                         |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| [`add-module`](.cursor/skills/add-module/SKILL.md) | Tạo mới một feature module (types → strings → hooks → mutations → route)             |
+| [`add-dialog`](.cursor/skills/add-dialog/SKILL.md) | Tạo create/edit dialog với `ResponsiveSheet` + TanStack Form + `useImperativeHandle` |
 
 **Công cụ kiểm soát chất lượng:** ESLint (flat) + **Perfectionist** (thứ tự import/export/object/…), kiểm tra vòng lặp import (`import/no-cycle`), **Prettier**, **Husky** + **lint-staged** (pre-commit), **Commitlint** (conventional commits). Ví dụ commit: `feat: thêm màn thống kê`, `fix: sửa format VND`.
 

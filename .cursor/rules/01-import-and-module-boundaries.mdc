@@ -14,8 +14,9 @@ alwaysApply: true
 - When importing UI components, prefer **barrels**:
   - `@/components/ui`
   - `@/components/patterns`
+  - `@/components/inputs`
 
-Avoid deep imports like `@/components/ui/button` in app code.
+Avoid deep imports like `@/components/ui/button` or `@/components/inputs/VndAmountInput` in app code.
 
 ## Avoid cycles inside components
 

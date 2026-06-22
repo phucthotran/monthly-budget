@@ -25,6 +25,13 @@ alwaysApply: true
 - Wrap each label + control + error group with `Field` / `FieldLabel` / `FieldError` from `@/components/ui` (barrel), not ad-hoc `Label` + `div` for form fields.
 - Pass `invalid={!!err}` to `Field` when there is an error (shadcn `data-invalid` pattern).
 - `Input` / `SelectTrigger` use `aria-invalid` and error classes from the design system; `VndAmountInput` / `MonthYearPicker` support `invalid` / `aria-invalid` accordingly.
+- Use `FormLabelWithHint` from `@/components/patterns` instead of `FieldLabel` when a field needs a tooltip hint icon beside the label.
+
+## Accessibility (form IDs + aria)
+
+- Call `useId()` once per dialog/form component; use the result as a prefix for all field element IDs (e.g. `${formId}-title`, `${formId}-amount`).
+- Set `aria-invalid={!!err}` on every input control (`Input`, `SelectTrigger`, `VndAmountInput`, `MonthYearPicker`).
+- Assign an `id` to each `FieldError` (e.g. `id={errId}`) and set `aria-describedby={err ? errId : undefined}` on the corresponding control.
 
 ## Cross-field fields (form-level submit validation)
 

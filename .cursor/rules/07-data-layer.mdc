@@ -1,0 +1,82 @@
+---
+description: Firestore data layer — collection hooks, mutation hooks, query keys, cache updates
+alwaysApply: true
+---
+
+# Data Layer (Firestore + React Query)
+
+## Base collection hook
+
+`useFirestoreCollection<T>(uid, segments, queryKey, options?)` from `@/hooks/useFirestoreCollection`:
+
+- Subscribes to a Firestore collection via `onSnapshot` and writes results into React Query cache.
+- Returns `{ data: T[], isHydrated: boolean, ...queryResult }`. Use `isHydrated` to decide whether to show a skeleton.
+- `options.constraints` — array of Firestore `QueryConstraint` / `or()` chunks.
+- `options.hydrationQueryKey` — set to the base (unfiltered) key so filter variants don't reset the loading skeleton.
+
+## Domain collection hooks
+
+All domain hooks live in **`src/hooks/useUserCollections.ts`**. Add new collections there.
+
+Each hook:
+1. Memoises `segments` and `queryKey` with `useMemo`.
+2. Calls `useFirestoreCollection` with the appropriate options.
+3. Returns `{ ...queryResult, data }` where `data` is the client-side sorted array.
+
+Existing hooks: `useCategories`, `useBudgetItems`, `useIncomePeriods`, `useActualExpenses`.
+
+## Mutation hook shape
+
+Create `src/modules/<feature>/hooks/use<Feature>Mutations.ts`:
+
+```ts
+export function use<Feature>Mutations(uid: string | undefined) {
+  const qc = useQueryClient()
+  return useMemo(() => {
+    if (!uid) return null
+    const db = getFirestoreDb()
+    // define async functions here
+    return { create, update, remove }
+  }, [qc, uid])
+}
+```
+
+- Always return `null` when `uid` is undefined — callers must guard before use.
+- Keep functions pure async (no setState); side effects go through `qc.setQueriesData` / `qc.invalidateQueries`.
+
+## Cache update strategy
+
+| Collection | Strategy | Reason |
+|---|---|---|
+| `budgetItems`, `incomePeriods`, `categories` | `qc.setQueriesData<T[]>({ queryKey: queryKeys.X(uid) }, ...)` | Optimistic — avoids re-fetch round-trip |
+| `actualExpenses` | `qc.invalidateQueries({ queryKey: queryKeys.actualExpenses(uid) })` | Fan-out complexity; invalidation is simpler |
+
+## Query keys
+
+Use `queryKeys` from `@/lib/query-keys` for all `invalidateQueries` and `setQueriesData` calls. Keys are aligned with the keys produced by `useUserCollections` hooks:
+
+```ts
+queryKeys.categories(uid)       // ['categories', uid]
+queryKeys.budgetItems(uid)      // ['budgetItems', uid]
+queryKeys.incomePeriods(uid)    // ['incomePeriods', uid]
+queryKeys.actualExpenses(uid)   // ['actualExpenses', uid]
+```
+
+When adding a new collection, add its entry to `src/lib/query-keys.ts` and to `useUserCollections.ts` in the same PR.
+
+## Firestore collection paths
+
+```
+users/{uid}/categories
+users/{uid}/budgetItems
+users/{uid}/incomePeriods
+users/{uid}/actualExpenses
+```
+
+Timestamps: use `createdAt: Date.now()` (epoch ms) for new documents; always include `updatedAt: Date.now()` on updates.
+
+## Client-side sorting
+
+- **Categories**: A→Z by `name` using `new Intl.Collator('vi-VN', { sensitivity: 'base' })`.
+- **Budget items / income periods**: sort by `validFrom` asc (string compare), then A→Z by `title` / `label` with the same collator.
+- Sort inside the domain hook's `useMemo`, not in components.

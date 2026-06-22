@@ -27,10 +27,19 @@ alwaysApply: true
 - Category lists: sort **A→Z** by `name` (Vietnamese collation).
 - Budget items and income periods: sort by **month/year first** (`validFrom` asc), then **A→Z** by `title`/`label`.
 
+## Shared utilities
+
+- **Domain types**: `src/lib/types.ts` — `BudgetItem`, `IncomePeriod`, `Category`, `ActualExpense`, `MonthKey`. Import from here; do not redefine inline.
+- **VND formatting**: `formatVnd(n)` (with currency symbol) and `formatVndNumber(n)` (digits only) from `@/lib/vnd`. `parseVndInput(raw)` for raw string → number.
+- **Currency display class**: `currencyClass({ positive?, primary? })` from `@/lib/style-classes` — returns Tailwind classes for tabular currency columns (`tabular-nums`, destructive/primary colour).
+- **Shared hooks**: live in `src/hooks/`, not inside feature modules. Key hooks: `useFirestoreCollection`, `useUserCollections`, `useYearFilterPageState`, `useIsMobile`.
+
 ## Firestore conventions
 
 - Keep paths under `users/{uid}/...`.
+- Collections: `categories`, `budgetItems`, `incomePeriods`, `actualExpenses`.
 - Prefer client-side sorting to avoid Firestore index friction, unless there is a strong reason to use server ordering.
+- See `07-data-layer.mdc` for full data-layer conventions (hooks, mutations, query keys).
 
 ## Security and commits
 

@@ -28,6 +28,12 @@ alwaysApply: true
   - `t.stats.*`, `t.income.*`, `t.settings.*`, `t.budget.*`, `t.auth.*`
 - Keep keys **deterministically ordered** (repo uses object key sorting rules).
 
+## Parameterised string helpers
+
+- When a UI string embeds dynamic values (e.g. a name or formatted amount in a delete confirmation), export a named function from `strings.ts` rather than using an inline template literal in the component.
+- Existing helpers: `budgetDeleteDialogP1(title)`, `incomeDeleteDialogP1(label)`, `actualExpenseLineDeleteDialogP1(formattedAmount, monthLabel)`.
+- Add new helpers at the bottom of `strings.ts` following the same pattern.
+
 ## Exceptions (allowed hardcode)
 
 - `confirm(...)` prompts and short one-off debug strings may be hardcoded temporarily, but should be moved into `t.*` once UX is finalized.

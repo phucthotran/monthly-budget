@@ -17,6 +17,19 @@ Rules:
 
 ## VND amount
 
-- Use `VndAmountInput` (`src/components/inputs/VndAmountInput.tsx`) for amount fields.
+- Use `VndAmountInput` for amount fields; import from `@/components/inputs` barrel.
 - Store numeric value (integer VND), but display formatted `1.000.000`.
+- `VndAmountInput` accepts `invalid` prop (mirrors `aria-invalid`) — pass `invalid={!!err}` when a validation error is present.
+
+## VND quick-pick chips
+
+- Use `VndAmountQuickPick` (from `@/components/inputs`) as an optional companion row below `VndAmountInput`.
+- Props: `currentAmountVnd`, optional `plannedHintVnd` (budget line hint), `onPick`.
+- Renders up to 8 suggested amounts; the "remaining unspent" variant is `ActualAmountQuickPick` in the budget module.
+
+## Year filter
+
+- Use `YearFilterSelect` (from `@/components/inputs`) for year filter dropdowns on list pages.
+- Always pair with `useYearFilterPageState()` from `@/hooks` — it initialises `filterYear` to the current calendar year and provides `yearOptions` (5-year window).
+- Do not build a raw `<select>` year picker; `YearFilterSelect` applies the project's select styling.
 
