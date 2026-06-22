@@ -1,5 +1,5 @@
 import type { MonthSnapshot } from '@/lib/budget/aggregate'
-import type { TooltipProps } from 'recharts'
+import type { TooltipContentProps, TooltipPayloadEntry } from 'recharts'
 
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from 'recharts'
 
@@ -53,12 +53,12 @@ const savingsConfig = {
 // ─── Tooltip builders ────────────────────────────────────────────────────────
 
 function makeTooltip(config: ChartConfig) {
-  return function TooltipRenderer({ active, payload }: TooltipProps<number, string>) {
+  return function TooltipRenderer({ active, payload }: Partial<TooltipContentProps<number, string>>) {
     if (!active || !payload?.length) return null
     const heading = (payload[0]?.payload as ChartEntry | undefined)?.label
     const rows: ChartTooltipRow[] = payload
-      .filter((p) => p.value !== undefined)
-      .map((p) => ({
+      .filter((p: TooltipPayloadEntry) => p.value !== undefined)
+      .map((p: TooltipPayloadEntry) => ({
         color: p.color ?? p.fill,
         label: (config[p.dataKey as string]?.label as string) ?? p.name ?? String(p.dataKey),
         value: formatVnd(p.value as number),
