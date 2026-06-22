@@ -10,6 +10,7 @@ import { t } from '@/lib/strings'
 import { formatVnd } from '@/lib/vnd'
 
 import { SavingsTable } from './components/SavingsTable'
+import { StatsCharts } from './components/StatsCharts'
 import { StatsSummaryTiles } from './components/StatsSummaryTiles'
 import { StatsTable } from './components/StatsTable'
 import { groupSnapshotsByYear } from './groupSnapshotsByYear'
@@ -47,6 +48,8 @@ export function StatsPage() {
           />
 
           <StatsSummaryTiles plannedAvgLabel={formatVnd(plannedAvg)} actualAvgLabel={formatVnd(actualAvg)} />
+
+          <StatsCharts snaps={snaps} />
 
           <Tabs defaultValue="detail" className="w-full">
             <TabsList className="flex flex-col sm:grid w-full sm:grid-cols-2 h-20 gap-2 sm:h-10">

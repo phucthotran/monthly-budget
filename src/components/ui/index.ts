@@ -3,6 +3,15 @@ export { Badge, type BadgeProps, badgeVariants } from './badge'
 export { Button, type ButtonProps, buttonVariants } from './button'
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './card'
 export {
+  type ChartConfig,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartTooltipRow,
+} from './chart'
+export {
   Dialog,
   DialogClose,
   DialogContent,

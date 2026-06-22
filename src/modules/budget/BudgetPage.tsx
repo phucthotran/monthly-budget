@@ -151,7 +151,7 @@ export function BudgetPage() {
           <Button
             type="button"
             size="icon"
-            className="fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full shadow-lg sm:hidden"
+            className="fixed bottom-20 right-6 z-40 h-14 w-14 rounded-full shadow-lg sm:hidden"
             onClick={() => budgetDialogRef.current?.openCreate()}
             aria-label={t.budget.add}
           >
