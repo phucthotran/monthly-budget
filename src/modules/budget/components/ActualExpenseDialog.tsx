@@ -128,7 +128,7 @@ function ActualExpenseDialogImpl(
         if (!v) setItem(null)
       }}
     >
-      <ResponsiveSheetContent className="max-h-[min(90vh,46rem)] max-w-full overflow-y-auto sm:max-w-lg md:max-w-3xl">
+      <ResponsiveSheetContent className="max-w-full sm:max-h-[min(90vh,46rem)] sm:overflow-y-auto sm:max-w-lg md:max-w-3xl">
         <ModalHeading
           title={t.budget.addActual}
           description={

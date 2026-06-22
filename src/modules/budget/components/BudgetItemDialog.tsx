@@ -113,7 +113,7 @@ function BudgetItemDialogImpl(
         if (!v) setEditing(null)
       }}
     >
-      <ResponsiveSheetContent className="max-h-[min(90vh,46rem)] overflow-y-auto sm:max-w-lg md:max-w-3xl max-w-full">
+      <ResponsiveSheetContent className="max-w-full sm:max-h-[min(90vh,46rem)] sm:overflow-y-auto sm:max-w-lg md:max-w-3xl">
         <ModalHeading
           title={editing ? t.budget.edit : t.budget.add}
           description={

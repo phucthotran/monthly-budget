@@ -46,7 +46,9 @@ export function ResponsiveSheetContent({ children, className }: ResponsiveSheetC
           className={cn('flex flex-col data-[vaul-drawer-direction=bottom]:after:content-[initial]', className)}
         >
           <div className="mx-auto mt-3 mb-1 h-1.5 w-20 rounded-full bg-muted shrink-0" />
-          <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-8 pt-4 space-y-4">{children}</div>
+          <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-[max(env(safe-area-inset-bottom),2rem)] pt-4 space-y-4">
+            {children}
+          </div>
         </DrawerContent>
       </SheetVariantContext.Provider>
     )
