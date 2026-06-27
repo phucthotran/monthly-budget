@@ -2,8 +2,6 @@ import { type ReactNode } from 'react'
 
 import { cn } from '@/lib/utils'
 
-import { MobileBackButton } from './MobileBackButton'
-
 export type PageHeadingProps = {
   title: ReactNode
   description?: ReactNode
@@ -11,24 +9,14 @@ export type PageHeadingProps = {
   actions?: ReactNode
   className?: string
   descriptionClassName?: string
-  hideMobileBack?: boolean
 }
 
-export function PageHeading({
-  actions,
-  className,
-  description,
-  descriptionClassName,
-  hideMobileBack,
-  icon,
-  title,
-}: PageHeadingProps) {
+export function PageHeading({ actions, className, description, descriptionClassName, icon, title }: PageHeadingProps) {
   return (
     <div className={cn('flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between', className)}>
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">
           <span className="flex min-w-0 items-center gap-2">
-            {!hideMobileBack ? <MobileBackButton className="-ml-2" /> : null}
             <span className="min-w-0 flex-1">
               {icon != null ? (
                 <span className="inline-flex min-w-0 items-center gap-2.5">

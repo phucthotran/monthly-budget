@@ -16,6 +16,16 @@ export function formatVndNumber(amount: number): string {
   return vndNumberFormatter.format(Math.round(amount))
 }
 
+export function formatVndShort(amount: number): string {
+  const abs = Math.abs(amount)
+
+  if (abs >= 1_000_000_000) return `${formatVndNumber(amount / 1_000_000_000)} tỷ`
+  if (abs >= 1_000_000) return `${formatVndNumber(amount / 1_000_000)}tr`
+  if (abs >= 1_000) return `${formatVndNumber(amount / 1_000)}k`
+
+  return String(amount)
+}
+
 export function parseVndInput(raw: string): null | number {
   const trimmed = raw.trim().replace(/\s/g, '')
   if (!trimmed) return null

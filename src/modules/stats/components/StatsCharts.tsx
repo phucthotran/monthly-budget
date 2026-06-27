@@ -15,22 +15,13 @@ import {
 } from '@/components/ui'
 import { formatMonthLabel, formatMonthLabelShort } from '@/lib/month'
 import { t } from '@/lib/strings'
-import { formatVnd } from '@/lib/vnd'
+import { formatVnd, formatVndShort } from '@/lib/vnd'
 
 type Props = {
   snaps: MonthSnapshot[]
 }
 
 type ChartEntry = { label: string; shortLabel: string } & MonthSnapshot
-
-/** Compact VND axis tick: 5.000.000 → 5tr, 500.000 → 500k */
-function vndAxis(value: number): string {
-  const abs = Math.abs(value)
-  if (abs === 0) return '0'
-  if (abs >= 1_000_000) return `${Math.round(value / 1_000_000)}tr`
-  if (abs >= 1_000) return `${Math.round(value / 1_000)}k`
-  return String(value)
-}
 
 // ─── Chart configs ────────────────────────────────────────────────────────────
 
@@ -83,7 +74,7 @@ const xAxisProps = {
 const yAxisProps = {
   axisLine: false,
   tick: { fontSize: 10 },
-  tickFormatter: vndAxis,
+  tickFormatter: formatVndShort,
   tickLine: false,
   width: 40,
 } as const
