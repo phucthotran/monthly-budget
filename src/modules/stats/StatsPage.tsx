@@ -49,7 +49,7 @@ export function StatsPage() {
 
           <StatsSummaryTiles plannedAvgLabel={formatVnd(plannedAvg)} actualAvgLabel={formatVnd(actualAvg)} />
 
-          <StatsCharts snaps={snaps} />
+          <StatsCharts actuals={actuals} budget={budget} income={income} />
 
           <Tabs defaultValue="detail" className="w-full">
             <TabsList className="flex flex-col sm:grid w-full sm:grid-cols-2 h-20 gap-2 sm:h-10">

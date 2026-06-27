@@ -1,8 +1,11 @@
 import type { MonthSnapshot } from '@/lib/budget/aggregate'
+import type { BudgetItem, IncomePeriod, MonthKey } from '@/lib/types'
 import type { TooltipContentProps, TooltipPayloadEntry } from 'recharts'
 
+import { useMemo } from 'react'
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from 'recharts'
 
+import { YearFilterSelect } from '@/components/inputs'
 import { Panel } from '@/components/patterns'
 import {
   type ChartConfig,
@@ -17,8 +20,13 @@ import { formatMonthLabel, formatMonthLabelShort } from '@/lib/month'
 import { t } from '@/lib/strings'
 import { formatVnd, formatVndShort } from '@/lib/vnd'
 
+import { buildChartYearSnapshots } from '../buildChartYearSnapshots'
+import { useStatsChartYearState } from '../hooks/useStatsChartYearState'
+
 type Props = {
-  snaps: MonthSnapshot[]
+  actuals: { spentMonth: MonthKey; amountVnd: number }[]
+  budget: BudgetItem[]
+  income: IncomePeriod[]
 }
 
 type ChartEntry = { label: string; shortLabel: string } & MonthSnapshot
@@ -81,17 +89,31 @@ const yAxisProps = {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export function StatsCharts({ snaps }: Props) {
-  if (snaps.length === 0) return null
+export function StatsCharts({ actuals, budget, income }: Props) {
+  const { filterYear, setFilterYear, yearOptions } = useStatsChartYearState()
 
-  const chartData: ChartEntry[] = snaps.map((s) => ({
-    ...s,
-    label: formatMonthLabel(s.month),
-    shortLabel: formatMonthLabelShort(s.month),
-  }))
+  const snaps = useMemo(
+    () => buildChartYearSnapshots(filterYear, income, budget, actuals),
+    [actuals, budget, filterYear, income],
+  )
+
+  const chartData: ChartEntry[] = useMemo(
+    () =>
+      snaps.map((s) => ({
+        ...s,
+        label: formatMonthLabel(s.month),
+        shortLabel: formatMonthLabelShort(s.month),
+      })),
+    [snaps],
+  )
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="text-lg font-semibold tracking-tight">{t.stats.chartSectionTitle}</h2>
+        <YearFilterSelect value={filterYear} years={yearOptions} onValueChange={setFilterYear} />
+      </div>
+
       {/* Chart 1: Cashflow */}
       <Panel bodyClassName="overflow-visible px-2 pb-3 pt-1" title={t.stats.chartTitleCashflow}>
         <ChartContainer className="h-[220px] w-full sm:h-[260px]" config={cashflowConfig}>

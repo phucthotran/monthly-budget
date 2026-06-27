@@ -51,8 +51,21 @@ export function calendarYearStartEndKeys(year: number): { end: MonthKey; start: 
   return { end: `${year}-12`, start: `${year}-01` }
 }
 
+/** All month keys for a calendar year (`yyyy-01` … `yyyy-12`). */
+export function calendarYearMonthKeys(year: number): MonthKey[] {
+  const keys: MonthKey[] = []
+  for (let month = 1; month <= 12; month++) {
+    keys.push(`${year}-${String(month).padStart(2, '0')}`)
+  }
+  return keys
+}
+
 /** Same forward window as page year filters (VN TZ). */
 export const YEAR_FILTER_SPAN = 5
+
+/** Stats chart year dropdown spans (VN TZ). */
+export const STATS_CHART_YEAR_BACK_SPAN = 5
+export const STATS_CHART_YEAR_FORWARD_SPAN = 5
 
 function yearFilterInclusiveBounds(now = new Date(), span = YEAR_FILTER_SPAN): { maxYear: number; minYear: number } {
   const cy = currentCalendarYear(now)
@@ -63,6 +76,22 @@ function yearFilterInclusiveBounds(now = new Date(), span = YEAR_FILTER_SPAN): {
 /** Consecutive years for page year filters: `span` years from the current calendar year forward (VN TZ). */
 export function yearFilterRange(now = new Date(), span = YEAR_FILTER_SPAN): number[] {
   const { maxYear, minYear } = yearFilterInclusiveBounds(now, span)
+  const out: number[] = []
+  for (let y = minYear; y <= maxYear; y++) out.push(y)
+  return out
+}
+
+/** Consecutive years for stats charts: `backSpan` prior years through `forwardSpan` years ahead of current (VN TZ). */
+export function statsChartYearRange(
+  now = new Date(),
+  backSpan = STATS_CHART_YEAR_BACK_SPAN,
+  forwardSpan = STATS_CHART_YEAR_FORWARD_SPAN,
+): number[] {
+  const cy = currentCalendarYear(now)
+  const back = Math.max(1, backSpan)
+  const forward = Math.max(1, forwardSpan)
+  const minYear = cy - (back - 1)
+  const maxYear = cy + (forward - 1)
   const out: number[] = []
   for (let y = minYear; y <= maxYear; y++) out.push(y)
   return out

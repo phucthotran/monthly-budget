@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest'
 
 import {
   asOfMonthForYearFilter,
+  calendarYearMonthKeys,
   compareMonthKeys,
   formatMonthLabelShort,
   monthYearPickerYearConstraints,
+  statsChartYearRange,
   statsMonthKeys,
   yearFilterRange,
 } from '@/lib/month'
@@ -50,6 +52,32 @@ describe('asOfMonthForYearFilter', () => {
     const now = new Date('2026-04-15T12:00:00Z')
     expect(asOfMonthForYearFilter(2025, now)).toBe('2025-12')
     expect(asOfMonthForYearFilter(2027, now)).toBe('2027-01')
+  })
+})
+
+describe('calendarYearMonthKeys', () => {
+  it('returns Jan–Dec keys for a calendar year', () => {
+    expect(calendarYearMonthKeys(2026)).toEqual([
+      '2026-01',
+      '2026-02',
+      '2026-03',
+      '2026-04',
+      '2026-05',
+      '2026-06',
+      '2026-07',
+      '2026-08',
+      '2026-09',
+      '2026-10',
+      '2026-11',
+      '2026-12',
+    ])
+  })
+})
+
+describe('statsChartYearRange', () => {
+  it('returns five prior and five upcoming years around the current calendar year (VN TZ)', () => {
+    const now = new Date('2026-06-01T12:00:00Z')
+    expect(statsChartYearRange(now)).toEqual([2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030])
   })
 })
 
