@@ -21,6 +21,7 @@ import { useActualExpenses } from '@/hooks/useUserCollections'
 import { formatDateLong } from '@/lib/datetime'
 import { compareMonthKeys, formatMonthLabel } from '@/lib/month'
 import { t } from '@/lib/strings'
+import { currencyClass } from '@/lib/style-classes'
 import { cn } from '@/lib/utils'
 import { formatVnd } from '@/lib/vnd'
 
@@ -34,15 +35,15 @@ function sortActualExpenseRows(rows: ActualExpense[]): ActualExpense[] {
 
 function ActualExpenseMonthTabPanel({
   budgetItemId,
-  deleteLocked,
   onDeleteLine,
+  readOnly,
   spentMonth,
   uid,
 }: {
   uid: string
   budgetItemId: string
   spentMonth: MonthKey
-  deleteLocked: boolean
+  readOnly: boolean
   onDeleteLine: (expense: ActualExpense) => void
 }) {
   const { data: rows = [], isHydrated } = useActualExpenses(uid, spentMonth, budgetItemId)
@@ -70,29 +71,30 @@ function ActualExpenseMonthTabPanel({
             <TableHead className="whitespace-nowrap">{t.budget.amount}</TableHead>
             <TableHead className="whitespace-nowrap">{t.common.note}</TableHead>
             <TableHead className="whitespace-nowrap">{t.budget.createdAt}</TableHead>
-            <TableHead className="w-12" />
+            {readOnly ? null : <TableHead className="w-12" />}
           </TableRow>
         </TableHeader>
         <TableBody>
           {sorted.map((row) => (
             <TableRow key={row.id}>
-              <TableCell className="whitespace-nowrap text-sm font-medium tabular-nums">
+              <TableCell className={cn('whitespace-nowrap text-sm', currencyClass({ positive: row.amountVnd >= 0 }))}>
                 {formatVnd(row.amountVnd)}
               </TableCell>
               <TableCell className="max-w-[10rem] truncate text-sm">{row.note?.trim() || '—'}</TableCell>
               <TableCell className="text-sm">{formatDateLong(row.createdAt)}</TableCell>
-              <TableCell className="whitespace-nowrap p-1 text-right align-middle">
-                <ActionTooltipButton
-                  aria-label={t.common.delete}
-                  className="h-8 w-8 shrink-0 p-0"
-                  disabled={deleteLocked}
-                  label={deleteLocked ? t.budget.periodEndedLocked : t.common.delete}
-                  variant="ghost"
-                  onClick={() => onDeleteLine(row)}
-                >
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </ActionTooltipButton>
-              </TableCell>
+              {readOnly ? null : (
+                <TableCell className="whitespace-nowrap p-1 text-right align-middle">
+                  <ActionTooltipButton
+                    aria-label={t.common.delete}
+                    className="h-8 w-8 shrink-0 p-0"
+                    label={t.common.delete}
+                    variant="ghost"
+                    onClick={() => onDeleteLine(row)}
+                  >
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </ActionTooltipButton>
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>
@@ -104,30 +106,36 @@ function ActualExpenseMonthTabPanel({
 export function ActualExpenseMonthTabs({
   budgetItemId,
   defaultMonth,
-  deleteLocked,
+  includeDefaultMonth,
   onDeleteLine,
+  readOnly,
   uid,
 }: {
   uid: string
   budgetItemId: string
   defaultMonth: MonthKey
-  deleteLocked: boolean
+  /** When false, omit `defaultMonth` from tabs unless there are no recorded lines (view-only / expired). */
+  includeDefaultMonth: boolean
+  readOnly: boolean
   onDeleteLine: (expense: ActualExpense) => void
 }) {
   const { data: itemActuals = [], isHydrated: tabMonthsReady } = useActualExpenses(uid, undefined, budgetItemId)
   const [viewMonth, setViewMonth] = useState(defaultMonth)
 
   const tabMonths = useMemo(() => {
-    const months = new Set<MonthKey>([defaultMonth])
+    const months = new Set<MonthKey>()
     for (const row of itemActuals) {
       months.add(row.spentMonth)
     }
+    if (includeDefaultMonth || months.size === 0) {
+      months.add(defaultMonth)
+    }
     return [...months].sort((a, b) => compareMonthKeys(b, a))
-  }, [defaultMonth, itemActuals])
+  }, [defaultMonth, includeDefaultMonth, itemActuals])
 
   useEffect(() => {
-    setViewMonth(defaultMonth)
-  }, [budgetItemId, defaultMonth])
+    setViewMonth(tabMonths[0] ?? defaultMonth)
+  }, [budgetItemId, defaultMonth, tabMonths])
 
   return (
     <div className="space-y-2 rounded-md border p-3">
@@ -156,7 +164,7 @@ export function ActualExpenseMonthTabs({
               {viewMonth === month ? (
                 <ActualExpenseMonthTabPanel
                   budgetItemId={budgetItemId}
-                  deleteLocked={deleteLocked}
+                  readOnly={readOnly}
                   spentMonth={month}
                   uid={uid}
                   onDeleteLine={onDeleteLine}

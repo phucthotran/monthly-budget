@@ -4,6 +4,8 @@ import { InfoTooltip } from '@/components/patterns'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
 import { formatMonthLabelShort } from '@/lib/month'
 import { t } from '@/lib/strings'
+import { currencyClass } from '@/lib/style-classes'
+import { cn } from '@/lib/utils'
 
 import { groupSnapshotsByYear } from '../groupSnapshotsByYear'
 
@@ -80,16 +82,36 @@ export function SavingsTableDesktop({ formatVnd, isYearOpen, rows, toggleYear }:
               ? yearRows.map((s) => (
                   <TableRow key={s.month}>
                     <TableCell className="whitespace-nowrap font-medium">{formatMonthLabelShort(s.month)}</TableCell>
-                    <TableCell className="whitespace-nowrap text-right tabular-nums text-primary">
+                    <TableCell
+                      className={cn(
+                        'whitespace-nowrap text-right',
+                        currencyClass({ positive: s.plannedSurplusVnd >= 0, primary: true }),
+                      )}
+                    >
                       {formatVnd(s.plannedSurplusVnd)}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap text-right tabular-nums text-primary">
+                    <TableCell
+                      className={cn(
+                        'whitespace-nowrap text-right',
+                        currencyClass({ positive: s.actualSurplusVnd >= 0, primary: true }),
+                      )}
+                    >
                       {formatVnd(s.actualSurplusVnd)}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap text-right tabular-nums">
+                    <TableCell
+                      className={cn(
+                        'whitespace-nowrap text-right',
+                        currencyClass({ positive: s.plannedSavingsToDateVnd >= 0 }),
+                      )}
+                    >
                       {formatVnd(s.plannedSavingsToDateVnd)}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap text-right tabular-nums">
+                    <TableCell
+                      className={cn(
+                        'whitespace-nowrap text-right',
+                        currencyClass({ positive: s.actualSavingsToDateVnd >= 0 }),
+                      )}
+                    >
                       {formatVnd(s.actualSavingsToDateVnd)}
                     </TableCell>
                   </TableRow>

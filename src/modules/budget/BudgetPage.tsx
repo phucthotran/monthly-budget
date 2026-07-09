@@ -4,13 +4,13 @@ import { Plus, Wallet } from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
-import { YearFilterSelect } from '@/components/inputs'
+import { PeriodStatusFilterToggle, YearFilterSelect } from '@/components/inputs'
 import { ConfirmDeleteDialog, PageHeading, PageLoadingSkeleton, Panel } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
+import { usePeriodListPageState } from '@/hooks/usePeriodListPageState'
 import { useActualExpenses, useBudgetItems, useCategories } from '@/hooks/useUserCollections'
-import { useYearFilterPageState } from '@/hooks/useYearFilterPageState'
-import { asOfMonthForYearFilter, currentMonthKey, formatMonthLabel } from '@/lib/month'
+import { asOfMonthForYearFilter, currentMonthKey, formatMonthLabel, matchesPeriodStatusFilter } from '@/lib/month'
 import { actualExpenseLineDeleteDialogP1, budgetDeleteDialogP1, t } from '@/lib/strings'
 import { formatVnd } from '@/lib/vnd'
 
@@ -28,10 +28,14 @@ export function BudgetPage() {
 
   const [itemToDelete, setItemToDelete] = useState<BudgetItem | null>(null)
   const [actualLineToDelete, setActualLineToDelete] = useState<ActualExpense | null>(null)
-  const { filterYear, setFilterYear, yearOptions } = useYearFilterPageState()
+  const { filterYear, periodStatus, setFilterYear, setPeriodStatus, yearOptions } = usePeriodListPageState()
   const asOfMonth = useMemo(() => asOfMonthForYearFilter(filterYear), [filterYear])
 
   const { data: items = [], isHydrated: itemsReady } = useBudgetItems(uid, filterYear)
+  const filteredItems = useMemo(
+    () => items.filter((item) => matchesPeriodStatusFilter(item.validTo, asOfMonth, periodStatus)),
+    [asOfMonth, items, periodStatus],
+  )
   const { data: actuals = [], isHydrated: actualsReady } = useActualExpenses(uid)
   const dataLoading = !categoriesReady || !itemsReady || !actualsReady
 
@@ -81,15 +85,16 @@ export function BudgetPage() {
 
           <Panel
             title={
-              <div className="mb-4 flex justify-end">
+              <div className="mb-4 flex flex-nowrap items-center justify-between gap-2">
+                <PeriodStatusFilterToggle value={periodStatus} onValueChange={setPeriodStatus} />
                 <YearFilterSelect value={filterYear} years={yearOptions} onValueChange={setFilterYear} />
               </div>
             }
           >
-            {items.length > 0 ? (
+            {filteredItems.length > 0 ? (
               <BudgetItemsTable
                 month={asOfMonth}
-                items={items}
+                items={filteredItems}
                 categories={categories}
                 actualMap={actualMap}
                 onAddActual={(item) => actualDialogRef.current?.openForItem(item)}
@@ -97,7 +102,11 @@ export function BudgetPage() {
                 onDelete={(item) => setItemToDelete(item)}
               />
             ) : (
-              <p className="text-sm text-muted-foreground py-6 text-center">{t.common.noItemsInSelectedYear}</p>
+              <p className="text-sm text-muted-foreground py-6 text-center">
+                {periodStatus === 'expired'
+                  ? t.common.noExpiredItemsInSelectedYear
+                  : t.common.noActiveItemsInSelectedYear}
+              </p>
             )}
           </Panel>
 

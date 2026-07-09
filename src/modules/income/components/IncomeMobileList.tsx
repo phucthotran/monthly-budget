@@ -5,6 +5,7 @@ import { Pencil, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { formatMonthLabel, isPeriodClosedBefore } from '@/lib/month'
 import { t } from '@/lib/strings'
+import { currencyClass } from '@/lib/style-classes'
 import { formatVnd } from '@/lib/vnd'
 
 export function IncomeMobileList({ asOfMonth, onDelete, onEdit, rows }: IncomeTableProps) {
@@ -36,7 +37,7 @@ export function IncomeMobileList({ asOfMonth, onDelete, onEdit, rows }: IncomeTa
                 </Button>
               </div>
             </div>
-            <p className="text-base font-semibold tabular-nums">{formatVnd(row.amountVnd)}</p>
+            <p className={currencyClass({ positive: row.amountVnd >= 0 })}>{formatVnd(row.amountVnd)}</p>
           </div>
         )
       })}

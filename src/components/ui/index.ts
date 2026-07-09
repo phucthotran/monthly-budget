@@ -63,6 +63,7 @@ export {
 } from './select'
 export { Separator } from './separator'
 export { Skeleton } from './skeleton'
+export { Switch, type SwitchProps } from './switch'
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table'
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs'
 export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip'

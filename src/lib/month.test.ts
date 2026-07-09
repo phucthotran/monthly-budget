@@ -5,6 +5,8 @@ import {
   calendarYearMonthKeys,
   compareMonthKeys,
   formatMonthLabelShort,
+  isPeriodClosedBefore,
+  matchesPeriodStatusFilter,
   monthYearPickerYearConstraints,
   statsChartYearRange,
   statsMonthKeys,
@@ -93,6 +95,28 @@ describe('yearFilterRange', () => {
   it('respects a custom span', () => {
     const now = new Date('2026-01-10T12:00:00Z')
     expect(yearFilterRange(now, 3)).toEqual([2026, 2027, 2028])
+  })
+})
+
+describe('matchesPeriodStatusFilter', () => {
+  const asOfMonth = '2026-06'
+
+  it('active includes open-ended and not-yet-expired periods', () => {
+    expect(matchesPeriodStatusFilter(null, asOfMonth, 'active')).toBe(true)
+    expect(matchesPeriodStatusFilter('2026-06', asOfMonth, 'active')).toBe(true)
+    expect(matchesPeriodStatusFilter('2026-12', asOfMonth, 'active')).toBe(true)
+    expect(matchesPeriodStatusFilter('2027-01', asOfMonth, 'active')).toBe(true)
+  })
+
+  it('active excludes periods closed before asOfMonth', () => {
+    expect(matchesPeriodStatusFilter('2026-05', asOfMonth, 'active')).toBe(false)
+    expect(isPeriodClosedBefore('2026-05', asOfMonth)).toBe(true)
+  })
+
+  it('expired includes only periods closed before asOfMonth', () => {
+    expect(matchesPeriodStatusFilter('2026-05', asOfMonth, 'expired')).toBe(true)
+    expect(matchesPeriodStatusFilter('2026-06', asOfMonth, 'expired')).toBe(false)
+    expect(matchesPeriodStatusFilter(null, asOfMonth, 'expired')).toBe(false)
   })
 })
 

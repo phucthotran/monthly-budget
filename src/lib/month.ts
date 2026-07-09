@@ -152,6 +152,18 @@ export function isPeriodClosedBefore(validTo: MonthKey | null, asOfMonth: MonthK
   return compareMonthKeys(validTo, asOfMonth) < 0
 }
 
+export type PeriodStatusFilter = 'active' | 'expired'
+
+/** Client-side period status filter for budget/income list pages. */
+export function matchesPeriodStatusFilter(
+  validTo: MonthKey | null,
+  asOfMonth: MonthKey,
+  filter: PeriodStatusFilter,
+): boolean {
+  const expired = isPeriodClosedBefore(validTo, asOfMonth)
+  return filter === 'expired' ? expired : !expired
+}
+
 /** UI label `T{month}/{year}` (e.g. T4/2026). */
 export function formatMonthLabel(month: MonthKey): string {
   const [y, m] = month.split('-')

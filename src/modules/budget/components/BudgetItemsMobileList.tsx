@@ -5,7 +5,7 @@ import { useMemo } from 'react'
 
 import { Badge, Button } from '@/components/ui'
 import { canRecordActualExpenseForBudgetItem } from '@/lib/budget/apply'
-import { formatMonthLabel, isPeriodClosedBefore } from '@/lib/month'
+import { currentMonthKey, formatMonthLabel, isPeriodClosedBefore } from '@/lib/month'
 import { t } from '@/lib/strings'
 import { currencyClass } from '@/lib/style-classes'
 import { formatVnd } from '@/lib/vnd'
@@ -30,7 +30,7 @@ export function BudgetItemsMobileList({
         const spent = actualMap.get(`${item.id}|${month}`) ?? 0
         const remaining = item.amountVnd - spent
         const locked = isPeriodClosedBefore(item.validTo, month)
-        const canAddActual = canRecordActualExpenseForBudgetItem(item, month)
+        const canAddActual = canRecordActualExpenseForBudgetItem(item, currentMonthKey())
         return (
           <div key={item.id} className="rounded-lg border border-border bg-card p-4 space-y-3">
             <div className="flex items-start justify-between gap-2">
@@ -59,15 +59,9 @@ export function BudgetItemsMobileList({
             </div>
 
             <div className="flex gap-2 pt-0.5">
-              <Button
-                size="sm"
-                variant="secondary"
-                className="flex-1 gap-1.5"
-                disabled={!canAddActual}
-                onClick={() => onAddActual(item)}
-              >
+              <Button size="sm" variant="secondary" className="flex-1 gap-1.5" onClick={() => onAddActual(item)}>
                 <HandCoinsIcon className="h-3.5 w-3.5" />
-                {t.budget.actuals}
+                {canAddActual ? t.budget.actuals : t.budget.viewActualAction}
               </Button>
               <Button size="sm" variant="outline" disabled={locked} onClick={() => onEdit(item)}>
                 <Pencil className="h-3.5 w-3.5" />

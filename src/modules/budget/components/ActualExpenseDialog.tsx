@@ -17,6 +17,7 @@ import { VndAmountInput } from '@/components/inputs'
 import { FormLabelWithHint, ModalHeading, ResponsiveSheet, ResponsiveSheetContent } from '@/components/patterns'
 import { Button, Field, FieldError, FieldLabel, Input } from '@/components/ui'
 import { useActualExpenses } from '@/hooks/useUserCollections'
+import { canRecordActualExpenseForBudgetItem } from '@/lib/budget/apply'
 import { firstFieldErrorMessage } from '@/lib/form/fieldMeta'
 import { currentMonthKey, formatMonthLabel, isPeriodClosedBefore } from '@/lib/month'
 import { t } from '@/lib/strings'
@@ -119,6 +120,7 @@ function ActualExpenseDialogImpl(
   if (!item || !uid) return null
 
   const deleteLocked = isPeriodClosedBefore(item.validTo, snapshotMonth)
+  const addLocked = !canRecordActualExpenseForBudgetItem(item, recordMonth)
 
   return (
     <ResponsiveSheet
@@ -130,95 +132,105 @@ function ActualExpenseDialogImpl(
     >
       <ResponsiveSheetContent className="max-w-full sm:max-h-[min(90vh,46rem)] sm:overflow-y-auto sm:max-w-lg md:max-w-3xl">
         <ModalHeading
-          title={t.budget.addActual}
+          title={addLocked ? t.budget.viewActual : t.budget.addActual}
           description={
-            <div className="space-y-2.5 text-pretty leading-relaxed">
-              <p>
-                {em(item.title)} — {t.budget.addActualContext}
+            addLocked ? (
+              <p className="text-pretty leading-relaxed">
+                {em(item.title)} — {t.budget.viewActualBody}
               </p>
-              <p className="text-muted-foreground">{t.budget.addActualBody}</p>
-            </div>
+            ) : (
+              <div className="space-y-2.5 text-pretty leading-relaxed">
+                <p>
+                  {em(item.title)} — {t.budget.addActualContext}
+                </p>
+                <p className="text-muted-foreground">{t.budget.addActualBody}</p>
+              </div>
+            )
           }
         />
         <form
           className="min-w-0 space-y-4"
           onSubmit={(e) => {
             e.preventDefault()
+            if (addLocked) return
             void form.handleSubmit()
           }}
         >
           <ActualExpenseMonthTabs
             budgetItemId={item.id}
             defaultMonth={recordMonth}
-            deleteLocked={deleteLocked}
+            includeDefaultMonth={!addLocked}
+            readOnly={deleteLocked}
             uid={uid}
             onDeleteLine={onDeleteLine}
           />
 
-          <div className="space-y-2 rounded-md border border-border/60 bg-muted/30 p-3 shadow-sm dark:border-border/80 dark:bg-muted/50">
-            <form.Field name="amountVnd">
-              {(field) => {
-                const err = firstFieldErrorMessage(field.state.meta)
-                const errId = `${formId}-amount-err`
-                const quickPickDescId = `${formId}-amount-quick`
-                const describedBy = [err ? errId : null, quickPickDescId].filter(Boolean).join(' ') || undefined
-                return (
-                  <Field invalid={!!err}>
-                    <FieldLabel htmlFor={`${formId}-amount`}>{t.budget.amount}</FieldLabel>
-                    <VndAmountInput
-                      aria-describedby={describedBy}
-                      id={`${formId}-amount`}
-                      invalid={!!err}
-                      value={field.state.value}
-                      onValueChange={(n) => field.handleChange(n)}
-                    />
-                    <FieldError id={errId}>{err}</FieldError>
-                    <div className="min-w-0 pt-2" id={quickPickDescId}>
-                      <p className="mb-1.5 text-xs text-muted-foreground">{t.common.amountQuickPickHint}</p>
-                      <ActualAmountQuickPick
-                        currentAmountVnd={field.state.value}
-                        plannedAmountVnd={item.amountVnd}
-                        spentInMonthVnd={spentInMonthVnd}
-                        onPick={(n) => field.handleChange(n)}
+          {addLocked ? null : (
+            <div className="space-y-2 rounded-md border border-border/60 bg-muted/30 p-3 shadow-sm dark:border-border/80 dark:bg-muted/50">
+              <form.Field name="amountVnd">
+                {(field) => {
+                  const err = firstFieldErrorMessage(field.state.meta)
+                  const errId = `${formId}-amount-err`
+                  const quickPickDescId = `${formId}-amount-quick`
+                  const describedBy = [err ? errId : null, quickPickDescId].filter(Boolean).join(' ') || undefined
+                  return (
+                    <Field invalid={!!err}>
+                      <FieldLabel htmlFor={`${formId}-amount`}>{t.budget.amount}</FieldLabel>
+                      <VndAmountInput
+                        aria-describedby={describedBy}
+                        id={`${formId}-amount`}
+                        invalid={!!err}
+                        value={field.state.value}
+                        onValueChange={(n) => field.handleChange(n)}
                       />
-                    </div>
-                  </Field>
-                )
-              }}
-            </form.Field>
+                      <FieldError id={errId}>{err}</FieldError>
+                      <div className="min-w-0 pt-2" id={quickPickDescId}>
+                        <p className="mb-1.5 text-xs text-muted-foreground">{t.common.amountQuickPickHint}</p>
+                        <ActualAmountQuickPick
+                          currentAmountVnd={field.state.value}
+                          plannedAmountVnd={item.amountVnd}
+                          spentInMonthVnd={spentInMonthVnd}
+                          onPick={(n) => field.handleChange(n)}
+                        />
+                      </div>
+                    </Field>
+                  )
+                }}
+              </form.Field>
 
-            <Field>
-              <FormLabelWithHint hint={<p className="text-pretty">{t.budget.actualSpentMonthReadOnlyHint}</p>}>
-                {t.common.month}
-              </FormLabelWithHint>
-              <p className="text-sm font-medium">{formatMonthLabel(recordMonth)}</p>
-            </Field>
+              <Field>
+                <FormLabelWithHint hint={<p className="text-pretty">{t.budget.actualSpentMonthReadOnlyHint}</p>}>
+                  {t.common.month}
+                </FormLabelWithHint>
+                <p className="text-sm font-medium">{formatMonthLabel(recordMonth)}</p>
+              </Field>
 
-            <form.Field name="note">
-              {(field) => {
-                const err = firstFieldErrorMessage(field.state.meta)
-                const errId = `${formId}-note-err`
-                return (
-                  <Field invalid={!!err}>
-                    <FieldLabel htmlFor={`${formId}-note`}>{t.common.note}</FieldLabel>
-                    <Input
-                      aria-describedby={err ? errId : undefined}
-                      aria-invalid={!!err}
-                      id={`${formId}-note`}
-                      maxLength={45}
-                      value={field.state.value}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                    />
-                    <FieldError id={errId}>{err}</FieldError>
-                  </Field>
-                )
-              }}
-            </form.Field>
+              <form.Field name="note">
+                {(field) => {
+                  const err = firstFieldErrorMessage(field.state.meta)
+                  const errId = `${formId}-note-err`
+                  return (
+                    <Field invalid={!!err}>
+                      <FieldLabel htmlFor={`${formId}-note`}>{t.common.note}</FieldLabel>
+                      <Input
+                        aria-describedby={err ? errId : undefined}
+                        aria-invalid={!!err}
+                        id={`${formId}-note`}
+                        maxLength={45}
+                        value={field.state.value}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                      />
+                      <FieldError id={errId}>{err}</FieldError>
+                    </Field>
+                  )
+                }}
+              </form.Field>
 
-            <Button className="w-full" disabled={form.state.isSubmitting} type="submit">
-              {form.state.isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : t.budget.saveActualAction}
-            </Button>
-          </div>
+              <Button className="w-full" disabled={form.state.isSubmitting} type="submit">
+                {form.state.isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : t.budget.saveActualAction}
+              </Button>
+            </div>
+          )}
         </form>
       </ResponsiveSheetContent>
     </ResponsiveSheet>

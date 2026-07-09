@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react'
 
 import { Button, TableCell, TableRow } from '@/components/ui'
 import { t } from '@/lib/strings'
+import { currencyClass } from '@/lib/style-classes'
 import { cn } from '@/lib/utils'
 
 import { StatsTableColgroup } from '../statsTableColgroup'
@@ -34,13 +35,27 @@ function BreakdownNestedTable({ formatVnd, rows }: { formatVnd: (n: number) => s
               <td className="min-w-0 p-2 align-middle font-normal text-foreground">
                 <span className="block line-clamp-2 text-left leading-snug">{row.planned.label}</span>
               </td>
-              <td className="p-2 text-right align-middle tabular-nums">{'\u200b'}</td>
-              <td className="p-2 text-right align-middle tabular-nums">{formatVnd(plannedVnd)}</td>
-              <td className="align-middle whitespace-nowrap p-2 text-right tabular-nums">{formatVnd(actualVnd)}</td>
-              <td className="align-middle whitespace-nowrap p-2 text-right tabular-nums">
+              <td className="p-2 text-right align-middle">{'\u200b'}</td>
+              <td className={cn('p-2 text-right align-middle', currencyClass({ positive: plannedVnd >= 0 }))}>
+                {formatVnd(plannedVnd)}
+              </td>
+              <td
+                className={cn(
+                  'align-middle whitespace-nowrap p-2 text-right',
+                  currencyClass({ positive: actualVnd >= 0 }),
+                )}
+              >
+                {formatVnd(actualVnd)}
+              </td>
+              <td
+                className={cn(
+                  'align-middle whitespace-nowrap p-2 text-right',
+                  currencyClass({ positive: plannedVnd - actualVnd >= 0, primary: true }),
+                )}
+              >
                 {formatVnd(plannedVnd - actualVnd)}
               </td>
-              <td className="align-middle whitespace-nowrap p-2 text-right tabular-nums">{'\u200b'}</td>
+              <td className="align-middle whitespace-nowrap p-2 text-right">{'\u200b'}</td>
             </tr>
           )
         })}

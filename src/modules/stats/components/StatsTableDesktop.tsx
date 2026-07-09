@@ -9,6 +9,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { buildHomeMonthLineItems } from '@/lib/budget/homeMonthBreakdown'
 import { formatMonthLabelShort } from '@/lib/month'
 import { t } from '@/lib/strings'
+import { currencyClass } from '@/lib/style-classes'
+import { cn } from '@/lib/utils'
 
 import { groupSnapshotsByYear } from '../groupSnapshotsByYear'
 import { StatsTableColgroup } from '../statsTableColgroup'
@@ -113,19 +115,38 @@ export function StatsTableDesktop({
                         <TableCell className="whitespace-nowrap font-medium">
                           {formatMonthLabelShort(s.month)}
                         </TableCell>
-                        <TableCell className="whitespace-nowrap text-right tabular-nums">
+                        <TableCell
+                          className={cn('whitespace-nowrap text-right', currencyClass({ positive: s.incomeVnd >= 0 }))}
+                        >
                           {formatVnd(s.incomeVnd)}
                         </TableCell>
-                        <TableCell className="whitespace-nowrap text-right tabular-nums">
+                        <TableCell
+                          className={cn('whitespace-nowrap text-right', currencyClass({ positive: s.plannedVnd >= 0 }))}
+                        >
                           {formatVnd(s.plannedVnd)}
                         </TableCell>
-                        <TableCell className="whitespace-nowrap text-right tabular-nums">
+                        <TableCell
+                          className={cn(
+                            'whitespace-nowrap text-right',
+                            currencyClass({ positive: s.actualSpentVnd >= 0 }),
+                          )}
+                        >
                           {formatVnd(s.actualSpentVnd)}
                         </TableCell>
-                        <TableCell className="whitespace-nowrap text-right tabular-nums text-primary">
+                        <TableCell
+                          className={cn(
+                            'whitespace-nowrap text-right',
+                            currencyClass({ positive: s.plannedSurplusVnd >= 0, primary: true }),
+                          )}
+                        >
                           {formatVnd(s.plannedSurplusVnd)}
                         </TableCell>
-                        <TableCell className="whitespace-nowrap text-right tabular-nums text-primary">
+                        <TableCell
+                          className={cn(
+                            'whitespace-nowrap text-right',
+                            currencyClass({ positive: s.actualSurplusVnd >= 0, primary: true }),
+                          )}
+                        >
                           {formatVnd(s.actualSurplusVnd)}
                         </TableCell>
                       </TableRow>

@@ -7,6 +7,8 @@ import { ActionTooltipButton } from '@/components/patterns'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
 import { formatMonthLabel, isPeriodClosedBefore } from '@/lib/month'
 import { t } from '@/lib/strings'
+import { currencyClass } from '@/lib/style-classes'
+import { cn } from '@/lib/utils'
 import { formatVnd } from '@/lib/vnd'
 
 export type IncomeTableProps = {
@@ -36,7 +38,9 @@ export function IncomeTableDesktop({ asOfMonth, onDelete, onEdit, rows }: Income
                 <TableCell className="font-medium max-w-[18rem] truncate">
                   <span className="block truncate">{row.label}</span>
                 </TableCell>
-                <TableCell className="text-right tabular-nums whitespace-nowrap">{formatVnd(row.amountVnd)}</TableCell>
+                <TableCell className={cn('text-right', currencyClass({ positive: row.amountVnd >= 0 }))}>
+                  {formatVnd(row.amountVnd)}
+                </TableCell>
                 <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
                   {formatMonthLabel(row.validFrom)} → {row.validTo ? formatMonthLabel(row.validTo) : '…'}
                 </TableCell>

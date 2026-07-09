@@ -4,13 +4,13 @@ import { PiggyBank, Plus } from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
-import { YearFilterSelect } from '@/components/inputs'
+import { PeriodStatusFilterToggle, YearFilterSelect } from '@/components/inputs'
 import { ConfirmDeleteDialog, PageHeading, PageLoadingSkeleton, Panel } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
+import { usePeriodListPageState } from '@/hooks/usePeriodListPageState'
 import { useIncomePeriods } from '@/hooks/useUserCollections'
-import { useYearFilterPageState } from '@/hooks/useYearFilterPageState'
-import { asOfMonthForYearFilter, currentMonthKey } from '@/lib/month'
+import { asOfMonthForYearFilter, currentMonthKey, matchesPeriodStatusFilter } from '@/lib/month'
 import { incomeDeleteDialogP1, t } from '@/lib/strings'
 
 import { IncomeDialog, type IncomeDialogHandle } from './components/IncomeDialog'
@@ -21,10 +21,14 @@ export function IncomePage() {
   const { user } = useAuthContext()
   const uid = user?.uid
   const [rowToDelete, setRowToDelete] = useState<IncomePeriod | null>(null)
-  const { filterYear, setFilterYear, yearOptions } = useYearFilterPageState()
+  const { filterYear, periodStatus, setFilterYear, setPeriodStatus, yearOptions } = usePeriodListPageState()
   const asOfMonth = useMemo(() => asOfMonthForYearFilter(filterYear), [filterYear])
 
   const { data: rows = [], isHydrated: incomeReady } = useIncomePeriods(uid, filterYear)
+  const filteredRows = useMemo(
+    () => rows.filter((row) => matchesPeriodStatusFilter(row.validTo, asOfMonth, periodStatus)),
+    [asOfMonth, periodStatus, rows],
+  )
   const dataLoading = !incomeReady
 
   const dialogDefaultMonth = currentMonthKey()
@@ -68,20 +72,25 @@ export function IncomePage() {
 
           <Panel
             title={
-              <div className="mb-4 flex justify-end">
+              <div className="mb-4 flex flex-nowrap items-center justify-between gap-2">
+                <PeriodStatusFilterToggle value={periodStatus} onValueChange={setPeriodStatus} />
                 <YearFilterSelect value={filterYear} years={yearOptions} onValueChange={setFilterYear} />
               </div>
             }
           >
-            {rows.length > 0 ? (
+            {filteredRows.length > 0 ? (
               <IncomeTable
                 asOfMonth={asOfMonth}
-                rows={rows}
+                rows={filteredRows}
                 onEdit={(row) => dialogRef.current?.openEdit(row)}
                 onDelete={(row) => setRowToDelete(row)}
               />
             ) : (
-              <p className="text-sm text-muted-foreground py-6 text-center">{t.common.noItemsInSelectedYear}</p>
+              <p className="text-sm text-muted-foreground py-6 text-center">
+                {periodStatus === 'expired'
+                  ? t.common.noExpiredItemsInSelectedYear
+                  : t.common.noActiveItemsInSelectedYear}
+              </p>
             )}
           </Panel>
 

@@ -6,8 +6,10 @@ import { useMemo } from 'react'
 import { ActionTooltipButton, InfoTooltip } from '@/components/patterns'
 import { Badge, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
 import { canRecordActualExpenseForBudgetItem } from '@/lib/budget/apply'
-import { formatMonthLabel, isPeriodClosedBefore } from '@/lib/month'
+import { currentMonthKey, formatMonthLabel, isPeriodClosedBefore } from '@/lib/month'
 import { t } from '@/lib/strings'
+import { currencyClass } from '@/lib/style-classes'
+import { cn } from '@/lib/utils'
 import { formatVnd } from '@/lib/vnd'
 
 export type BudgetItemsTableProps = {
@@ -67,7 +69,7 @@ export function BudgetItemsTableDesktop({
           const spent = actualMap.get(`${item.id}|${month}`) ?? 0
           const remaining = item.amountVnd - spent
           const locked = isPeriodClosedBefore(item.validTo, month)
-          const canAddActual = canRecordActualExpenseForBudgetItem(item, month)
+          const canAddActual = canRecordActualExpenseForBudgetItem(item, currentMonthKey())
           return (
             <TableRow key={item.id}>
               <TableCell className="font-medium max-w-[12rem] sm:max-w-[18rem] truncate">
@@ -78,18 +80,21 @@ export function BudgetItemsTableDesktop({
                   <span className="block truncate">{cat?.name ?? '—'}</span>
                 </Badge>
               </TableCell>
-              <TableCell className="text-right tabular-nums whitespace-nowrap">{formatVnd(item.amountVnd)}</TableCell>
+              <TableCell className={cn('text-right', currencyClass({ positive: item.amountVnd >= 0 }))}>
+                {formatVnd(item.amountVnd)}
+              </TableCell>
               <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
                 {formatMonthLabel(item.validFrom)} → {item.validTo ? formatMonthLabel(item.validTo) : '…'}
               </TableCell>
-              <TableCell className="text-right tabular-nums whitespace-nowrap">{formatVnd(remaining)}</TableCell>
+              <TableCell className={cn('text-right', currencyClass({ positive: remaining >= 0, primary: true }))}>
+                {formatVnd(remaining)}
+              </TableCell>
               <TableCell className="text-right whitespace-nowrap">
                 <div className="inline-flex items-center justify-end gap-1">
                   <ActionTooltipButton
                     variant="secondary"
-                    disabled={!canAddActual}
                     onClick={() => onAddActual(item)}
-                    label={canAddActual ? t.budget.addActualAction : t.budget.actualPeriodInactiveLocked}
+                    label={canAddActual ? t.budget.addActualAction : t.budget.viewActualAction}
                   >
                     <HandCoinsIcon className="h-4 w-4" />
                   </ActionTooltipButton>
