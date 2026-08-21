@@ -3,7 +3,7 @@ import type { ActualExpense, MonthKey } from '@/lib/types'
 import { Trash2 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 
-import { ActionTooltipButton } from '@/components/patterns'
+import { ActionTooltipButton, EmptyState } from '@/components/patterns'
 import {
   Skeleton,
   Table,
@@ -60,7 +60,7 @@ function ActualExpenseMonthTabPanel({
   }
 
   if (sorted.length === 0) {
-    return <p className="py-2 text-sm text-muted-foreground">{t.budget.actualLinesEmpty}</p>
+    return <EmptyState compact description={t.budget.actualLinesEmpty} />
   }
 
   return (

@@ -40,13 +40,13 @@ const cashflowConfig = {
 } satisfies ChartConfig
 
 const surplusConfig = {
-  actualSurplusVnd: { color: 'hsl(var(--chart-4))', label: t.stats.chartActualSurplus },
+  actualSurplusVnd: { color: 'hsl(var(--chart-3))', label: t.stats.chartActualSurplus },
   plannedSurplusVnd: { color: 'hsl(var(--chart-2))', label: t.stats.chartPlannedSurplus },
 } satisfies ChartConfig
 
 const savingsConfig = {
-  actualSavingsToDateVnd: { color: 'hsl(var(--chart-4))', label: t.stats.chartActualSavings },
-  plannedSavingsToDateVnd: { color: 'hsl(var(--chart-1))', label: t.stats.chartPlannedSavings },
+  actualSavingsToDateVnd: { color: 'hsl(var(--chart-3))', label: t.stats.chartActualSavings },
+  plannedSavingsToDateVnd: { color: 'hsl(var(--chart-2))', label: t.stats.chartPlannedSavings },
 } satisfies ChartConfig
 
 // ─── Tooltip builders ────────────────────────────────────────────────────────

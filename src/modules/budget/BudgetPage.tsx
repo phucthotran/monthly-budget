@@ -5,7 +5,7 @@ import { useMemo, useRef, useState } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
 import { PeriodStatusFilterToggle, YearFilterSelect } from '@/components/inputs'
-import { ConfirmDeleteDialog, PageHeading, PageLoadingSkeleton, Panel } from '@/components/patterns'
+import { ConfirmDeleteDialog, EmptyState, PageHeading, PageLoadingSkeleton, Panel } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
 import { usePeriodListPageState } from '@/hooks/usePeriodListPageState'
@@ -101,12 +101,27 @@ export function BudgetPage() {
                 onEdit={(item) => budgetDialogRef.current?.openEdit(item)}
                 onDelete={(item) => setItemToDelete(item)}
               />
+            ) : items.length === 0 ? (
+              <EmptyState
+                icon={<Wallet />}
+                title={t.budget.emptyList}
+                description={t.budget.emptyHint}
+                action={
+                  <Button type="button" onClick={() => budgetDialogRef.current?.openCreate()}>
+                    <Plus className="h-4 w-4" />
+                    {t.budget.add}
+                  </Button>
+                }
+              />
             ) : (
-              <p className="text-sm text-muted-foreground py-6 text-center">
-                {periodStatus === 'expired'
-                  ? t.common.noExpiredItemsInSelectedYear
-                  : t.common.noActiveItemsInSelectedYear}
-              </p>
+              <EmptyState
+                compact
+                description={
+                  periodStatus === 'expired'
+                    ? t.common.noExpiredItemsInSelectedYear
+                    : t.common.noActiveItemsInSelectedYear
+                }
+              />
             )}
           </Panel>
 

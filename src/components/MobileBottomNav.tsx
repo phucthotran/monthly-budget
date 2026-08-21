@@ -1,6 +1,7 @@
 import { Link, useRouterState } from '@tanstack/react-router'
 
 import { navItems } from '@/lib/nav'
+import { t } from '@/lib/strings'
 import { cn } from '@/lib/utils'
 
 export function MobileBottomNav() {
@@ -9,7 +10,7 @@ export function MobileBottomNav() {
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-40 flex h-16 items-stretch border-t border-border bg-card/95 backdrop-blur-sm md:hidden"
-      aria-label="Điều hướng chính"
+      aria-label={t.nav.mainNav}
     >
       {navItems.map((item) => {
         const active = pathname === item.to

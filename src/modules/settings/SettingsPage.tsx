@@ -2,7 +2,7 @@ import { Plus, Settings } from 'lucide-react'
 import { useState } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
-import { PageHeading, PageLoadingSkeleton, Panel } from '@/components/patterns'
+import { EmptyState, PageHeading, PageLoadingSkeleton, Panel } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
 import { useCategories } from '@/hooks/useUserCollections'
@@ -66,7 +66,17 @@ export function SettingsPage() {
               }}
             />
             {categories.length === 0 ? (
-              <p className="text-sm text-muted-foreground py-6 text-center">{t.settings.emptyList}</p>
+              <EmptyState
+                icon={<Settings />}
+                title={t.settings.emptyList}
+                description={t.settings.pageLead}
+                action={
+                  <Button type="button" onClick={() => setOpen(true)}>
+                    <Plus className="h-4 w-4" />
+                    {t.settings.add}
+                  </Button>
+                }
+              />
             ) : null}
           </Panel>
 

@@ -11,6 +11,7 @@ import { t } from '@/lib/strings'
 import { formatVnd } from '@/lib/vnd'
 
 import { HomeSummaryTiles } from './components/HomeSummaryTiles'
+import { OnboardingCard } from './components/OnboardingCard'
 import { useHomeData } from './hooks/useHomeData'
 
 export function HomePage() {
@@ -23,6 +24,8 @@ export function HomePage() {
   const dataLoading = !incomeReady || !budgetReady || !actualsReady
 
   const { cur, currentMonth, next, nextMonth } = useHomeData({ actuals, budget, income })
+
+  const isNewUser = income.length === 0 && budget.length === 0
 
   const breakdownThisMonth = useMemo(
     () => buildHomeMonthLineItems(currentMonth, income, budget, actuals, t.home.orphanedBudgetActual),
@@ -51,6 +54,8 @@ export function HomePage() {
             }
             descriptionClassName="text-base"
           />
+
+          {isNewUser ? <OnboardingCard /> : null}
 
           <div className="space-y-4">
             <div className="flex items-center justify-between gap-3">

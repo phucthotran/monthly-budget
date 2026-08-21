@@ -61,7 +61,7 @@ export function BudgetItemsMobileList({
             <div className="flex gap-2 pt-0.5">
               <Button size="sm" variant="secondary" className="flex-1 gap-1.5" onClick={() => onAddActual(item)}>
                 <HandCoinsIcon className="h-3.5 w-3.5" />
-                {canAddActual ? t.budget.actuals : t.budget.viewActualAction}
+                {canAddActual ? t.budget.actuals : t.budget.viewActual}
               </Button>
               <Button size="sm" variant="outline" disabled={locked} onClick={() => onEdit(item)}>
                 <Pencil className="h-3.5 w-3.5" />

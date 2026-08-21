@@ -1,11 +1,12 @@
 import type { HomeMonthLineItem } from '@/lib/budget/homeMonthBreakdown'
 
+import { EmptyState } from '@/components/patterns'
 import { t } from '@/lib/strings'
 import { formatVnd } from '@/lib/vnd'
 
 export function BreakdownLines({ lines }: { lines: readonly HomeMonthLineItem[] }) {
   if (lines.length === 0) {
-    return <p className="text-sm leading-snug text-muted-foreground">{t.home.breakdownEmpty}</p>
+    return <EmptyState compact className="py-2" description={t.home.breakdownEmpty} />
   }
 
   return (

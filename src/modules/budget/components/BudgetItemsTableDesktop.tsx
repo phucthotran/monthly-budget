@@ -94,7 +94,7 @@ export function BudgetItemsTableDesktop({
                   <ActionTooltipButton
                     variant="secondary"
                     onClick={() => onAddActual(item)}
-                    label={canAddActual ? t.budget.addActualAction : t.budget.viewActualAction}
+                    label={canAddActual ? t.budget.addActual : t.budget.viewActual}
                   >
                     <HandCoinsIcon className="h-4 w-4" />
                   </ActionTooltipButton>

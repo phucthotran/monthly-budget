@@ -5,7 +5,7 @@ import { useMemo, useRef, useState } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
 import { PeriodStatusFilterToggle, YearFilterSelect } from '@/components/inputs'
-import { ConfirmDeleteDialog, PageHeading, PageLoadingSkeleton, Panel } from '@/components/patterns'
+import { ConfirmDeleteDialog, EmptyState, PageHeading, PageLoadingSkeleton, Panel } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
 import { usePeriodListPageState } from '@/hooks/usePeriodListPageState'
@@ -85,12 +85,27 @@ export function IncomePage() {
                 onEdit={(row) => dialogRef.current?.openEdit(row)}
                 onDelete={(row) => setRowToDelete(row)}
               />
+            ) : rows.length === 0 ? (
+              <EmptyState
+                icon={<PiggyBank />}
+                title={t.income.emptyList}
+                description={t.income.emptyHint}
+                action={
+                  <Button type="button" onClick={() => dialogRef.current?.openCreate()}>
+                    <Plus className="h-4 w-4" />
+                    {t.income.add}
+                  </Button>
+                }
+              />
             ) : (
-              <p className="text-sm text-muted-foreground py-6 text-center">
-                {periodStatus === 'expired'
-                  ? t.common.noExpiredItemsInSelectedYear
-                  : t.common.noActiveItemsInSelectedYear}
-              </p>
+              <EmptyState
+                compact
+                description={
+                  periodStatus === 'expired'
+                    ? t.common.noExpiredItemsInSelectedYear
+                    : t.common.noActiveItemsInSelectedYear
+                }
+              />
             )}
           </Panel>
 

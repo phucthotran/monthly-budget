@@ -23,7 +23,7 @@ function AppShellSidebarBody() {
     <>
       <div className="flex flex-col gap-2 px-3 pt-2.5 pb-1.5 md:px-4 md:pt-3 md:pb-2">
         <div className="flex min-h-9 items-center gap-2 font-semibold tracking-tight">
-          <img src={Logo} alt="Money" className="size-6 shrink-0" />
+          <img src={Logo} alt={t.appName} className="size-6 shrink-0" />
           <span className="min-w-0 flex-1 truncate">{t.appName}</span>
         </div>
         <AppShellUserCard user={user} />
@@ -71,7 +71,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* Mobile top header */}
         <header className="flex shrink-0 items-center gap-2 border-b border-border bg-card/50 px-3 py-2 md:hidden">
           <div className="flex min-h-9 min-w-0 flex-1 items-center gap-2 font-semibold tracking-tight">
-            <img src={Logo} alt="Money" className="size-6 shrink-0" />
+            <img src={Logo} alt={t.appName} className="size-6 shrink-0" />
             <span className="truncate">{t.appName}</span>
           </div>
           <button
