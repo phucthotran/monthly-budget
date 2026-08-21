@@ -6,7 +6,9 @@ import { EmptyState, PageHeading, PageLoadingSkeleton, Panel } from '@/component
 import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
 import { useCategories } from '@/hooks/useUserCollections'
+import { haptic } from '@/lib/haptics'
 import { t } from '@/lib/strings'
+import { runWithToast } from '@/lib/toast'
 
 import { CategoriesTable } from './components/CategoriesTable'
 import { CategoryDialog } from './components/CategoryDialog'
@@ -38,7 +40,7 @@ export function SettingsPage() {
               </div>
             }
             actions={
-              <span className="hidden sm:inline-flex">
+              <span className="hidden md:inline-flex">
                 <Button type="button" onClick={() => setOpen(true)}>
                   <Plus className="h-4 w-4" />
                   {t.settings.add}
@@ -53,16 +55,23 @@ export function SettingsPage() {
             onSubmit={async (value) => {
               if (!mutations) return
               const maxOrder = categories.reduce((m, c) => Math.max(m, c.sortOrder ?? 0), 0)
-              await mutations.addCategory({ name: value.name, sortOrder: maxOrder + 10 })
+              await runWithToast(
+                () => mutations.addCategory({ name: value.name, sortOrder: maxOrder + 10 }),
+                t.toast.categoryAdded,
+              )
             }}
           />
 
           <Panel title={<></>}>
             <CategoriesTable
               categories={categories}
-              onToggleArchive={async (c) => {
+              onToggleArchive={(c) => {
                 if (!mutations) return
-                await mutations.toggleArchive(c)
+                // No dialog to keep open here, so the reported failure needs no further unwinding.
+                runWithToast(
+                  () => mutations.toggleArchive(c),
+                  c.archived ? t.toast.categoryShown : t.toast.categoryHidden,
+                ).catch(() => undefined)
               }}
             />
             {categories.length === 0 ? (
@@ -83,8 +92,11 @@ export function SettingsPage() {
           <Button
             type="button"
             size="icon"
-            className="fixed bottom-20 right-6 z-40 h-14 w-14 rounded-full shadow-lg sm:hidden"
-            onClick={() => setOpen(true)}
+            className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-6 z-40 h-14 w-14 rounded-full shadow-lg md:hidden"
+            onClick={() => {
+              haptic('light')
+              setOpen(true)
+            }}
             aria-label={t.settings.add}
           >
             <Plus className="h-6 w-6" />

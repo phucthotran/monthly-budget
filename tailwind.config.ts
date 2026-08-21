@@ -48,6 +48,10 @@ export default {
           foreground: 'hsl(var(--secondary-foreground))',
         },
       },
+      spacing: {
+        'safe-b': 'env(safe-area-inset-bottom)',
+        'safe-t': 'env(safe-area-inset-top)',
+      },
     },
   },
 } satisfies Config

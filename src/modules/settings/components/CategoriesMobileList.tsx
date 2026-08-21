@@ -25,15 +25,20 @@ export function CategoriesMobileList({ categories, onToggleArchive }: Categories
               </Badge>
             )}
           </div>
-          <Button size="sm" variant="outline" className="shrink-0 gap-1.5" onClick={() => onToggleArchive(c)}>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-10 shrink-0 gap-1.5 md:h-8"
+            onClick={() => onToggleArchive(c)}
+          >
             {c.archived ? (
               <>
-                <Eye className="h-3.5 w-3.5" />
+                <Eye className="h-4 w-4" />
                 {t.settings.show}
               </>
             ) : (
               <>
-                <EyeOff className="h-3.5 w-3.5" />
+                <EyeOff className="h-4 w-4" />
                 {t.settings.hide}
               </>
             )}

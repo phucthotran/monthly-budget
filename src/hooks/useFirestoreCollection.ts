@@ -4,7 +4,9 @@ import { type QueryKey, useQuery, useQueryClient } from '@tanstack/react-query'
 import { collection, type DocumentData, type Firestore, onSnapshot, orderBy, query } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 
+import { useFirestoreRefreshNonce } from '@/hooks/useFirestoreRefresh'
 import { getFirestoreDb } from '@/lib/firebase'
+import { notifySnapshotSettled } from '@/lib/firestore/refreshSignal'
 
 type Options = {
   constraints?: FirestoreQueryChunk[]
@@ -43,6 +45,7 @@ export function useFirestoreCollection<T extends { id: string }>(
 ) {
   const qc = useQueryClient()
   const db = getFirestoreDb()
+  const refreshNonce = useFirestoreRefreshNonce()
   const enabled = Boolean(uid && segments?.length)
   const hydrationSourceKey = options.hydrationQueryKey ?? queryKey
   const hydrationId = hydrationIdForQueryKey(hydrationSourceKey)
@@ -84,12 +87,14 @@ export function useFirestoreCollection<T extends { id: string }>(
         const rows = snap.docs.map((d) => ({ id: d.id, ...(d.data() as DocumentData) }) as T)
         qc.setQueryData(queryKey, rows)
         markHydrated()
+        notifySnapshotSettled()
       },
       (err) => {
         // Avoid failing silently: this is usually permission / index / network.
         console.error('[useFirestoreCollection] onSnapshot error', { err, queryKey, segments })
         // Do not wipe cache: transient errors and listener churn otherwise flash empty UI.
         markHydrated()
+        notifySnapshotSettled()
       },
     )
     return unsub
@@ -97,6 +102,8 @@ export function useFirestoreCollection<T extends { id: string }>(
     db,
     hydrationId,
     qc,
+    // A bump tears down and re-establishes the listener, resyncing against the server.
+    refreshNonce,
     uid,
     segments,
     options.constraints,

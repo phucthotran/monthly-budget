@@ -59,21 +59,34 @@ export function BudgetItemsMobileList({
             </div>
 
             <div className="flex gap-2 pt-0.5">
-              <Button size="sm" variant="secondary" className="flex-1 gap-1.5" onClick={() => onAddActual(item)}>
-                <HandCoinsIcon className="h-3.5 w-3.5" />
+              <Button
+                size="sm"
+                variant="secondary"
+                className="h-10 flex-1 gap-1.5 md:h-8"
+                onClick={() => onAddActual(item)}
+              >
+                <HandCoinsIcon className="h-4 w-4" />
                 {canAddActual ? t.budget.actuals : t.budget.viewActual}
               </Button>
-              <Button size="sm" variant="outline" disabled={locked} onClick={() => onEdit(item)}>
-                <Pencil className="h-3.5 w-3.5" />
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-10 w-10 shrink-0 p-0 md:h-8 md:w-8"
+                disabled={locked}
+                onClick={() => onEdit(item)}
+                aria-label={t.budget.editAction}
+              >
+                <Pencil className="h-4 w-4" />
               </Button>
               <Button
                 size="sm"
                 variant="ghost"
+                className="h-10 w-10 shrink-0 p-0 md:h-8 md:w-8"
                 disabled={locked}
                 onClick={() => onDelete(item)}
                 aria-label={t.budget.deleteAction}
               >
-                <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                <Trash2 className="h-4 w-4 text-destructive" />
               </Button>
             </div>
           </div>

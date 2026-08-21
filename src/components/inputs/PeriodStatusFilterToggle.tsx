@@ -1,5 +1,6 @@
 import type { PeriodStatusFilter } from '@/lib/month'
 
+import { haptic } from '@/lib/haptics'
 import { t } from '@/lib/strings'
 import { cn } from '@/lib/utils'
 
@@ -33,9 +34,12 @@ export function PeriodStatusFilterToggle({
             key={option.value}
             type="button"
             aria-pressed={selected}
-            onClick={() => onValueChange(option.value)}
+            onClick={() => {
+              haptic('light')
+              onValueChange(option.value)
+            }}
             className={cn(
-              'whitespace-nowrap rounded-[0.3rem] px-3 py-1 font-medium transition-colors',
+              'whitespace-nowrap rounded-[0.3rem] px-3 py-2 font-medium transition-colors active:scale-[0.97] md:py-1',
               selected ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground',
             )}
           >

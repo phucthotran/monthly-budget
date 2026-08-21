@@ -23,17 +23,25 @@ export function IncomeMobileList({ asOfMonth, onDelete, onEdit, rows }: IncomeTa
                 </p>
               </div>
               <div className="flex gap-1.5 shrink-0">
-                <Button size="sm" variant="outline" disabled={locked} onClick={() => onEdit(row)}>
-                  <Pencil className="h-3.5 w-3.5" />
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-10 w-10 shrink-0 p-0 md:h-8 md:w-8"
+                  disabled={locked}
+                  onClick={() => onEdit(row)}
+                  aria-label={t.income.editAction}
+                >
+                  <Pencil className="h-4 w-4" />
                 </Button>
                 <Button
                   size="sm"
                   variant="ghost"
+                  className="h-10 w-10 shrink-0 p-0 md:h-8 md:w-8"
                   disabled={locked}
                   onClick={() => onDelete(row)}
                   aria-label={t.income.deleteAction}
                 >
-                  <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                  <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
               </div>
             </div>

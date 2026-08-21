@@ -10,8 +10,10 @@ import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
 import { usePeriodListPageState } from '@/hooks/usePeriodListPageState'
 import { useActualExpenses, useBudgetItems, useCategories } from '@/hooks/useUserCollections'
+import { haptic } from '@/lib/haptics'
 import { asOfMonthForYearFilter, currentMonthKey, formatMonthLabel, matchesPeriodStatusFilter } from '@/lib/month'
 import { actualExpenseLineDeleteDialogP1, budgetDeleteDialogP1, t } from '@/lib/strings'
+import { runWithToast } from '@/lib/toast'
 import { formatVnd } from '@/lib/vnd'
 
 import { ActualExpenseDialog, type ActualExpenseDialogHandle } from './components/ActualExpenseDialog'
@@ -64,7 +66,7 @@ export function BudgetPage() {
               </div>
             }
             actions={
-              <span className="hidden sm:inline-flex">
+              <span className="hidden md:inline-flex">
                 <Button type="button" onClick={() => budgetDialogRef.current?.openCreate()}>
                   <Plus className="h-4 w-4" />
                   {t.budget.add}
@@ -79,13 +81,13 @@ export function BudgetPage() {
             defaultMonth={dialogDefaultMonth}
             onSubmit={async (editing, value) => {
               if (!mutations) return
-              await mutations.upsertBudgetItem(editing, value)
+              await runWithToast(() => mutations.upsertBudgetItem(editing, value), t.toast.budgetSaved)
             }}
           />
 
           <Panel
             title={
-              <div className="mb-4 flex flex-nowrap items-center justify-between gap-2">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <PeriodStatusFilterToggle value={periodStatus} onValueChange={setPeriodStatus} />
                 <YearFilterSelect value={filterYear} years={yearOptions} onValueChange={setFilterYear} />
               </div>
@@ -132,7 +134,7 @@ export function BudgetPage() {
             onDeleteLine={(expense) => setActualLineToDelete(expense)}
             onSubmit={async (item, value) => {
               if (!mutations) return
-              await mutations.addActualExpense(item, value)
+              await runWithToast(() => mutations.addActualExpense(item, value), t.toast.actualSaved)
             }}
           />
 
@@ -146,7 +148,7 @@ export function BudgetPage() {
             }}
             onConfirm={async () => {
               if (!mutations || !itemToDelete) return
-              await mutations.deleteBudgetItem(itemToDelete.id)
+              await runWithToast(() => mutations.deleteBudgetItem(itemToDelete.id), t.toast.budgetDeleted)
             }}
           />
 
@@ -168,15 +170,18 @@ export function BudgetPage() {
             }}
             onConfirm={async () => {
               if (!mutations || !actualLineToDelete) return
-              await mutations.deleteActualExpense(actualLineToDelete.id)
+              await runWithToast(() => mutations.deleteActualExpense(actualLineToDelete.id), t.toast.actualDeleted)
             }}
           />
 
           <Button
             type="button"
             size="icon"
-            className="fixed bottom-20 right-6 z-40 h-14 w-14 rounded-full shadow-lg sm:hidden"
-            onClick={() => budgetDialogRef.current?.openCreate()}
+            className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-6 z-40 h-14 w-14 rounded-full shadow-lg md:hidden"
+            onClick={() => {
+              haptic('light')
+              budgetDialogRef.current?.openCreate()
+            }}
             aria-label={t.budget.add}
           >
             <Plus className="h-6 w-6" />

@@ -10,8 +10,10 @@ import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
 import { usePeriodListPageState } from '@/hooks/usePeriodListPageState'
 import { useIncomePeriods } from '@/hooks/useUserCollections'
+import { haptic } from '@/lib/haptics'
 import { asOfMonthForYearFilter, currentMonthKey, matchesPeriodStatusFilter } from '@/lib/month'
 import { incomeDeleteDialogP1, t } from '@/lib/strings'
+import { runWithToast } from '@/lib/toast'
 
 import { IncomeDialog, type IncomeDialogHandle } from './components/IncomeDialog'
 import { IncomeTable } from './components/IncomeTable'
@@ -52,7 +54,7 @@ export function IncomePage() {
               </div>
             }
             actions={
-              <span className="hidden sm:inline-flex">
+              <span className="hidden md:inline-flex">
                 <Button type="button" onClick={() => dialogRef.current?.openCreate()}>
                   <Plus className="h-4 w-4" />
                   {t.income.add}
@@ -66,13 +68,13 @@ export function IncomePage() {
             defaultMonth={dialogDefaultMonth}
             onSubmit={async (editing, value) => {
               if (!mutations) return
-              await mutations.upsertIncome(editing, value)
+              await runWithToast(() => mutations.upsertIncome(editing, value), t.toast.incomeSaved)
             }}
           />
 
           <Panel
             title={
-              <div className="mb-4 flex flex-nowrap items-center justify-between gap-2">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <PeriodStatusFilterToggle value={periodStatus} onValueChange={setPeriodStatus} />
                 <YearFilterSelect value={filterYear} years={yearOptions} onValueChange={setFilterYear} />
               </div>
@@ -119,15 +121,18 @@ export function IncomePage() {
             }}
             onConfirm={async () => {
               if (!mutations || !rowToDelete) return
-              await mutations.deleteIncome(rowToDelete.id)
+              await runWithToast(() => mutations.deleteIncome(rowToDelete.id), t.toast.incomeDeleted)
             }}
           />
 
           <Button
             type="button"
             size="icon"
-            className="fixed bottom-20 right-6 z-40 h-14 w-14 rounded-full shadow-lg sm:hidden"
-            onClick={() => dialogRef.current?.openCreate()}
+            className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-6 z-40 h-14 w-14 rounded-full shadow-lg md:hidden"
+            onClick={() => {
+              haptic('light')
+              dialogRef.current?.openCreate()
+            }}
             aria-label={t.income.add}
           >
             <Plus className="h-6 w-6" />

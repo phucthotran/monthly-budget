@@ -52,16 +52,16 @@ export function StatsPage() {
           <StatsCharts actuals={actuals} budget={budget} income={income} />
 
           <Tabs defaultValue="detail" className="w-full">
-            <TabsList className="flex flex-col sm:grid w-full sm:grid-cols-2 h-20 gap-2 sm:h-10">
-              <TabsTrigger value="detail" className="gap-2 whitespace-nowrap min-w-52 w-full sm:w-auto">
-                <Table2 className="size-4 shrink-0" />
-                <span className="truncate">{t.stats.tabDetail}</span>
-                <InfoTooltip content={t.stats.tabDetailTooltip} htmlTag="span" />
+            <TabsList className="grid h-11 w-full grid-cols-2 gap-1 sm:h-10">
+              <TabsTrigger value="detail" className="min-w-0 gap-1.5 px-2 text-xs sm:px-3 sm:text-sm">
+                <Table2 className="hidden size-4 shrink-0 sm:block" />
+                <span className="min-w-0 truncate">{t.stats.tabDetail}</span>
+                <InfoTooltip content={t.stats.tabDetailTooltip} htmlTag="span" className="hidden sm:inline-flex" />
               </TabsTrigger>
-              <TabsTrigger value="savings" className="gap-2 whitespace-nowrap min-w-52 w-full sm:w-auto">
-                <PiggyBank className="size-4 shrink-0" />
-                <span className="truncate">{t.stats.tabSavings}</span>
-                <InfoTooltip content={t.stats.tabSavingsTooltip} htmlTag="span" />
+              <TabsTrigger value="savings" className="min-w-0 gap-1.5 px-2 text-xs sm:px-3 sm:text-sm">
+                <PiggyBank className="hidden size-4 shrink-0 sm:block" />
+                <span className="min-w-0 truncate">{t.stats.tabSavings}</span>
+                <InfoTooltip content={t.stats.tabSavingsTooltip} htmlTag="span" className="hidden sm:inline-flex" />
               </TabsTrigger>
             </TabsList>
 

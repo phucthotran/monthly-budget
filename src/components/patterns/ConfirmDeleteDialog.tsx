@@ -3,9 +3,13 @@ import type { ReactNode } from 'react'
 import { CircleAlert } from 'lucide-react'
 import { useState } from 'react'
 
+import { haptic } from '@/lib/haptics'
 import { t } from '@/lib/strings'
 
-import { Alert, AlertDescription, Button, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../ui'
+import { Alert, AlertDescription, Button, DialogFooter } from '../ui'
+
+import { ModalHeading } from './ModalHeading'
+import { ResponsiveSheet, ResponsiveSheetContent } from './ResponsiveSheet'
 
 export type ConfirmDeleteDialogProps = {
   confirmLabel?: string
@@ -29,31 +33,29 @@ export function ConfirmDeleteDialog({
   const [pending, setPending] = useState(false)
 
   async function handleConfirm() {
+    haptic('warning')
     setPending(true)
     try {
       await onConfirm()
       onOpenChange(false)
+    } catch {
+      // The caller surfaces the failure; keep the sheet open so the user can retry.
     } finally {
       setPending(false)
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-3">
-          <div className="text-sm text-muted-foreground leading-relaxed [&_p]:text-pretty">{description}</div>
-          {emphasis ? (
-            <Alert className="border-primary/25 bg-primary/5 [&>svg]:text-primary">
-              <CircleAlert className="h-4 w-4" aria-hidden />
-              <AlertDescription className="text-pretty text-foreground/90">{emphasis}</AlertDescription>
-            </Alert>
-          ) : null}
-        </div>
-        <DialogFooter>
+    <ResponsiveSheet open={open} onOpenChange={onOpenChange}>
+      <ResponsiveSheetContent className="max-w-full sm:max-w-md">
+        <ModalHeading title={title} description={description} />
+        {emphasis ? (
+          <Alert className="border-primary/25 bg-primary/5 [&>svg]:text-primary">
+            <CircleAlert className="h-4 w-4" aria-hidden />
+            <AlertDescription className="text-pretty text-foreground/90">{emphasis}</AlertDescription>
+          </Alert>
+        ) : null}
+        <DialogFooter className="[&>button]:h-11 [&>button]:w-full sm:[&>button]:h-9 sm:[&>button]:w-auto">
           <Button type="button" variant="outline" disabled={pending} onClick={() => onOpenChange(false)}>
             {t.common.cancel}
           </Button>
@@ -61,7 +63,7 @@ export function ConfirmDeleteDialog({
             {pending ? t.common.loading : confirmLabel}
           </Button>
         </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveSheetContent>
+    </ResponsiveSheet>
   )
 }

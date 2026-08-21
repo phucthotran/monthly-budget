@@ -1,6 +1,7 @@
 import { Link, useRouterState } from '@tanstack/react-router'
 import { type ReactNode, useEffect, useState } from 'react'
 
+import { haptic } from '@/lib/haptics'
 import { navItems } from '@/lib/nav'
 import { t } from '@/lib/strings'
 import { cn } from '@/lib/utils'
@@ -11,6 +12,7 @@ import { AppShellUserCard } from './AppShellUserCard'
 import { useAuthContext } from './AuthProvider'
 import { MobileAccountSheet } from './MobileAccountSheet'
 import { MobileBottomNav } from './MobileBottomNav'
+import { MobilePageGestures } from './MobilePageGestures'
 import { ThemeToggle } from './ThemeToggle'
 import { Separator, TooltipProvider } from './ui'
 import { UserAvatar } from './UserAvatar'
@@ -69,7 +71,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <TooltipProvider delayDuration={200}>
       <div className="flex min-h-dvh flex-col md:flex-row bg-slate-100 dark:bg-slate-900">
         {/* Mobile top header */}
-        <header className="flex shrink-0 items-center gap-2 border-b border-border bg-card/50 px-3 py-2 md:hidden">
+        <header className="sticky top-0 z-30 flex shrink-0 items-center gap-2 border-b border-border bg-card/80 px-3 pb-2 pt-[calc(0.5rem+env(safe-area-inset-top))] backdrop-blur-md md:hidden">
           <div className="flex min-h-9 min-w-0 flex-1 items-center gap-2 font-semibold tracking-tight">
             <img src={Logo} alt={t.appName} className="size-6 shrink-0" />
             <span className="truncate">{t.appName}</span>
@@ -77,8 +79,11 @@ export function AppShell({ children }: { children: ReactNode }) {
           <button
             type="button"
             aria-label={t.nav.accountSheet}
-            onClick={() => setAccountSheetOpen(true)}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-muted"
+            onClick={() => {
+              haptic('light')
+              setAccountSheetOpen(true)
+            }}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-muted active:scale-95"
           >
             <UserAvatar user={user} />
           </button>
@@ -89,8 +94,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           <AppShellSidebarBody />
         </aside>
 
-        {/* Main content — pb-16 on mobile to clear the bottom nav bar */}
-        <main className="mx-auto w-full max-w-6xl flex-1 p-4 pb-20 md:p-8 md:pb-8">{children}</main>
+        {/* Main content — extra bottom padding on mobile to clear the bottom nav bar and FAB */}
+        <main className="mx-auto w-full max-w-6xl flex-1 p-4 pb-[calc(5rem+env(safe-area-inset-bottom))] md:p-8 md:pb-8">
+          <MobilePageGestures>{children}</MobilePageGestures>
+        </main>
 
         {/* Mobile bottom nav & account sheet */}
         <MobileBottomNav />

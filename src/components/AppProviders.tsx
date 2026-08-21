@@ -2,7 +2,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type ReactNode, useState } from 'react'
 
 import { AuthProvider } from './AuthProvider'
+import { PwaUpdatePrompt } from './PwaUpdatePrompt'
 import { ThemeProvider } from './ThemeProvider'
+import { Toaster } from './ui'
 
 export function AppProviders({ children }: { children: ReactNode }) {
   const [client] = useState(
@@ -21,6 +23,8 @@ export function AppProviders({ children }: { children: ReactNode }) {
     <QueryClientProvider client={client}>
       <ThemeProvider>
         <AuthProvider>{children}</AuthProvider>
+        <Toaster />
+        <PwaUpdatePrompt />
       </ThemeProvider>
     </QueryClientProvider>
   )
