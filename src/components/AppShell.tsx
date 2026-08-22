@@ -12,7 +12,7 @@ import { AppShellUserCard } from './AppShellUserCard'
 import { useAuthContext } from './AuthProvider'
 import { MobileAccountSheet } from './MobileAccountSheet'
 import { MobileBottomNav } from './MobileBottomNav'
-import { MobilePageGestures } from './MobilePageGestures'
+import { PageTransition } from './PageTransition'
 import { ThemeToggle } from './ThemeToggle'
 import { Separator, TooltipProvider } from './ui'
 import { UserAvatar } from './UserAvatar'
@@ -96,7 +96,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         {/* Main content — extra bottom padding on mobile to clear the bottom nav bar and FAB */}
         <main className="mx-auto w-full max-w-6xl flex-1 p-4 pb-[calc(5rem+env(safe-area-inset-bottom))] md:p-8 md:pb-8">
-          <MobilePageGestures>{children}</MobilePageGestures>
+          <PageTransition>{children}</PageTransition>
         </main>
 
         {/* Mobile bottom nav & account sheet */}

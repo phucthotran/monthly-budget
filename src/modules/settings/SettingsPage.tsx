@@ -2,11 +2,10 @@ import { Plus, Settings } from 'lucide-react'
 import { useState } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
-import { EmptyState, PageHeading, PageLoadingSkeleton, Panel } from '@/components/patterns'
+import { EmptyState, MobileFab, PageHeading, PageLoadingSkeleton, Panel } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
 import { useCategories } from '@/hooks/useUserCollections'
-import { haptic } from '@/lib/haptics'
 import { t } from '@/lib/strings'
 import { runWithToast } from '@/lib/toast'
 
@@ -89,18 +88,7 @@ export function SettingsPage() {
             ) : null}
           </Panel>
 
-          <Button
-            type="button"
-            size="icon"
-            className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-6 z-40 h-14 w-14 rounded-full shadow-lg md:hidden"
-            onClick={() => {
-              haptic('light')
-              setOpen(true)
-            }}
-            aria-label={t.settings.add}
-          >
-            <Plus className="h-6 w-6" />
-          </Button>
+          <MobileFab label={t.settings.add} onClick={() => setOpen(true)} />
         </div>
       )}
     </RequireAuth>

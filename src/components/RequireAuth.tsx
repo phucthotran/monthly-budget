@@ -1,14 +1,15 @@
 import { useLocation, useNavigate } from '@tanstack/react-router'
-import { type ReactNode, useEffect, useState } from 'react'
+import { type ReactNode, useEffect } from 'react'
+
+import { pageSkeletonPropsForPath } from '@/lib/pageSkeleton'
 
 import { useAuthContext } from './AuthProvider'
-import { PageLoadingSkeleton, type PageLoadingSkeletonVariant } from './patterns/PageLoadingSkeleton'
+import { PageLoadingSkeleton } from './patterns/PageLoadingSkeleton'
 
 export function RequireAuth({ children }: { children: ReactNode }) {
   const { loading, user } = useAuthContext()
   const navigate = useNavigate()
   const location = useLocation()
-  const [skeletonVariant, setSkeletonVariant] = useState<PageLoadingSkeletonVariant>('default')
 
   useEffect(() => {
     if (!loading && !user) {
@@ -16,16 +17,8 @@ export function RequireAuth({ children }: { children: ReactNode }) {
     }
   }, [loading, user, navigate])
 
-  useEffect(() => {
-    if (location.pathname === '/') {
-      setSkeletonVariant('home')
-    } else if (location.pathname === '/stats') {
-      setSkeletonVariant('stats')
-    }
-  }, [location.pathname])
-
   if (loading) {
-    return <PageLoadingSkeleton variant={skeletonVariant} />
+    return <PageLoadingSkeleton {...pageSkeletonPropsForPath(location.pathname)} />
   }
 
   if (!user) return null

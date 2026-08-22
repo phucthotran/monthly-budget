@@ -5,12 +5,18 @@ import { useMemo, useRef, useState } from 'react'
 
 import { useAuthContext } from '@/components/AuthProvider'
 import { PeriodStatusFilterToggle, YearFilterSelect } from '@/components/inputs'
-import { ConfirmDeleteDialog, EmptyState, PageHeading, PageLoadingSkeleton, Panel } from '@/components/patterns'
+import {
+  ConfirmDeleteDialog,
+  EmptyState,
+  MobileFab,
+  PageHeading,
+  PageLoadingSkeleton,
+  Panel,
+} from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
 import { usePeriodListPageState } from '@/hooks/usePeriodListPageState'
 import { useIncomePeriods } from '@/hooks/useUserCollections'
-import { haptic } from '@/lib/haptics'
 import { asOfMonthForYearFilter, currentMonthKey, matchesPeriodStatusFilter } from '@/lib/month'
 import { incomeDeleteDialogP1, t } from '@/lib/strings'
 import { runWithToast } from '@/lib/toast'
@@ -125,18 +131,7 @@ export function IncomePage() {
             }}
           />
 
-          <Button
-            type="button"
-            size="icon"
-            className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-6 z-40 h-14 w-14 rounded-full shadow-lg md:hidden"
-            onClick={() => {
-              haptic('light')
-              dialogRef.current?.openCreate()
-            }}
-            aria-label={t.income.add}
-          >
-            <Plus className="h-6 w-6" />
-          </Button>
+          <MobileFab label={t.income.add} onClick={() => dialogRef.current?.openCreate()} />
         </div>
       )}
     </RequireAuth>

@@ -90,27 +90,10 @@
 }
 
 /*
- * Page transition for swipe navigation.
- *
- * Opacity only, deliberately: any `transform` here would make the wrapper a
- * containing block for `position: fixed` descendants, which would tear the
- * page FABs out of place for the duration of the animation. Note this rules
- * out tailwindcss-animate's `animate-in`, whose `enter` keyframe always
- * animates transform even when only fading.
+ * Only reaches CSS animations and transitions. Motion's page transitions are
+ * JS-driven inline styles, and are handled by `MotionConfig reducedMotion`
+ * in `AppProviders`.
  */
-@keyframes page-enter {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.page-enter {
-  animation: page-enter 200ms ease-out;
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

@@ -5,6 +5,7 @@ export { EmptyState, type EmptyStateProps } from './EmptyState'
 export { FormLabelWithHint, type FormLabelWithHintProps, InfoTooltip, type InfoTooltipProps } from './InfoTooltip'
 export { MetricTile, type MetricTileProps } from './MetricTile'
 export { MobileBackButton, type MobileBackButtonProps } from './MobileBackButton'
+export { MobileFab, type MobileFabProps } from './MobileFab'
 export { ModalHeading, type ModalHeadingProps } from './ModalHeading'
 export { PageHeading, type PageHeadingProps } from './PageHeading'
 export {
