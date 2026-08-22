@@ -17,7 +17,7 @@ export function InfoTooltip({ ariaLabel, className, content, htmlTag = 'button' 
   const { t } = useTranslation()
 
   return (
-    <Tooltip>
+    <Tooltip touchActivation="tap">
       <TooltipTrigger asChild>
         {htmlTag === 'button' ? (
           <Button

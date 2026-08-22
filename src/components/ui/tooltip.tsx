@@ -1,13 +1,71 @@
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 import * as React from 'react'
 
+import { type TouchTooltipActivation, useTouchTooltip } from '@/hooks/useTouchTooltip'
 import { cn } from '@/lib/utils'
 
 const TooltipProvider = TooltipPrimitive.Provider
 
-const Tooltip = TooltipPrimitive.Root
+type TouchTooltipContextValue = {
+  triggerProps: ReturnType<typeof useTouchTooltip>['triggerProps']
+}
 
-const TooltipTrigger = TooltipPrimitive.Trigger
+const TouchTooltipContext = React.createContext<null | TouchTooltipContextValue>(null)
+
+type TooltipProps = {
+  touchActivation?: TouchTooltipActivation
+  touchAutoHideMs?: number
+} & React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Root>
+
+function composeHandlers<E extends React.SyntheticEvent>(
+  theirs?: React.EventHandler<E>,
+  ours?: React.EventHandler<E>,
+): React.EventHandler<E> | undefined {
+  if (!theirs && !ours) return undefined
+  return (event) => {
+    ours?.(event)
+    if (event.defaultPrevented) return
+    theirs?.(event)
+  }
+}
+
+function Tooltip({ children, touchActivation, touchAutoHideMs, ...props }: TooltipProps) {
+  const touchEnabled = touchActivation != null
+  const { rootProps, triggerProps } = useTouchTooltip({
+    activation: touchActivation ?? 'tap',
+    autoHideMs: touchAutoHideMs,
+  })
+
+  return (
+    <TooltipPrimitive.Root {...props} {...(touchEnabled ? rootProps : {})}>
+      {touchEnabled ? (
+        <TouchTooltipContext.Provider value={{ triggerProps }}>{children}</TouchTooltipContext.Provider>
+      ) : (
+        children
+      )}
+    </TooltipPrimitive.Root>
+  )
+}
+
+const TooltipTrigger = React.forwardRef<
+  React.ElementRef<typeof TooltipPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Trigger>
+>(({ onClick, onPointerCancel, onPointerDown, onPointerUp, ...props }, ref) => {
+  const ctx = React.useContext(TouchTooltipContext)
+  const touch = ctx?.triggerProps
+
+  return (
+    <TooltipPrimitive.Trigger
+      ref={ref}
+      onClick={composeHandlers(onClick, touch?.onClick)}
+      onPointerCancel={composeHandlers(onPointerCancel, touch?.onPointerCancel)}
+      onPointerDown={composeHandlers(onPointerDown, touch?.onPointerDown)}
+      onPointerUp={composeHandlers(onPointerUp, touch?.onPointerUp)}
+      {...props}
+    />
+  )
+})
+TooltipTrigger.displayName = TooltipPrimitive.Trigger.displayName
 
 const TooltipContent = React.forwardRef<
   React.ElementRef<typeof TooltipPrimitive.Content>,

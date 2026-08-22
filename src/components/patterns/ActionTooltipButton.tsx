@@ -32,7 +32,7 @@ export function ActionTooltipButton({
   )
 
   return (
-    <Tooltip>
+    <Tooltip touchActivation="longPress">
       <TooltipTrigger asChild>{disabled ? <span className="inline-flex">{button}</span> : button}</TooltipTrigger>
       <TooltipContent>{tooltipLabel ?? label}</TooltipContent>
     </Tooltip>
