@@ -94,6 +94,8 @@ export type PageGestures = {
     onTouchStart: (e: ReactTouchEvent) => void
   }
   isRefreshing: boolean
+  /** True from swipe commit until the new page has faded in. */
+  isSettling: boolean
   /** Horizontal offset of the current page. */
   pageX: MotionValue<number>
   peek: null | PagePeek
@@ -133,7 +135,13 @@ export function usePageGestures(): PageGestures {
   /** Mirrors `peek` for the touch handlers, which run between renders. */
   const peekTarget = useRef<null | PagePeek>(null)
   /** True from the moment a swipe commits until the new page has faded in. */
-  const isSettling = useRef(false)
+  const isSettlingRef = useRef(false)
+  const [isSettling, setIsSettling] = useState(false)
+
+  const markSettling = useCallback((value: boolean) => {
+    isSettlingRef.current = value
+    setIsSettling(value)
+  }, [])
 
   const restingPeekX = useCallback((dir: SwipeDirection) => dir * (pageWidth.current + PAGE_GAP_PX), [])
 
@@ -182,7 +190,7 @@ export function usePageGestures(): PageGestures {
   const commitSwipe = useCallback(
     (target: PagePeek) => {
       haptic('light')
-      isSettling.current = true
+      markSettling(true)
       void animate(peekX, 0, COMMIT_TRANSITION)
       void animate(pageX, -restingPeekX(target.dir), COMMIT_TRANSITION).then(async () => {
         // The skeleton now covers the viewport, so the outgoing page can snap
@@ -192,20 +200,20 @@ export function usePageGestures(): PageGestures {
           await navigate({ to: target.to })
           await animate(peekOpacity, 0, SETTLE_FADE)
         } finally {
-          isSettling.current = false
+          markSettling(false)
           peekOpacity.set(1)
           clearPeek(target)
         }
       })
     },
-    [clearPeek, navigate, pageX, peekOpacity, peekX, restingPeekX],
+    [clearPeek, markSettling, navigate, pageX, peekOpacity, peekX, restingPeekX],
   )
 
   const onTouchStart = useCallback(
     (e: ReactTouchEvent) => {
       axis.current = 'none'
       // Sit out until an in-flight refresh or page change has finished.
-      if (isRefreshing || isSettling.current) return
+      if (isRefreshing || isSettlingRef.current) return
 
       const touch = e.touches[0]
       if (!touch || e.touches.length > 1) return
@@ -336,6 +344,7 @@ export function usePageGestures(): PageGestures {
       onTouchStart,
     },
     isRefreshing,
+    isSettling,
     pageX,
     peek,
     peekOpacity,

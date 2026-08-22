@@ -6,7 +6,9 @@ import { m, useTransform } from 'motion/react'
 import { useTranslation } from 'react-i18next'
 
 import { PULL_THRESHOLD_PX, usePageGestures } from '@/hooks/usePageGestures'
+import { useSyncPageNavigationTransition } from '@/hooks/usePageNavigationTransition'
 import { PageSwipeContext } from '@/hooks/usePageSwipe'
+import { MOBILE_HEADER_BOTTOM } from '@/lib/layout'
 import { PAGE_FADE } from '@/lib/motion'
 import { pageSkeletonPropsForPath } from '@/lib/pageSkeleton'
 
@@ -15,8 +17,6 @@ import { PageLoadingSkeleton } from './patterns/PageLoadingSkeleton'
 /** Resting position of the pull indicator, tucked up behind the sticky header. */
 const INDICATOR_HIDDEN_PX = -40
 const INDICATOR_TRAVEL = 0.7
-/** Height of the mobile top header, which the peeking page sits below. */
-const HEADER_OFFSET = 'calc(3.25rem + env(safe-area-inset-top))'
 
 /**
  * Mobile pull-to-refresh and drag-tracked swipe between nav tabs.
@@ -28,7 +28,12 @@ const HEADER_OFFSET = 'calc(3.25rem + env(safe-area-inset-top))'
 export function MobilePageGestures({ children }: { children: ReactNode }) {
   const { t } = useTranslation()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const { handlers, isRefreshing, pageX, peek, peekOpacity, peekX, pullY } = usePageGestures()
+  const { handlers, isRefreshing, isSettling, pageX, peek, peekOpacity, peekX, pullY } = usePageGestures()
+
+  useSyncPageNavigationTransition({
+    isSettling,
+    swipeTarget: peek?.to ?? null,
+  })
 
   const indicatorY = useTransform(pullY, (v) => INDICATOR_HIDDEN_PX + v * INDICATOR_TRAVEL)
   const indicatorOpacity = useTransform(pullY, [0, 8], [0, 1])
@@ -42,7 +47,7 @@ export function MobilePageGestures({ children }: { children: ReactNode }) {
       <m.div
         aria-hidden={!isRefreshing}
         className="pointer-events-none fixed inset-x-0 z-20 flex justify-center"
-        style={{ opacity: indicatorOpacity, top: HEADER_OFFSET, y: indicatorY }}
+        style={{ opacity: indicatorOpacity, top: MOBILE_HEADER_BOTTOM, y: indicatorY }}
       >
         <m.span
           role="status"
@@ -70,7 +75,7 @@ export function MobilePageGestures({ children }: { children: ReactNode }) {
           inert
           aria-hidden
           className="pointer-events-none fixed inset-x-0 bottom-0 z-10 overflow-hidden"
-          style={{ top: HEADER_OFFSET }}
+          style={{ top: MOBILE_HEADER_BOTTOM }}
         >
           <m.div
             className="h-full w-full overflow-hidden bg-slate-100 p-4 pb-[calc(5rem+env(safe-area-inset-bottom))] dark:bg-slate-900"

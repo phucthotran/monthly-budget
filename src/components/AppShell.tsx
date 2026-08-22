@@ -2,6 +2,7 @@ import { Link, useRouterState } from '@tanstack/react-router'
 import { type ReactNode, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { PageNavigationTransitionProvider } from '@/hooks/usePageNavigationTransition'
 import { haptic } from '@/lib/haptics'
 import { useNavItems } from '@/lib/nav'
 import { cn } from '@/lib/utils'
@@ -14,6 +15,7 @@ import { LocaleToggle } from './LocaleToggle'
 import { MobileAccountSheet } from './MobileAccountSheet'
 import { MobileBottomNav } from './MobileBottomNav'
 import { PageTransition } from './PageTransition'
+import { RouteLoadingBar } from './RouteLoadingBar'
 import { ThemeToggle } from './ThemeToggle'
 import { Separator } from './ui'
 import { UserAvatar } from './UserAvatar'
@@ -75,39 +77,43 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, [pathname])
 
   return (
-    <div className="flex min-h-dvh flex-col md:flex-row bg-slate-100 dark:bg-slate-900">
-      {/* Mobile top header */}
-      <header className="sticky top-0 z-30 flex shrink-0 items-center gap-2 border-b border-border bg-card/80 px-3 pb-2 pt-[calc(0.5rem+env(safe-area-inset-top))] backdrop-blur-md md:hidden">
-        <div className="flex min-h-9 min-w-0 flex-1 items-center gap-2 font-semibold tracking-tight">
-          <img src={Logo} alt={t('appName')} className="size-6 shrink-0" />
-          <span className="truncate">{t('appName')}</span>
-        </div>
-        <button
-          type="button"
-          aria-label={t('nav.accountSheet')}
-          onClick={() => {
-            haptic('light')
-            setAccountSheetOpen(true)
-          }}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-muted active:scale-95"
-        >
-          <UserAvatar user={user} />
-        </button>
-      </header>
+    <PageNavigationTransitionProvider>
+      <div className="flex min-h-dvh flex-col md:flex-row bg-slate-100 dark:bg-slate-900">
+        {/* Mobile top header */}
+        <header className="sticky top-0 z-30 flex shrink-0 items-center gap-2 border-b border-border bg-card/80 px-3 pb-2 pt-[calc(0.5rem+env(safe-area-inset-top))] backdrop-blur-md md:hidden">
+          <div className="flex min-h-9 min-w-0 flex-1 items-center gap-2 font-semibold tracking-tight">
+            <img src={Logo} alt={t('appName')} className="size-6 shrink-0" />
+            <span className="truncate">{t('appName')}</span>
+          </div>
+          <button
+            type="button"
+            aria-label={t('nav.accountSheet')}
+            onClick={() => {
+              haptic('light')
+              setAccountSheetOpen(true)
+            }}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-muted active:scale-95"
+          >
+            <UserAvatar user={user} />
+          </button>
+        </header>
 
-      {/* Desktop sidebar */}
-      <aside className="hidden min-h-0 w-72 shrink-0 flex-col border-r border-border bg-card/50 md:flex md:min-h-dvh max-h-screen fixed top-0 left-0">
-        <AppShellSidebarBody />
-      </aside>
+        <RouteLoadingBar />
 
-      {/* Main content — extra bottom padding on mobile to clear the bottom nav bar and FAB */}
-      <main className="mx-auto w-full max-w-6xl flex-1 p-4 pb-[calc(5rem+env(safe-area-inset-bottom))] md:p-8 md:pb-8">
-        <PageTransition>{children}</PageTransition>
-      </main>
+        {/* Desktop sidebar */}
+        <aside className="hidden min-h-0 w-72 shrink-0 flex-col border-r border-border bg-card/50 md:flex md:min-h-dvh max-h-screen fixed top-0 left-0">
+          <AppShellSidebarBody />
+        </aside>
 
-      {/* Mobile bottom nav & account sheet */}
-      <MobileBottomNav />
-      <MobileAccountSheet open={accountSheetOpen} onOpenChange={setAccountSheetOpen} user={user} />
-    </div>
+        {/* Main content — extra bottom padding on mobile to clear the bottom nav bar and FAB */}
+        <main className="mx-auto w-full max-w-6xl flex-1 p-4 pb-[calc(5rem+env(safe-area-inset-bottom))] md:p-8 md:pb-8">
+          <PageTransition>{children}</PageTransition>
+        </main>
+
+        {/* Mobile bottom nav & account sheet */}
+        <MobileBottomNav />
+        <MobileAccountSheet open={accountSheetOpen} onOpenChange={setAccountSheetOpen} user={user} />
+      </div>
+    </PageNavigationTransitionProvider>
   )
 }

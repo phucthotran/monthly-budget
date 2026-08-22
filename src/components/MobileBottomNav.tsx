@@ -2,6 +2,7 @@ import { Link, useRouterState } from '@tanstack/react-router'
 import { m } from 'motion/react'
 import { useTranslation } from 'react-i18next'
 
+import { usePageNavigationTransition } from '@/hooks/usePageNavigationTransition'
 import { haptic } from '@/lib/haptics'
 import { useNavItems } from '@/lib/nav'
 import { cn } from '@/lib/utils'
@@ -18,7 +19,9 @@ export function MobileBottomNav() {
   const { t } = useTranslation()
   const labeledItems = useNavItems()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const activeIndex = labeledItems.findIndex((item) => item.to === pathname)
+  const swipeTarget = usePageNavigationTransition((s) => s.swipeTarget)
+  const activePath = swipeTarget ?? pathname
+  const activeIndex = labeledItems.findIndex((item) => item.to === activePath)
 
   return (
     <nav
@@ -50,7 +53,7 @@ export function MobileBottomNav() {
       ) : null}
 
       {labeledItems.map((item) => {
-        const active = pathname === item.to
+        const active = activePath === item.to
         const Icon = item.icon
         return (
           <Link
