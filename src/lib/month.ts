@@ -2,6 +2,8 @@ import type { MonthKey } from '@/lib/types'
 
 import { formatInTimeZone } from 'date-fns-tz'
 
+import i18n from '@/i18n'
+
 export type { MonthKey }
 
 /** `yyyy-MM` string format for Zod and form validation. */
@@ -164,16 +166,32 @@ export function matchesPeriodStatusFilter(
   return filter === 'expired' ? expired : !expired
 }
 
-/** UI label `T{month}/{year}` (e.g. T4/2026). */
-export function formatMonthLabel(month: MonthKey): string {
+const EN_MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'] as const
+
+function resolveUiLocale(locale?: string): 'en' | 'vi' {
+  const raw = locale ?? i18n.language
+  return raw.startsWith('en') ? 'en' : 'vi'
+}
+
+/** UI label: `T4/2026` (vi) or `Apr 2026` (en). */
+export function formatMonthLabel(month: MonthKey, locale?: string): string {
   const [y, m] = month.split('-')
   if (!y || !m) return month
+  const monthIndex = Number(m) - 1
+  if (resolveUiLocale(locale) === 'en') {
+    const name = EN_MONTH_SHORT[monthIndex]
+    return name ? `${name} ${y}` : month
+  }
   return `T${Number(m)}/${y}`
 }
 
-/** Month-only label `T{n}` for use under a year group header. */
-export function formatMonthLabelShort(month: MonthKey): string {
+/** Month-only label: `T4` (vi) or `Apr` (en), for use under a year group header. */
+export function formatMonthLabelShort(month: MonthKey, locale?: string): string {
   const [, m] = month.split('-')
   if (!m) return month
+  const monthIndex = Number(m) - 1
+  if (resolveUiLocale(locale) === 'en') {
+    return EN_MONTH_SHORT[monthIndex] ?? month
+  }
   return `T${Number(m)}`
 }

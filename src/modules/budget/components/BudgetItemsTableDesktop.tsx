@@ -2,15 +2,15 @@ import type { BudgetItem, Category, MonthKey } from '@/lib/types'
 
 import { HandCoinsIcon, Pencil, Trash2 } from 'lucide-react'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { ActionTooltipButton, InfoTooltip } from '@/components/patterns'
 import { Badge, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
+import { useMoney } from '@/hooks/useMoney'
 import { canRecordActualExpenseForBudgetItem } from '@/lib/budget/apply'
 import { currentMonthKey, formatMonthLabel, isPeriodClosedBefore } from '@/lib/month'
-import { t } from '@/lib/strings'
 import { currencyClass } from '@/lib/style-classes'
 import { cn } from '@/lib/utils'
-import { formatVnd } from '@/lib/vnd'
 
 export type BudgetItemsTableProps = {
   month: MonthKey
@@ -31,6 +31,8 @@ export function BudgetItemsTableDesktop({
   onDelete,
   onEdit,
 }: BudgetItemsTableProps) {
+  const { t } = useTranslation('budget')
+  const { currency, format } = useMoney()
   const categoryMap = useMemo(() => {
     return new Map(categories.map((c) => [c.id, c]))
   }, [categories])
@@ -39,24 +41,24 @@ export function BudgetItemsTableDesktop({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[34%]">{t.budget.titleLabel}</TableHead>
-          <TableHead className="w-[18%]">{t.budget.category}</TableHead>
-          <TableHead className="text-right whitespace-nowrap">{t.budget.amount}</TableHead>
+          <TableHead className="w-[34%]">{t('titleLabel')}</TableHead>
+          <TableHead className="w-[18%]">{t('category')}</TableHead>
+          <TableHead className="text-right whitespace-nowrap">{t('amount', { currency })}</TableHead>
           <TableHead className="whitespace-nowrap min-w-[8rem]">
             <span className="inline-flex items-center gap-1">
-              {t.budget.periodColumn}
+              {t('periodColumn')}
               <InfoTooltip
                 className="h-4 w-4"
-                content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.budget.periodColumnHint}</p>}
+                content={<p className="max-w-xs text-pretty text-sm leading-snug">{t('periodColumnHint')}</p>}
               />
             </span>
           </TableHead>
           <TableHead className="text-right whitespace-nowrap min-w-[7rem]">
             <span className="inline-flex w-full items-center justify-end gap-1">
-              {t.budget.remaining}
+              {t('remaining', { currency })}
               <InfoTooltip
                 className="h-4 w-4"
-                content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.budget.remainingHint}</p>}
+                content={<p className="max-w-xs text-pretty text-sm leading-snug">{t('remainingHint')}</p>}
               />
             </span>
           </TableHead>
@@ -81,20 +83,20 @@ export function BudgetItemsTableDesktop({
                 </Badge>
               </TableCell>
               <TableCell className={cn('text-right', currencyClass({ positive: item.amountVnd >= 0 }))}>
-                {formatVnd(item.amountVnd)}
+                {format(item.amountVnd)}
               </TableCell>
               <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
                 {formatMonthLabel(item.validFrom)} → {item.validTo ? formatMonthLabel(item.validTo) : '…'}
               </TableCell>
               <TableCell className={cn('text-right', currencyClass({ positive: remaining >= 0, primary: true }))}>
-                {formatVnd(remaining)}
+                {format(remaining)}
               </TableCell>
               <TableCell className="text-right whitespace-nowrap">
                 <div className="inline-flex items-center justify-end gap-1">
                   <ActionTooltipButton
                     variant="secondary"
                     onClick={() => onAddActual(item)}
-                    label={canAddActual ? t.budget.addActual : t.budget.viewActual}
+                    label={canAddActual ? t('addActual') : t('viewActual')}
                   >
                     <HandCoinsIcon className="h-4 w-4" />
                   </ActionTooltipButton>
@@ -102,7 +104,7 @@ export function BudgetItemsTableDesktop({
                     variant="outline"
                     disabled={locked}
                     onClick={() => onEdit(item)}
-                    label={locked ? t.budget.periodEndedLocked : t.budget.editAction}
+                    label={locked ? t('periodEndedLocked') : t('editAction')}
                   >
                     <Pencil className="h-4 w-4" />
                   </ActionTooltipButton>
@@ -110,7 +112,7 @@ export function BudgetItemsTableDesktop({
                     variant="ghost"
                     disabled={locked}
                     onClick={() => onDelete(item)}
-                    label={locked ? t.budget.periodEndedLocked : t.budget.deleteAction}
+                    label={locked ? t('periodEndedLocked') : t('deleteAction')}
                   >
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </ActionTooltipButton>

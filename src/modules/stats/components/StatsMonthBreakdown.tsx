@@ -2,9 +2,9 @@ import type { HomeMonthLineItem } from '@/lib/budget/homeMonthBreakdown'
 
 import { ChevronDown } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Button, TableCell, TableRow } from '@/components/ui'
-import { t } from '@/lib/strings'
 import { currencyClass } from '@/lib/style-classes'
 import { cn } from '@/lib/utils'
 
@@ -73,6 +73,7 @@ export function StatsMonthDetailRows({
   actualLines: readonly HomeMonthLineItem[]
   plannedLines: readonly HomeMonthLineItem[]
 }) {
+  const { t } = useTranslation('stats')
   const taggedRows = useMemo(() => buildTagged(plannedLines, actualLines), [plannedLines, actualLines])
   const rowCount = taggedRows.length
   const needsToggle = rowCount > PREVIEW_LINE_CAP
@@ -122,7 +123,7 @@ export function StatsMonthDetailRows({
                       'transition-transform',
                     )}
                   />
-                  {expanded ? t.stats.collapseMonthBreakdown : t.stats.expandMonthBreakdown}
+                  {expanded ? t('collapseMonthBreakdown') : t('expandMonthBreakdown')}
                 </Button>
               </div>
             </>

@@ -28,29 +28,23 @@ export interface <Entity> {
 
 ---
 
-### Step 2 — Strings (`src/lib/strings.ts`)
+### Step 2 — Strings (`src/locales/{vi,en}/<feature>.json`)
 
-Add a namespace under `t.<feature>` (keep keys alphabetically sorted within the block):
+Add a page namespace JSON in **both** locales (keys alphabetically sorted). Register the namespace in `src/i18n/index.ts` and `src/i18n/i18next.d.ts`.
 
-```ts
-<feature>: {
-  add: '...',
-  deleteDialogTitle: '...',
-  emptyList: '...',
-  pageDetail: '...',
-  pageLead: '...',
-  title: '...',
-  // field labels, hints, etc.
-},
-```
-
-For delete confirmation body text with dynamic values, add a named function at the bottom of the file:
-
-```ts
-export function <feature>DeleteDialogP1(label: string) {
-  return `Bạn sắp xóa ... "${label}". Thao tác này không thể hoàn tác.`
+```json
+{
+  "add": "...",
+  "deleteDialogP1": "You are about to delete “{{label}}”. This cannot be undone.",
+  "deleteDialogTitle": "...",
+  "emptyList": "...",
+  "pageDetail": "...",
+  "pageLead": "...",
+  "title": "..."
 }
 ```
+
+In the page: `const { t } = useTranslation('<feature>')`. Use interpolation (`{{label}}`) instead of helper functions.
 
 ---
 
@@ -171,12 +165,14 @@ export function use<Feature>Mutations(uid: string | undefined) {
 
 ```ts
 import { z } from 'zod'
-import { t } from '@/lib/strings'
+import i18n from '@/i18n'
 
-export const <feature>FormSchema = z.object({
-  name: z.string().refine((s) => s.trim().length > 0, { message: t.validation.nameRequired }),
-  // ... other fields
-})
+export function <feature>FormSchema() {
+  return z.object({
+    name: z.string().refine((s) => s.trim().length > 0, { message: i18n.t('validation.nameRequired') }),
+    // ... other fields
+  })
+}
 
 export type <Feature>FormValues = z.infer<typeof <feature>FormSchema>
 ```
@@ -187,14 +183,15 @@ export type <Feature>FormValues = z.infer<typeof <feature>FormSchema>
 
 ```ts
 import { useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/components/AuthProvider'
 import { PageHeading } from '@/components/patterns'
-import { t } from '@/lib/strings'
 import { use<Feature>s } from '@/hooks/useUserCollections'
 import { use<Feature>Mutations } from './hooks/use<Feature>Mutations'
 import { <Feature>Dialog, type <Feature>DialogHandle } from './components/<Feature>Dialog'
 
 export function <Feature>Page() {
+  const { t } = useTranslation('<feature>')
   const { user } = useAuth()
   const { data, isHydrated } = use<Feature>s(user?.uid)
   const mutations = use<Feature>Mutations(user?.uid)
@@ -203,10 +200,10 @@ export function <Feature>Page() {
   return (
     <>
       <PageHeading
-        title={t.<feature>.title}
-        lead={t.<feature>.pageLead}
-        detail={t.<feature>.pageDetail}
-        action={{ label: t.<feature>.add, onClick: () => dialogRef.current?.openCreate() }}
+        title={t('title')}
+        lead={t('pageLead')}
+        detail={t('pageDetail')}
+        action={{ label: t('add'), onClick: () => dialogRef.current?.openCreate() }}
       />
       {/* table / list goes here */}
       <Feature>Dialog
@@ -237,13 +234,13 @@ export const <feature>Route = createRoute({
 })
 ```
 
-Then register the route in `src/routeTree.ts` and add a nav link in `AppShell.tsx` using `t.nav.<feature>`.
+Then register the route in `src/routeTree.ts` and add a nav link in `src/lib/nav.ts` with a `nav.<feature>` key in both `common.json` files.
 
 ---
 
 ## Key rules to follow
 
-- `00-core-project-standards` — structure, types, VND utils
-- `04-strings-and-ui-text` — all copy in `t.*`
+- `00-core-project-standards` — structure, types, money helpers
+- `04-strings-and-ui-text` — both locale JSON files; `useTranslation`
 - `07-data-layer` — hooks, mutation shape, query keys
 - `08-responsive-dialog` — dialog shell (load `add-dialog` skill for the dialog)

@@ -4,6 +4,10 @@
     <script>
       ;(function () {
         try {
+          var lng = localStorage.getItem('i18nextLng')
+          if (lng === 'en' || lng === 'vi') {
+            document.documentElement.lang = lng
+          }
           var t = localStorage.getItem('theme')
           if (t === 'light') {
             document.documentElement.classList.remove('dark')

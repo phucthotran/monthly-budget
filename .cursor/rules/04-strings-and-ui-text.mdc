@@ -1,5 +1,5 @@
 ---
-description: Centralize Vietnamese UI text in src/lib/strings.ts (no hardcoded copy)
+description: Centralize UI text in i18next locale JSON (no hardcoded copy)
 alwaysApply: true
 ---
 
@@ -7,8 +7,22 @@ alwaysApply: true
 
 ## Requirement
 
-- **Do not hardcode Vietnamese UI strings in components** (titles, labels, button text, table headers, empty states, helper text).
-- Put UI copy in `src/lib/strings.ts` under `t.*`, then reference it from components.
+- **Do not hardcode UI strings in components** (titles, labels, button text, table headers, empty states, helper text).
+- Put copy in **both** `src/locales/vi/<ns>.json` and `src/locales/en/<ns>.json`, then use `useTranslation()` / `i18n.t()`.
+
+## Namespaces (one file per page)
+
+| File | Used on |
+|---|---|
+| `common.json` | Shell, shared buttons, nav, toasts, validation, currency labels |
+| `home.json` | `/` |
+| `stats.json` | `/stats` |
+| `budget.json` | `/budget` |
+| `income.json` | `/income` |
+| `settings.json` | `/settings` |
+| `auth.json` | `/login` |
+
+Pages: `const { t } = useTranslation('<page>')`. Shared copy: `useTranslation()` (default NS `common`) or `t('common:cancel')`. Non-React: `i18n.t('toast.error')` or `i18n.t('errorGoogle', { ns: 'auth' })`.
 
 ## Scope
 
@@ -22,20 +36,16 @@ alwaysApply: true
 
 ## Conventions
 
-- Prefer reusing existing keys under `t.common.*` for shared copy:
-  - `t.common.edit`, `t.common.period`, `t.common.status`, `t.common.visible`, etc.
-- For feature-specific copy, add keys under the relevant namespace:
-  - `t.stats.*`, `t.income.*`, `t.settings.*`, `t.budget.*`, `t.auth.*`
+- Prefer reusing existing keys in `common.json` for shared copy (`edit`, `period`, `status`, `visible`, `nav.*`, `toast.*`, `validation.*`).
+- Add feature-specific keys to that page’s JSON in **both** locales.
 - Keep keys **deterministically ordered** (repo uses object key sorting rules).
 
-## Parameterised string helpers
+## Interpolation
 
-- When a UI string embeds dynamic values (e.g. a name or formatted amount in a delete confirmation), export a named function from `strings.ts` rather than using an inline template literal in the component.
-- Existing helpers: `budgetDeleteDialogP1(title)`, `incomeDeleteDialogP1(label)`, `actualExpenseLineDeleteDialogP1(formattedAmount, monthLabel)`.
-- Add new helpers at the bottom of `strings.ts` following the same pattern.
+- Dynamic values use i18next interpolation: `t('deleteDialogP1', { title })` with `{{title}}` in the JSON.
+- Do not add named helper functions for delete-dialog copy.
 
 ## Exceptions (allowed hardcode)
 
-- `confirm(...)` prompts and short one-off debug strings may be hardcoded temporarily, but should be moved into `t.*` once UX is finalized.
+- `confirm(...)` prompts and short one-off debug strings may be hardcoded temporarily, but should be moved into locale JSON once UX is finalized.
 - Symbols only (e.g. `→`, `…`) are OK to inline.
-

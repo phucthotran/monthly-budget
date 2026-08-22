@@ -1,8 +1,8 @@
 import { getRedirectResult, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from 'firebase/auth'
 import { useCallback, useEffect, useState } from 'react'
 
+import i18n from '@/i18n'
 import { getFirebaseAuth } from '@/lib/firebase'
-import { t } from '@/lib/strings'
 
 function shouldUseRedirect() {
   // Popup is flaky on iOS Safari / installed PWAs.
@@ -38,7 +38,7 @@ export function useGoogleAuth() {
       await signInWithPopup(auth, provider)
       return { ok: true as const }
     } catch {
-      setError(t.auth.errorGoogle)
+      setError(i18n.t('errorGoogle', { ns: 'auth' }))
       return { ok: false as const }
     } finally {
       setPending(false)

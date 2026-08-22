@@ -2,13 +2,14 @@ import type { IncomePeriod, MonthKey } from '@/lib/types'
 
 import { useForm } from '@tanstack/react-form'
 import { type ForwardedRef, forwardRef, useId, useImperativeHandle, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { MonthYearPicker, VndAmountInput, VndAmountQuickPick } from '@/components/inputs'
 import { FormLabelWithHint, ModalHeading, ResponsiveSheet, ResponsiveSheetContent } from '@/components/patterns'
 import { Button, DialogFooter, Field, FieldError, FieldLabel, Input } from '@/components/ui'
+import { useMoney } from '@/hooks/useMoney'
 import { firstFieldErrorMessage } from '@/lib/form/fieldMeta'
 import { compareMonthKeys, monthYearPickerYearConstraints } from '@/lib/month'
-import { t } from '@/lib/strings'
 
 import { incomeFormSchema } from '../schemas/incomeFormSchema'
 
@@ -31,10 +32,14 @@ function IncomeDialogImpl(
   },
   ref: ForwardedRef<IncomeDialogHandle>,
 ) {
+  const { t } = useTranslation('income')
+  const { t: tc } = useTranslation()
+  const { currency } = useMoney()
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<IncomePeriod | null>(null)
 
   const yearPick = useMemo(() => monthYearPickerYearConstraints(editing), [editing])
+  const schema = useMemo(() => incomeFormSchema(currency), [currency])
   const formId = useId()
 
   const form = useForm({
@@ -57,7 +62,7 @@ function IncomeDialogImpl(
       form.reset()
     },
     validators: {
-      onSubmit: incomeFormSchema,
+      onSubmit: schema,
     },
   })
 
@@ -94,11 +99,11 @@ function IncomeDialogImpl(
     >
       <ResponsiveSheetContent className="max-w-full sm:max-h-[min(90vh,46rem)] sm:overflow-y-auto sm:max-w-lg md:max-w-3xl">
         <ModalHeading
-          title={editing ? t.income.editTitle : t.income.add}
+          title={editing ? t('editTitle') : t('add')}
           description={
             <div className="space-y-2.5 text-pretty leading-relaxed">
-              <p>{t.income.dialogP1}</p>
-              <p>{t.income.dialogP2c}</p>
+              <p>{t('dialogP1')}</p>
+              <p>{t('dialogP2c')}</p>
             </div>
           }
         />
@@ -115,7 +120,7 @@ function IncomeDialogImpl(
               const errId = `${formId}-label-err`
               return (
                 <Field invalid={!!err}>
-                  <FieldLabel htmlFor={`${formId}-label`}>{t.income.label}</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-label`}>{t('label')}</FieldLabel>
                   <Input
                     aria-describedby={err ? errId : undefined}
                     aria-invalid={!!err}
@@ -138,7 +143,7 @@ function IncomeDialogImpl(
               const describedBy = [err ? errId : null, quickPickDescId].filter(Boolean).join(' ') || undefined
               return (
                 <Field invalid={!!err}>
-                  <FieldLabel htmlFor={`${formId}-amount`}>{t.income.amount}</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-amount`}>{t('amount', { currency })}</FieldLabel>
                   <VndAmountInput
                     aria-describedby={describedBy}
                     id={`${formId}-amount`}
@@ -148,7 +153,7 @@ function IncomeDialogImpl(
                   />
                   <FieldError id={errId}>{err}</FieldError>
                   <div className="min-w-0 pt-2" id={quickPickDescId}>
-                    <p className="text-xs text-muted-foreground mb-1.5">{t.common.amountQuickPickHint}</p>
+                    <p className="text-xs text-muted-foreground mb-1.5">{tc('amountQuickPickHint')}</p>
                     <VndAmountQuickPick
                       currentAmountVnd={field.state.value}
                       plannedHintVnd={editing?.amountVnd}
@@ -166,7 +171,7 @@ function IncomeDialogImpl(
               const errId = `${formId}-validFrom-err`
               return (
                 <Field invalid={!!err}>
-                  <FieldLabel>{t.income.validFrom}</FieldLabel>
+                  <FieldLabel>{t('validFrom')}</FieldLabel>
                   <MonthYearPicker
                     invalid={!!err}
                     value={field.state.value}
@@ -192,8 +197,8 @@ function IncomeDialogImpl(
               const errId = `${formId}-validTo-err`
               return (
                 <Field invalid={!!err}>
-                  <FormLabelWithHint hint={<p className="text-pretty">{t.income.validToHint}</p>}>
-                    {t.income.validTo}
+                  <FormLabelWithHint hint={<p className="text-pretty">{t('validToHint')}</p>}>
+                    {t('validTo')}
                   </FormLabelWithHint>
                   <form.Subscribe selector={(s) => s.values.validFrom}>
                     {(validFrom) => {
@@ -222,9 +227,9 @@ function IncomeDialogImpl(
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              {t.common.cancel}
+              {tc('cancel')}
             </Button>
-            <Button type="submit">{t.common.save}</Button>
+            <Button type="submit">{tc('save')}</Button>
           </DialogFooter>
         </form>
       </ResponsiveSheetContent>

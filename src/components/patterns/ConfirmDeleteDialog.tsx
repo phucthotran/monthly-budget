@@ -2,9 +2,9 @@ import type { ReactNode } from 'react'
 
 import { CircleAlert } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { haptic } from '@/lib/haptics'
-import { t } from '@/lib/strings'
 
 import { Alert, AlertDescription, Button, DialogFooter } from '../ui'
 
@@ -22,7 +22,7 @@ export type ConfirmDeleteDialogProps = {
 }
 
 export function ConfirmDeleteDialog({
-  confirmLabel = t.common.delete,
+  confirmLabel,
   description,
   emphasis,
   onConfirm,
@@ -30,6 +30,7 @@ export function ConfirmDeleteDialog({
   open,
   title,
 }: ConfirmDeleteDialogProps) {
+  const { t } = useTranslation()
   const [pending, setPending] = useState(false)
 
   async function handleConfirm() {
@@ -57,10 +58,10 @@ export function ConfirmDeleteDialog({
         ) : null}
         <DialogFooter className="[&>button]:h-11 [&>button]:w-full sm:[&>button]:h-9 sm:[&>button]:w-auto">
           <Button type="button" variant="outline" disabled={pending} onClick={() => onOpenChange(false)}>
-            {t.common.cancel}
+            {t('cancel')}
           </Button>
           <Button type="button" variant="destructive" disabled={pending} onClick={() => void handleConfirm()}>
-            {pending ? t.common.loading : confirmLabel}
+            {pending ? t('loading') : (confirmLabel ?? t('delete'))}
           </Button>
         </DialogFooter>
       </ResponsiveSheetContent>

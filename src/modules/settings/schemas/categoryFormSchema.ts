@@ -1,7 +1,9 @@
 import { z } from 'zod'
 
-import { t } from '@/lib/strings'
+import i18n from '@/i18n'
 
-export const categoryFormSchema = z.object({
-  name: z.string().refine((s) => s.trim().length > 0, { message: t.validation.nameRequired }),
-})
+export function categoryFormSchema() {
+  return z.object({
+    name: z.string().refine((s) => s.trim().length > 0, { message: i18n.t('validation.nameRequired') }),
+  })
+}

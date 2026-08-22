@@ -1,10 +1,10 @@
 import { useForm } from '@tanstack/react-form'
 import { useId } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { ModalHeading, ResponsiveSheet, ResponsiveSheetContent } from '@/components/patterns'
 import { Button, DialogFooter, Field, FieldError, FieldLabel, Input } from '@/components/ui'
 import { firstFieldErrorMessage } from '@/lib/form/fieldMeta'
-import { t } from '@/lib/strings'
 
 import { categoryFormSchema } from '../schemas/categoryFormSchema'
 
@@ -17,6 +17,8 @@ export function CategoryDialog({
   onOpenChange: (v: boolean) => void
   onSubmit: (value: { name: string }) => Promise<void>
 }) {
+  const { t } = useTranslation('settings')
+  const { t: tc } = useTranslation()
   const formId = useId()
   const form = useForm({
     defaultValues: { name: '' },
@@ -26,7 +28,7 @@ export function CategoryDialog({
       form.reset()
     },
     validators: {
-      onSubmit: categoryFormSchema,
+      onSubmit: categoryFormSchema(),
     },
   })
 
@@ -40,10 +42,10 @@ export function CategoryDialog({
     >
       <ResponsiveSheetContent>
         <ModalHeading
-          title={t.settings.add}
+          title={t('add')}
           description={
             <div className="space-y-2.5 text-pretty leading-relaxed">
-              <p>{t.settings.dialogP1}</p>
+              <p>{t('dialogP1')}</p>
             </div>
           }
         />
@@ -60,7 +62,7 @@ export function CategoryDialog({
               const errId = `${formId}-name-err`
               return (
                 <Field invalid={!!err}>
-                  <FieldLabel htmlFor={`${formId}-name`}>{t.settings.name}</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-name`}>{t('name')}</FieldLabel>
                   <Input
                     aria-describedby={err ? errId : undefined}
                     aria-invalid={!!err}
@@ -76,9 +78,9 @@ export function CategoryDialog({
           </form.Field>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              {t.common.cancel}
+              {tc('cancel')}
             </Button>
-            <Button type="submit">{t.common.save}</Button>
+            <Button type="submit">{tc('save')}</Button>
           </DialogFooter>
         </form>
       </ResponsiveSheetContent>

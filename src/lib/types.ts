@@ -1,5 +1,12 @@
 export type MonthKey = string
 
+export type CurrencyCode = 'USD' | 'VND'
+
+export interface UserPreferences {
+  currency: CurrencyCode
+  updatedAt: number
+}
+
 export interface Category {
   id: string
   name: string

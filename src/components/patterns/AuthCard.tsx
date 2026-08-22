@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { t } from '@/lib/strings'
 import { cn } from '@/lib/utils'
 
 import Logo from '../../../public/header-logo.png'
@@ -13,16 +13,18 @@ export type AuthCardProps = {
 }
 
 export function AuthCard({ children, className, title }: AuthCardProps) {
+  const { t } = useTranslation()
+
   return (
     <Card className={cn('w-full max-w-md border-border', className)}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <img src={Logo} alt={t.appName} className="size-6 shrink-0 text-primary" />
+          <img src={Logo} alt={t('appName')} className="size-6 shrink-0 text-primary" />
           {title}
         </CardTitle>
         <Separator className="my-6 h-[1px]" />
         <CardDescription className="items-center justify-center flex">
-          <img src="./logo.png" alt={t.appName} className="max-w-full h-80" />
+          <img src="./logo.png" alt={t('appName')} className="max-w-full h-80" />
         </CardDescription>
       </CardHeader>
       <CardContent>{children}</CardContent>

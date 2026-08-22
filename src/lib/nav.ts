@@ -1,13 +1,13 @@
 import { LayoutDashboard, PiggyBank, Settings, TrendingUp, Wallet } from 'lucide-react'
-
-import { t } from '@/lib/strings'
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export const navItems = [
-  { icon: LayoutDashboard, label: t.nav.home, to: '/' },
-  { icon: TrendingUp, label: t.nav.stats, to: '/stats' },
-  { icon: Wallet, label: t.nav.budget, to: '/budget' },
-  { icon: PiggyBank, label: t.nav.income, to: '/income' },
-  { icon: Settings, label: t.nav.settings, to: '/settings' },
+  { icon: LayoutDashboard, navKey: 'home' as const, to: '/' },
+  { icon: TrendingUp, navKey: 'stats' as const, to: '/stats' },
+  { icon: Wallet, navKey: 'budget' as const, to: '/budget' },
+  { icon: PiggyBank, navKey: 'income' as const, to: '/income' },
+  { icon: Settings, navKey: 'settings' as const, to: '/settings' },
 ] as const
 
 export type NavPath = (typeof navItems)[number]['to']
@@ -25,4 +25,16 @@ export function resolveSwipeTarget(pathname: string, dir: SwipeDirection): NavPa
   const target = index + dir
   if (target < 0 || target >= navItems.length) return null
   return navItems[target].to
+}
+
+export function useNavItems() {
+  const { t } = useTranslation()
+  return useMemo(
+    () =>
+      navItems.map((item) => ({
+        ...item,
+        label: t(`nav.${item.navKey}`),
+      })),
+    [t],
+  )
 }

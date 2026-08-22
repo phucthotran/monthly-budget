@@ -1,13 +1,9 @@
 import type { PeriodStatusFilter } from '@/lib/month'
 
-import { haptic } from '@/lib/haptics'
-import { t } from '@/lib/strings'
-import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
-const options: { label: string; value: PeriodStatusFilter }[] = [
-  { label: t.common.periodStatusActive, value: 'active' },
-  { label: t.common.periodStatusExpired, value: 'expired' },
-]
+import { haptic } from '@/lib/haptics'
+import { cn } from '@/lib/utils'
 
 export function PeriodStatusFilterToggle({
   className,
@@ -18,10 +14,16 @@ export function PeriodStatusFilterToggle({
   value: PeriodStatusFilter
   onValueChange: (filter: PeriodStatusFilter) => void
 }) {
+  const { t } = useTranslation()
+  const options: { label: string; value: PeriodStatusFilter }[] = [
+    { label: t('periodStatusActive'), value: 'active' },
+    { label: t('periodStatusExpired'), value: 'expired' },
+  ]
+
   return (
     <div
       role="group"
-      aria-label={t.common.periodStatus}
+      aria-label={t('periodStatus')}
       className={cn(
         'inline-flex shrink-0 items-center rounded-md border border-border bg-muted p-0.5 text-xs sm:text-sm',
         className,

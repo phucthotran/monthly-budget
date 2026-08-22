@@ -3,6 +3,7 @@ import type { BudgetItem, IncomePeriod, MonthKey } from '@/lib/types'
 import type { TooltipContentProps, TooltipPayloadEntry } from 'recharts'
 
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from 'recharts'
 
 import { YearFilterSelect } from '@/components/inputs'
@@ -16,9 +17,8 @@ import {
   ChartTooltipContent,
   type ChartTooltipRow,
 } from '@/components/ui'
+import { useMoney } from '@/hooks/useMoney'
 import { formatMonthLabel, formatMonthLabelShort } from '@/lib/month'
-import { t } from '@/lib/strings'
-import { formatVnd, formatVndShort } from '@/lib/vnd'
 
 import { buildChartYearSnapshots } from '../buildChartYearSnapshots'
 import { useStatsChartYearState } from '../hooks/useStatsChartYearState'
@@ -31,27 +31,7 @@ type Props = {
 
 type ChartEntry = { label: string; shortLabel: string } & MonthSnapshot
 
-// ─── Chart configs ────────────────────────────────────────────────────────────
-
-const cashflowConfig = {
-  actualSpentVnd: { color: 'hsl(var(--chart-3))', label: t.stats.chartActual },
-  incomeVnd: { color: 'hsl(var(--chart-1))', label: t.stats.chartIncome },
-  plannedVnd: { color: 'hsl(var(--chart-2))', label: t.stats.chartPlanned },
-} satisfies ChartConfig
-
-const surplusConfig = {
-  actualSurplusVnd: { color: 'hsl(var(--chart-3))', label: t.stats.chartActualSurplus },
-  plannedSurplusVnd: { color: 'hsl(var(--chart-2))', label: t.stats.chartPlannedSurplus },
-} satisfies ChartConfig
-
-const savingsConfig = {
-  actualSavingsToDateVnd: { color: 'hsl(var(--chart-3))', label: t.stats.chartActualSavings },
-  plannedSavingsToDateVnd: { color: 'hsl(var(--chart-2))', label: t.stats.chartPlannedSavings },
-} satisfies ChartConfig
-
-// ─── Tooltip builders ────────────────────────────────────────────────────────
-
-function makeTooltip(config: ChartConfig) {
+function makeTooltip(config: ChartConfig, format: (n: number) => string) {
   return function TooltipRenderer({ active, payload }: Partial<TooltipContentProps<number, string>>) {
     if (!active || !payload?.length) return null
     const heading = (payload[0]?.payload as ChartEntry | undefined)?.label
@@ -60,17 +40,11 @@ function makeTooltip(config: ChartConfig) {
       .map((p: TooltipPayloadEntry) => ({
         color: p.color ?? p.fill,
         label: (config[p.dataKey as string]?.label as string) ?? p.name ?? String(p.dataKey),
-        value: formatVnd(p.value as number),
+        value: format(p.value as number),
       }))
     return <ChartTooltipContent active headingLabel={heading} rows={rows} />
   }
 }
-
-const CashflowTooltip = makeTooltip(cashflowConfig)
-const SurplusTooltip = makeTooltip(surplusConfig)
-const SavingsTooltip = makeTooltip(savingsConfig)
-
-// ─── Common axis props ────────────────────────────────────────────────────────
 
 const xAxisProps = {
   axisLine: false,
@@ -79,18 +53,56 @@ const xAxisProps = {
   tickLine: false,
 } as const
 
-const yAxisProps = {
-  axisLine: false,
-  tick: { fontSize: 10 },
-  tickFormatter: formatVndShort,
-  tickLine: false,
-  width: 40,
-} as const
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function StatsCharts({ actuals, budget, income }: Props) {
+  const { t } = useTranslation('stats')
+  const { format, formatShort } = useMoney()
   const { filterYear, setFilterYear, yearOptions } = useStatsChartYearState()
+
+  const cashflowConfig = useMemo(
+    () =>
+      ({
+        actualSpentVnd: { color: 'hsl(var(--chart-3))', label: t('chartActual') },
+        incomeVnd: { color: 'hsl(var(--chart-1))', label: t('chartIncome') },
+        plannedVnd: { color: 'hsl(var(--chart-2))', label: t('chartPlanned') },
+      }) satisfies ChartConfig,
+    [t],
+  )
+
+  const surplusConfig = useMemo(
+    () =>
+      ({
+        actualSurplusVnd: { color: 'hsl(var(--chart-3))', label: t('chartActualSurplus') },
+        plannedSurplusVnd: { color: 'hsl(var(--chart-2))', label: t('chartPlannedSurplus') },
+      }) satisfies ChartConfig,
+    [t],
+  )
+
+  const savingsConfig = useMemo(
+    () =>
+      ({
+        actualSavingsToDateVnd: { color: 'hsl(var(--chart-3))', label: t('chartActualSavings') },
+        plannedSavingsToDateVnd: { color: 'hsl(var(--chart-2))', label: t('chartPlannedSavings') },
+      }) satisfies ChartConfig,
+    [t],
+  )
+
+  const CashflowTooltip = useMemo(() => makeTooltip(cashflowConfig, format), [cashflowConfig, format])
+  const SurplusTooltip = useMemo(() => makeTooltip(surplusConfig, format), [format, surplusConfig])
+  const SavingsTooltip = useMemo(() => makeTooltip(savingsConfig, format), [format, savingsConfig])
+
+  const yAxisProps = useMemo(
+    () =>
+      ({
+        axisLine: false,
+        tick: { fontSize: 10 },
+        tickFormatter: formatShort,
+        tickLine: false,
+        width: 40,
+      }) as const,
+    [formatShort],
+  )
 
   const snaps = useMemo(
     () => buildChartYearSnapshots(filterYear, income, budget, actuals),
@@ -110,12 +122,12 @@ export function StatsCharts({ actuals, budget, income }: Props) {
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-lg font-semibold tracking-tight">{t.stats.chartSectionTitle}</h2>
+        <h2 className="text-lg font-semibold tracking-tight">{t('chartSectionTitle')}</h2>
         <YearFilterSelect value={filterYear} years={yearOptions} onValueChange={setFilterYear} />
       </div>
 
       {/* Chart 1: Cashflow */}
-      <Panel bodyClassName="overflow-visible px-2 pb-3 pt-1" title={t.stats.chartTitleCashflow}>
+      <Panel bodyClassName="overflow-visible px-2 pb-3 pt-1" title={t('chartTitleCashflow')}>
         <ChartContainer className="h-[220px] w-full sm:h-[260px]" config={cashflowConfig}>
           <AreaChart data={chartData} margin={{ bottom: 0, left: 0, right: 8, top: 4 }}>
             <defs>
@@ -166,7 +178,7 @@ export function StatsCharts({ actuals, budget, income }: Props) {
       </Panel>
 
       {/* Chart 2: Surplus */}
-      <Panel bodyClassName="overflow-visible px-2 pb-3 pt-1" title={t.stats.chartTitleSurplus}>
+      <Panel bodyClassName="overflow-visible px-2 pb-3 pt-1" title={t('chartTitleSurplus')}>
         <ChartContainer className="h-[200px] w-full sm:h-[240px]" config={surplusConfig}>
           <BarChart barGap={2} data={chartData} margin={{ bottom: 0, left: 0, right: 8, top: 4 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -182,7 +194,7 @@ export function StatsCharts({ actuals, budget, income }: Props) {
       </Panel>
 
       {/* Chart 3: Cumulative savings */}
-      <Panel bodyClassName="overflow-visible px-2 pb-3 pt-1" title={t.stats.chartTitleSavings}>
+      <Panel bodyClassName="overflow-visible px-2 pb-3 pt-1" title={t('chartTitleSavings')}>
         <ChartContainer className="h-[200px] w-full sm:h-[240px]" config={savingsConfig}>
           <AreaChart data={chartData} margin={{ bottom: 0, left: 0, right: 8, top: 4 }}>
             <defs>

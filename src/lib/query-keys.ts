@@ -6,4 +6,5 @@ export const queryKeys = {
   budgetItems: (uid: string): QueryKey => ['budgetItems', uid],
   categories: (uid: string): QueryKey => ['categories', uid],
   incomePeriods: (uid: string): QueryKey => ['incomePeriods', uid],
+  userPreferences: (uid: string): QueryKey => ['userPreferences', uid],
 }

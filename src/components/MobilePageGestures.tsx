@@ -3,12 +3,12 @@ import type { ReactNode } from 'react'
 import { useRouterState } from '@tanstack/react-router'
 import { RefreshCw } from 'lucide-react'
 import { m, useTransform } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 
 import { PULL_THRESHOLD_PX, usePageGestures } from '@/hooks/usePageGestures'
 import { PageSwipeContext } from '@/hooks/usePageSwipe'
 import { PAGE_FADE } from '@/lib/motion'
 import { pageSkeletonPropsForPath } from '@/lib/pageSkeleton'
-import { t } from '@/lib/strings'
 
 import { PageLoadingSkeleton } from './patterns/PageLoadingSkeleton'
 
@@ -26,6 +26,7 @@ const HEADER_OFFSET = 'calc(3.25rem + env(safe-area-inset-top))'
  * layer move, both driven by `MotionValue`s straight from the touch handlers.
  */
 export function MobilePageGestures({ children }: { children: ReactNode }) {
+  const { t } = useTranslation()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const { handlers, isRefreshing, pageX, peek, peekOpacity, peekX, pullY } = usePageGestures()
 
@@ -45,7 +46,7 @@ export function MobilePageGestures({ children }: { children: ReactNode }) {
       >
         <m.span
           role="status"
-          aria-label={isRefreshing ? t.common.refreshing : t.common.pullToRefresh}
+          aria-label={isRefreshing ? t('refreshing') : t('pullToRefresh')}
           className="flex size-9 items-center justify-center rounded-full border border-border bg-card shadow-md transition-colors"
           style={{ color: indicatorColor }}
         >

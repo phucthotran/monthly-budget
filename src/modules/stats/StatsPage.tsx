@@ -1,13 +1,13 @@
 import { PiggyBank, Table2, TrendingUp } from 'lucide-react'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { useAuthContext } from '@/components/AuthProvider'
 import { InfoTooltip, PageHeading, PageLoadingSkeleton } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
+import { useMoney } from '@/hooks/useMoney'
 import { useActualExpenses, useBudgetItems, useIncomePeriods } from '@/hooks/useUserCollections'
-import { t } from '@/lib/strings'
-import { formatVnd } from '@/lib/vnd'
 
 import { SavingsTable } from './components/SavingsTable'
 import { StatsCharts } from './components/StatsCharts'
@@ -18,6 +18,8 @@ import { useStatsData } from './hooks/useStatsData'
 import { useStatsYearCollapse } from './hooks/useStatsYearCollapse'
 
 export function StatsPage() {
+  const { t } = useTranslation('stats')
+  const { format } = useMoney()
   const { user } = useAuthContext()
   const uid = user?.uid
 
@@ -38,16 +40,16 @@ export function StatsPage() {
         <div className="space-y-6">
           <PageHeading
             icon={<TrendingUp />}
-            title={t.stats.title}
+            title={t('title')}
             description={
               <div className="space-y-2 text-pretty">
-                <p>{t.stats.pageLead}</p>
-                <p className="text-sm text-muted-foreground">{t.stats.pageDetail}</p>
+                <p>{t('pageLead')}</p>
+                <p className="text-sm text-muted-foreground">{t('pageDetail')}</p>
               </div>
             }
           />
 
-          <StatsSummaryTiles plannedAvgLabel={formatVnd(plannedAvg)} actualAvgLabel={formatVnd(actualAvg)} />
+          <StatsSummaryTiles plannedAvgLabel={format(plannedAvg)} actualAvgLabel={format(actualAvg)} />
 
           <StatsCharts actuals={actuals} budget={budget} income={income} />
 
@@ -55,13 +57,13 @@ export function StatsPage() {
             <TabsList className="grid h-11 w-full grid-cols-2 gap-1 sm:h-10">
               <TabsTrigger value="detail" className="min-w-0 gap-1.5 px-2 text-xs sm:px-3 sm:text-sm">
                 <Table2 className="hidden size-4 shrink-0 sm:block" />
-                <span className="min-w-0 truncate">{t.stats.tabDetail}</span>
-                <InfoTooltip content={t.stats.tabDetailTooltip} htmlTag="span" className="hidden sm:inline-flex" />
+                <span className="min-w-0 truncate">{t('tabDetail')}</span>
+                <InfoTooltip content={t('tabDetailTooltip')} htmlTag="span" className="hidden sm:inline-flex" />
               </TabsTrigger>
               <TabsTrigger value="savings" className="min-w-0 gap-1.5 px-2 text-xs sm:px-3 sm:text-sm">
                 <PiggyBank className="hidden size-4 shrink-0 sm:block" />
-                <span className="min-w-0 truncate">{t.stats.tabSavings}</span>
-                <InfoTooltip content={t.stats.tabSavingsTooltip} htmlTag="span" className="hidden sm:inline-flex" />
+                <span className="min-w-0 truncate">{t('tabSavings')}</span>
+                <InfoTooltip content={t('tabSavingsTooltip')} htmlTag="span" className="hidden sm:inline-flex" />
               </TabsTrigger>
             </TabsList>
 
@@ -69,7 +71,7 @@ export function StatsPage() {
               <StatsTable
                 actuals={actuals}
                 budget={budget}
-                formatVnd={formatVnd}
+                formatVnd={format}
                 income={income}
                 isYearOpen={isYearOpen}
                 rows={snaps}
@@ -78,7 +80,7 @@ export function StatsPage() {
             </TabsContent>
 
             <TabsContent value="savings" className="mt-4">
-              <SavingsTable formatVnd={formatVnd} isYearOpen={isYearOpen} rows={snaps} toggleYear={toggleYear} />
+              <SavingsTable formatVnd={format} isYearOpen={isYearOpen} rows={snaps} toggleYear={toggleYear} />
             </TabsContent>
           </Tabs>
         </div>

@@ -1,5 +1,6 @@
+import { useTranslation } from 'react-i18next'
+
 import { VndAmountQuickPick } from '@/components/inputs'
-import { t } from '@/lib/strings'
 
 export function ActualAmountQuickPick({
   currentAmountVnd,
@@ -12,13 +13,14 @@ export function ActualAmountQuickPick({
   spentInMonthVnd: number
   onPick: (amountVnd: number) => void
 }) {
+  const { t } = useTranslation('budget')
   const remainingUnspent = plannedAmountVnd - spentInMonthVnd
 
   return (
     <VndAmountQuickPick
       currentAmountVnd={currentAmountVnd}
       plannedHintVnd={plannedAmountVnd}
-      remainingChipTitle={t.budget.actualAmountQuickPickRemainingTitle}
+      remainingChipTitle={t('actualAmountQuickPickRemainingTitle')}
       remainingUnspentVnd={remainingUnspent}
       onPick={onPick}
     />

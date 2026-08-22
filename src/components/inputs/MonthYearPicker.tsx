@@ -1,8 +1,15 @@
 import { Calendar } from 'lucide-react'
 import { useLayoutEffect, useMemo, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { compareMonthKeys, currentCalendarYear, currentMonthKey, MONTH_KEY_REGEX, type MonthKey } from '@/lib/month'
-import { t } from '@/lib/strings'
+import {
+  compareMonthKeys,
+  currentCalendarYear,
+  currentMonthKey,
+  formatMonthLabelShort,
+  MONTH_KEY_REGEX,
+  type MonthKey,
+} from '@/lib/month'
 import { cn } from '@/lib/utils'
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui'
@@ -40,7 +47,7 @@ export function MonthYearPicker({
    * the parent. Use `empty` for optional end date (`''` in form); `minMonth` clamps to the lower bound.
    */
   outOfMinSync = 'minMonth',
-  placeholder = t.common.pickMonth,
+  placeholder,
   value,
 }: {
   value: MonthKey
@@ -55,6 +62,8 @@ export function MonthYearPicker({
   maxYears?: number
   outOfMinSync?: 'empty' | 'minMonth'
 }) {
+  const { t } = useTranslation()
+  const resolvedPlaceholder = placeholder ?? t('pickMonth')
   const trimmed = value?.trim() ?? ''
   const isValidKey = MONTH_KEY_REGEX.test(trimmed)
   /** When outOfMinSync='empty' and value is '', show placeholder in selects rather than minMonth fallback. */
@@ -134,12 +143,14 @@ export function MonthYearPicker({
           }}
         >
           <SelectTrigger aria-invalid={invalid || undefined} className="pl-8">
-            <SelectValue placeholder={placeholder}>{displayEmpty ? null : `T${Number(month)}`}</SelectValue>
+            <SelectValue placeholder={resolvedPlaceholder}>
+              {displayEmpty ? null : formatMonthLabelShort(`yyyy-${month}`)}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {availableMonths.map((mm) => (
               <SelectItem key={mm} value={mm}>
-                {`T${Number(mm)}`}
+                {formatMonthLabelShort(`yyyy-${mm}`)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -153,7 +164,7 @@ export function MonthYearPicker({
         }}
       >
         <SelectTrigger aria-invalid={invalid || undefined}>
-          <SelectValue placeholder={placeholder} />
+          <SelectValue placeholder={resolvedPlaceholder} />
         </SelectTrigger>
         <SelectContent>
           {years.map((y) => (

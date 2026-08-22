@@ -1,7 +1,7 @@
 import { Info } from 'lucide-react'
 import { type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { t } from '@/lib/strings'
 import { cn } from '@/lib/utils'
 
 import { Button, Label, Tooltip, TooltipContent, TooltipTrigger } from '../ui'
@@ -14,6 +14,8 @@ export type InfoTooltipProps = {
 }
 
 export function InfoTooltip({ ariaLabel, className, content, htmlTag = 'button' }: InfoTooltipProps) {
+  const { t } = useTranslation()
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -23,7 +25,7 @@ export function InfoTooltip({ ariaLabel, className, content, htmlTag = 'button' 
             variant="ghost"
             size="icon"
             className={cn('size-6 rounded-full text-muted-foreground hover:text-foreground', className)}
-            aria-label={ariaLabel ?? t.common.moreInfo}
+            aria-label={ariaLabel ?? t('moreInfo')}
           >
             <Info className="size-3.5" aria-hidden />
           </Button>

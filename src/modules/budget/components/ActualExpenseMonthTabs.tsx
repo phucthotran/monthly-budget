@@ -2,6 +2,7 @@ import type { ActualExpense, MonthKey } from '@/lib/types'
 
 import { Trash2 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { ActionTooltipButton, EmptyState } from '@/components/patterns'
 import {
@@ -17,13 +18,12 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui'
+import { useMoney } from '@/hooks/useMoney'
 import { useActualExpenses } from '@/hooks/useUserCollections'
 import { formatDateLong } from '@/lib/datetime'
 import { compareMonthKeys, formatMonthLabel } from '@/lib/month'
-import { t } from '@/lib/strings'
 import { currencyClass } from '@/lib/style-classes'
 import { cn } from '@/lib/utils'
-import { formatVnd } from '@/lib/vnd'
 
 function sortActualExpenseRows(rows: ActualExpense[]): ActualExpense[] {
   return [...rows].sort((a, b) => {
@@ -46,6 +46,9 @@ function ActualExpenseMonthTabPanel({
   readOnly: boolean
   onDeleteLine: (expense: ActualExpense) => void
 }) {
+  const { t } = useTranslation('budget')
+  const { t: tc } = useTranslation()
+  const { currency, format } = useMoney()
   const { data: rows = [], isHydrated } = useActualExpenses(uid, spentMonth, budgetItemId)
   const sorted = useMemo(() => sortActualExpenseRows(rows), [rows])
 
@@ -54,13 +57,13 @@ function ActualExpenseMonthTabPanel({
       <div className="space-y-2 py-2">
         <Skeleton className="h-8 w-full" />
         <Skeleton className="h-8 w-full" />
-        <p className="text-sm text-muted-foreground">{t.common.loading}</p>
+        <p className="text-sm text-muted-foreground">{tc('loading')}</p>
       </div>
     )
   }
 
   if (sorted.length === 0) {
-    return <EmptyState compact description={t.budget.actualLinesEmpty} />
+    return <EmptyState compact description={t('actualLinesEmpty')} />
   }
 
   return (
@@ -68,9 +71,9 @@ function ActualExpenseMonthTabPanel({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="whitespace-nowrap">{t.budget.amount}</TableHead>
-            <TableHead className="whitespace-nowrap">{t.common.note}</TableHead>
-            <TableHead className="whitespace-nowrap">{t.budget.createdAt}</TableHead>
+            <TableHead className="whitespace-nowrap">{t('amount', { currency })}</TableHead>
+            <TableHead className="whitespace-nowrap">{tc('note')}</TableHead>
+            <TableHead className="whitespace-nowrap">{t('createdAt')}</TableHead>
             {readOnly ? null : <TableHead className="w-12" />}
           </TableRow>
         </TableHeader>
@@ -78,16 +81,16 @@ function ActualExpenseMonthTabPanel({
           {sorted.map((row) => (
             <TableRow key={row.id}>
               <TableCell className={cn('whitespace-nowrap text-sm', currencyClass({ positive: row.amountVnd >= 0 }))}>
-                {formatVnd(row.amountVnd)}
+                {format(row.amountVnd)}
               </TableCell>
               <TableCell className="max-w-[10rem] truncate text-sm">{row.note?.trim() || '—'}</TableCell>
               <TableCell className="text-sm">{formatDateLong(row.createdAt)}</TableCell>
               {readOnly ? null : (
                 <TableCell className="whitespace-nowrap p-1 text-right align-middle">
                   <ActionTooltipButton
-                    aria-label={t.common.delete}
+                    aria-label={tc('delete')}
                     className="h-8 w-8 shrink-0 p-0"
-                    label={t.common.delete}
+                    label={tc('delete')}
                     variant="ghost"
                     onClick={() => onDeleteLine(row)}
                   >
@@ -119,6 +122,8 @@ export function ActualExpenseMonthTabs({
   readOnly: boolean
   onDeleteLine: (expense: ActualExpense) => void
 }) {
+  const { t } = useTranslation('budget')
+  const { t: tc } = useTranslation()
   const { data: itemActuals = [], isHydrated: tabMonthsReady } = useActualExpenses(uid, undefined, budgetItemId)
   const [viewMonth, setViewMonth] = useState(defaultMonth)
 
@@ -139,11 +144,11 @@ export function ActualExpenseMonthTabs({
 
   return (
     <div className="space-y-2 rounded-md border p-3">
-      <div className="text-sm font-medium">{t.budget.actualLinesHeading}</div>
+      <div className="text-sm font-medium">{t('actualLinesHeading')}</div>
       {!tabMonthsReady ? (
         <div className="space-y-2 py-1">
           <Skeleton className="h-9 w-full max-w-md" />
-          <p className="text-sm text-muted-foreground">{t.common.loading}</p>
+          <p className="text-sm text-muted-foreground">{tc('loading')}</p>
         </div>
       ) : (
         <Tabs className="min-w-0" value={viewMonth} onValueChange={(value) => setViewMonth(value as MonthKey)}>

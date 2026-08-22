@@ -1,26 +1,23 @@
 import { Monitor, Moon, Sun } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
-import { t } from '@/lib/strings'
 import { cn } from '@/lib/utils'
 
 import { ActionTooltipButton } from './patterns/ActionTooltipButton'
 import { useTheme } from './ThemeProvider'
 
-const items = [
-  { icon: Sun, label: t.common.themeLight, value: 'light' as const },
-  { icon: Moon, label: t.common.themeDark, value: 'dark' as const },
-  { icon: Monitor, label: t.common.themeSystem, value: 'system' as const },
-] as const
-
-export function ThemeToggle({ className, fullWidth = false }: { className?: string; fullWidth?: boolean }) {
+export function ThemeToggle({ className }: { className?: string }) {
+  const { t } = useTranslation()
   const { setTheme, theme } = useTheme()
 
+  const items = [
+    { icon: Sun, label: t('themeLight'), value: 'light' as const },
+    { icon: Moon, label: t('themeDark'), value: 'dark' as const },
+    { icon: Monitor, label: t('themeSystem'), value: 'system' as const },
+  ]
+
   return (
-    <div
-      aria-label={t.common.theme}
-      className={cn('flex items-center gap-0.5', fullWidth ? 'w-full justify-center' : 'inline-flex', className)}
-      role="group"
-    >
+    <div aria-label={t('theme')} className={cn('inline-flex items-center gap-0.5', className)} role="group">
       {items.map((item) => {
         const Icon = item.icon
         const active = theme === item.value

@@ -1,4 +1,5 @@
-import { t } from '@/lib/strings'
+import { useTranslation } from 'react-i18next'
+
 import { cn } from '@/lib/utils'
 
 import { Card, CardContent, CardHeader, Skeleton } from '../ui'
@@ -269,8 +270,10 @@ export function PageLoadingSkeleton({
   showHeadingAction = false,
   variant = 'default',
 }: PageLoadingSkeletonProps) {
+  const { t } = useTranslation()
+
   return (
-    <div className={cn('space-y-6', className)} aria-busy="true" aria-live="polite" aria-label={t.common.loading}>
+    <div className={cn('space-y-6', className)} aria-busy="true" aria-live="polite" aria-label={t('loading')}>
       {variant === 'home' ? (
         <>
           <HomeHeadingSkeleton />

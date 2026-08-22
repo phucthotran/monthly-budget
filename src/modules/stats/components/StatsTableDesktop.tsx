@@ -3,12 +3,12 @@ import type { ActualExpense, BudgetItem, IncomePeriod, MonthKey } from '@/lib/ty
 import type { ReactNode } from 'react'
 
 import { Fragment, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { InfoTooltip } from '@/components/patterns'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
 import { buildHomeMonthLineItems } from '@/lib/budget/homeMonthBreakdown'
 import { formatMonthLabelShort } from '@/lib/month'
-import { t } from '@/lib/strings'
 import { currencyClass } from '@/lib/style-classes'
 import { cn } from '@/lib/utils'
 
@@ -62,14 +62,16 @@ export function StatsTableDesktop({
   rows,
   toggleYear,
 }: StatsTableProps) {
+  const { t } = useTranslation('stats')
+  const { t: th } = useTranslation('home')
   const byYear = groupSnapshotsByYear(rows)
   const breakdownByMonth = useMemo(() => {
     const map = new Map<MonthKey, ReturnType<typeof buildHomeMonthLineItems>>()
     for (const s of rows) {
-      map.set(s.month, buildHomeMonthLineItems(s.month, income, budget, actuals, t.home.orphanedBudgetActual))
+      map.set(s.month, buildHomeMonthLineItems(s.month, income, budget, actuals, th('orphanedBudgetActual')))
     }
     return map
-  }, [actuals, budget, income, rows])
+  }, [actuals, budget, income, rows, th])
 
   return (
     <div className="-mx-4 overflow-x-auto px-4">
@@ -77,27 +79,27 @@ export function StatsTableDesktop({
         <StatsTableColgroup />
         <TableHeader>
           <TableRow>
-            <TableHead className="whitespace-nowrap">{t.stats.month}</TableHead>
+            <TableHead className="whitespace-nowrap">{t('month')}</TableHead>
             <HeadWithHint
-              label={t.stats.income}
-              content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.stats.incomeColumnHint}</p>}
+              label={t('income')}
+              content={<p className="max-w-xs text-pretty text-sm leading-snug">{t('incomeColumnHint')}</p>}
             />
             <HeadWithHint
-              label={t.stats.planned}
-              content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.stats.plannedHintColumn}</p>}
+              label={t('planned')}
+              content={<p className="max-w-xs text-pretty text-sm leading-snug">{t('plannedHintColumn')}</p>}
             />
             <HeadWithHint
-              label={t.stats.actual}
-              content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.stats.actualColumnHint}</p>}
+              label={t('actual')}
+              content={<p className="max-w-xs text-pretty text-sm leading-snug">{t('actualColumnHint')}</p>}
             />
             <HeadWithHint
-              label={t.stats.plannedSurplus}
-              content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.stats.plannedSurplusColumnHint}</p>}
+              label={t('plannedSurplus')}
+              content={<p className="max-w-xs text-pretty text-sm leading-snug">{t('plannedSurplusColumnHint')}</p>}
             />
             <HeadWithHint
-              label={t.stats.actualMonthlySurplus}
+              label={t('actualMonthlySurplus')}
               content={
-                <p className="max-w-xs text-pretty text-sm leading-snug">{t.stats.actualMonthlySurplusColumnHint}</p>
+                <p className="max-w-xs text-pretty text-sm leading-snug">{t('actualMonthlySurplusColumnHint')}</p>
               }
             />
           </TableRow>

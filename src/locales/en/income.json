@@ -1,0 +1,21 @@
+{
+  "add": "Add income period",
+  "amount": "Amount ({{currency}})",
+  "deleteAction": "Delete income period",
+  "deleteDialogP1": "You are about to delete the income period “{{label}}”. This cannot be undone.",
+  "deleteDialogP2": "This period will leave the income list. Past months that used this amount may look different on the overview and statistics.",
+  "deleteDialogTitle": "Delete income period?",
+  "dialogP1": "Set a monthly income amount. When income changes, add a new period instead of rewriting each month.",
+  "dialogP2c": "Leave the end month empty if this amount continues in later months.",
+  "editAction": "Edit income period",
+  "editTitle": "Edit income period",
+  "emptyHint": "Add your first income period to get started.",
+  "emptyList": "No income periods yet.",
+  "label": "Income period name",
+  "pageDetail": "When income changes, create a new period with the right dates.",
+  "pageLead": "Declare income amounts that apply over a period.",
+  "title": "Income by period",
+  "validFrom": "From month",
+  "validTo": "To month (optional)",
+  "validToHint": "Leave empty to keep applying from the start month onward."
+}

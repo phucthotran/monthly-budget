@@ -7,9 +7,17 @@ import { Button, type ButtonProps, Tooltip, TooltipContent, TooltipTrigger } fro
 export type ActionTooltipButtonProps = {
   children: ReactNode
   label: string
+  tooltipLabel?: string
 } & Omit<ButtonProps, 'children' | 'size'>
 
-export function ActionTooltipButton({ children, className, disabled, label, ...props }: ActionTooltipButtonProps) {
+export function ActionTooltipButton({
+  children,
+  className,
+  disabled,
+  label,
+  tooltipLabel,
+  ...props
+}: ActionTooltipButtonProps) {
   const button = (
     <Button
       {...props}
@@ -26,7 +34,7 @@ export function ActionTooltipButton({ children, className, disabled, label, ...p
   return (
     <Tooltip>
       <TooltipTrigger asChild>{disabled ? <span className="inline-flex">{button}</span> : button}</TooltipTrigger>
-      <TooltipContent>{label}</TooltipContent>
+      <TooltipContent>{tooltipLabel ?? label}</TooltipContent>
     </Tooltip>
   )
 }

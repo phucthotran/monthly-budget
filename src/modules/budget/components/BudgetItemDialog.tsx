@@ -2,6 +2,7 @@ import type { BudgetItem, Category, MonthKey } from '@/lib/types'
 
 import { useForm } from '@tanstack/react-form'
 import { type ForwardedRef, forwardRef, useId, useImperativeHandle, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { MonthYearPicker, VndAmountInput, VndAmountQuickPick } from '@/components/inputs'
 import { FormLabelWithHint, ModalHeading, ResponsiveSheet, ResponsiveSheetContent } from '@/components/patterns'
@@ -18,9 +19,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui'
+import { useMoney } from '@/hooks/useMoney'
 import { firstFieldErrorMessage } from '@/lib/form/fieldMeta'
 import { compareMonthKeys, monthYearPickerYearConstraints } from '@/lib/month'
-import { t } from '@/lib/strings'
 
 import { budgetItemFormSchema } from '../schemas/budgetItemFormSchema'
 
@@ -45,12 +46,15 @@ function BudgetItemDialogImpl(
   },
   ref: ForwardedRef<BudgetItemDialogHandle>,
 ) {
+  const { t } = useTranslation('budget')
+  const { t: tc } = useTranslation()
+  const { currency } = useMoney()
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<BudgetItem | null>(null)
 
   const defaultCategoryId = useMemo(() => categories.find((c) => !c.archived)?.id ?? '', [categories])
   const yearPick = useMemo(() => monthYearPickerYearConstraints(editing), [editing])
-  const schema = useMemo(() => budgetItemFormSchema(!!editing), [editing])
+  const schema = useMemo(() => budgetItemFormSchema(!!editing, currency), [currency, editing])
   const formId = useId()
 
   const form = useForm({
@@ -115,11 +119,11 @@ function BudgetItemDialogImpl(
     >
       <ResponsiveSheetContent className="max-w-full sm:max-h-[min(90vh,46rem)] sm:overflow-y-auto sm:max-w-lg md:max-w-3xl">
         <ModalHeading
-          title={editing ? t.budget.edit : t.budget.add}
+          title={editing ? t('edit') : t('add')}
           description={
             <div className="space-y-2.5 text-pretty leading-relaxed">
-              <p>{t.budget.dialogP1}</p>
-              <p>{t.budget.dialogP2c}</p>
+              <p>{t('dialogP1')}</p>
+              <p>{t('dialogP2c')}</p>
             </div>
           }
         />
@@ -136,7 +140,7 @@ function BudgetItemDialogImpl(
               const errId = `${formId}-title-err`
               return (
                 <Field invalid={!!err}>
-                  <FieldLabel htmlFor={`${formId}-title`}>{t.budget.titleLabel}</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-title`}>{t('titleLabel')}</FieldLabel>
                   <Input
                     aria-describedby={err ? errId : undefined}
                     aria-invalid={!!err}
@@ -159,7 +163,7 @@ function BudgetItemDialogImpl(
               const describedBy = [err ? errId : null, quickPickDescId].filter(Boolean).join(' ') || undefined
               return (
                 <Field invalid={!!err}>
-                  <FieldLabel htmlFor={`${formId}-amount`}>{t.budget.amount}</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-amount`}>{t('amount', { currency })}</FieldLabel>
                   <VndAmountInput
                     aria-describedby={describedBy}
                     id={`${formId}-amount`}
@@ -169,7 +173,7 @@ function BudgetItemDialogImpl(
                   />
                   <FieldError id={errId}>{err}</FieldError>
                   <div className="min-w-0 pt-2" id={quickPickDescId}>
-                    <p className="text-xs text-muted-foreground mb-1.5">{t.common.amountQuickPickHint}</p>
+                    <p className="text-xs text-muted-foreground mb-1.5">{tc('amountQuickPickHint')}</p>
                     <VndAmountQuickPick
                       currentAmountVnd={field.state.value}
                       plannedHintVnd={editing?.amountVnd}
@@ -187,14 +191,14 @@ function BudgetItemDialogImpl(
               const errId = `${formId}-category-err`
               return (
                 <Field invalid={!!err}>
-                  <FieldLabel htmlFor={`${formId}-category`}>{t.budget.category}</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-category`}>{t('category')}</FieldLabel>
                   <Select value={field.state.value} onValueChange={(v) => field.handleChange(v)}>
                     <SelectTrigger
                       aria-describedby={err ? errId : undefined}
                       aria-invalid={!!err}
                       id={`${formId}-category`}
                     >
-                      <SelectValue placeholder={t.common.selectPlaceholder} />
+                      <SelectValue placeholder={tc('selectPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
                       {categories
@@ -218,10 +222,10 @@ function BudgetItemDialogImpl(
               return (
                 <Field invalid={!!err}>
                   {editing ? (
-                    <FieldLabel>{t.budget.validFrom}</FieldLabel>
+                    <FieldLabel>{t('validFrom')}</FieldLabel>
                   ) : (
-                    <FormLabelWithHint hint={<p className="text-pretty">{t.budget.validFromCreateHint}</p>}>
-                      {t.budget.validFrom}
+                    <FormLabelWithHint hint={<p className="text-pretty">{t('validFromCreateHint')}</p>}>
+                      {t('validFrom')}
                     </FormLabelWithHint>
                   )}
                   <MonthYearPicker
@@ -250,8 +254,8 @@ function BudgetItemDialogImpl(
               const errId = `${formId}-validTo-err`
               return (
                 <Field invalid={!!err}>
-                  <FormLabelWithHint hint={<p className="text-pretty">{t.budget.validToHint}</p>}>
-                    {t.budget.validTo}
+                  <FormLabelWithHint hint={<p className="text-pretty">{t('validToHint')}</p>}>
+                    {t('validTo')}
                   </FormLabelWithHint>
                   <form.Subscribe selector={(s) => s.values.validFrom}>
                     {(validFrom) => {
@@ -280,9 +284,9 @@ function BudgetItemDialogImpl(
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              {t.common.cancel}
+              {tc('cancel')}
             </Button>
-            <Button type="submit">{t.common.save}</Button>
+            <Button type="submit">{tc('save')}</Button>
           </DialogFooter>
         </form>
       </ResponsiveSheetContent>

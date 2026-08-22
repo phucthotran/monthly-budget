@@ -1,7 +1,9 @@
+import { useTranslation } from 'react-i18next'
+
 import { Button } from '@/components/ui'
-import { t } from '@/lib/strings'
+import { useMoney } from '@/hooks/useMoney'
+import { coerceMoneyQuickPickCandidate, moneyQuickAmountSuggestions } from '@/lib/money'
 import { cn } from '@/lib/utils'
-import { coerceVndQuickPickCandidate, formatVndNumber, vndQuickAmountSuggestions } from '@/lib/vnd'
 
 export function VndAmountQuickPick({
   currentAmountVnd,
@@ -16,12 +18,15 @@ export function VndAmountQuickPick({
   remainingChipTitle?: string
   remainingUnspentVnd?: number
 }) {
-  const remainingChipAmount = remainingUnspentVnd != null ? coerceVndQuickPickCandidate(remainingUnspentVnd) : null
-  const chips = vndQuickAmountSuggestions(currentAmountVnd, plannedHintVnd, remainingUnspentVnd)
+  const { t } = useTranslation()
+  const { currency, formatNumber } = useMoney()
+  const remainingChipAmount =
+    remainingUnspentVnd != null ? coerceMoneyQuickPickCandidate(remainingUnspentVnd, currency) : null
+  const chips = moneyQuickAmountSuggestions(currentAmountVnd, currency, plannedHintVnd, remainingUnspentVnd)
 
   return (
     <div
-      aria-label={t.common.amountQuickPickLabel}
+      aria-label={t('amountQuickPickLabel')}
       className={cn(
         'flex w-full min-w-0 max-w-full gap-1.5',
         'flex-nowrap overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
@@ -35,7 +40,7 @@ export function VndAmountQuickPick({
         return (
           <Button
             key={n}
-            aria-label={isRemainingChip ? `${formatVndNumber(n)}, ${remainingChipTitle}` : undefined}
+            aria-label={isRemainingChip ? `${formatNumber(n)}, ${remainingChipTitle}` : undefined}
             className={cn(
               'h-8 shrink-0 px-2.5 font-normal tabular-nums text-xs',
               isRemainingChip &&
@@ -46,7 +51,7 @@ export function VndAmountQuickPick({
             variant="outline"
             onClick={() => onPick(n)}
           >
-            {formatVndNumber(n)}
+            {formatNumber(n)}
           </Button>
         )
       })}

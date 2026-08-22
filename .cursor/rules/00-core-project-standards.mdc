@@ -7,14 +7,14 @@ alwaysApply: true
 
 ## UX/i18n
 
-- UI language is Vietnamese.
-- Currency is VND.
-- UI copy should be centralized in `src/lib/strings.ts` (`t.*`). Avoid hardcoding Vietnamese strings in components.
-- Month label display must be **month then year**: use `formatMonthLabel(monthKey)` (e.g. `T4/2026`).
+- UI languages are Vietnamese (default) and English via i18next (`useTranslation` / `i18n.t`).
+- Add copy to **both** `src/locales/vi/<ns>.json` and `src/locales/en/<ns>.json`. One namespace per page plus `common`.
+- Currency is **VND or USD**, chosen once on home onboarding and stored on `users/{uid}`. Display falls back to VND until locked. Do not offer a settings editor.
+- Month labels: `formatMonthLabel(monthKey)` — `T4/2026` in Vietnamese, `Apr 2026` in English.
 
 ## Code comments and docs
 
-- **Code comments, JSDoc, and `*.mdc` rules** in this repo are written in **English** (clarity for tooling and mixed-language teams). UI strings for users stay Vietnamese via `t.*` as above.
+- **Code comments, JSDoc, and `*.mdc` rules** in this repo are written in **English** (clarity for tooling and mixed-language teams). UI strings for users go through i18next locale JSON.
 
 ## Project structure
 
@@ -29,14 +29,15 @@ alwaysApply: true
 
 ## Shared utilities
 
-- **Domain types**: `src/lib/types.ts` — `BudgetItem`, `IncomePeriod`, `Category`, `ActualExpense`, `MonthKey`. Import from here; do not redefine inline.
-- **VND formatting**: `formatVnd(n)` (with currency symbol) and `formatVndNumber(n)` (digits only) from `@/lib/vnd`. `parseVndInput(raw)` for raw string → number.
+- **Domain types**: `src/lib/types.ts` — `BudgetItem`, `IncomePeriod`, `Category`, `ActualExpense`, `MonthKey`, `CurrencyCode`, `UserPreferences`. Import from here; do not redefine inline.
+- **Money formatting**: `useMoney()` from `@/hooks/useMoney` in components (`format` / `formatNumber` / `formatShort`). Pure helpers in `@/lib/money` take an explicit `currency` (stored amounts are integer minor units).
 - **Currency display class**: `currencyClass({ positive?, primary? })` from `@/lib/style-classes` — returns Tailwind classes for tabular currency columns (`tabular-nums`, destructive/primary colour).
 - **Shared hooks**: live in `src/hooks/`, not inside feature modules. Key hooks: `useFirestoreCollection`, `useUserCollections`, `useYearFilterPageState`, `useIsMobile`.
 
 ## Firestore conventions
 
 - Keep paths under `users/{uid}/...`.
+- User profile doc `users/{uid}`: `{ currency, updatedAt }` — create-only (currency cannot change).
 - Collections: `categories`, `budgetItems`, `incomePeriods`, `actualExpenses`.
 - Prefer client-side sorting to avoid Firestore index friction, unless there is a strong reason to use server ordering.
 - See `07-data-layer.mdc` for full data-layer conventions (hooks, mutations, query keys).

@@ -1,7 +1,7 @@
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
-import { t } from '@/lib/strings'
 import { cn } from '@/lib/utils'
 
 import { Button } from '../ui'
@@ -11,6 +11,7 @@ export type MobileBackButtonProps = {
 }
 
 export function MobileBackButton({ className }: MobileBackButtonProps) {
+  const { t } = useTranslation()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const navigate = useNavigate()
 
@@ -22,7 +23,7 @@ export function MobileBackButton({ className }: MobileBackButtonProps) {
       variant="ghost"
       size="icon"
       className={cn('size-10 flex items-center justify-center shrink-0 md:hidden', className)}
-      aria-label={t.common.back}
+      aria-label={t('back')}
       onClick={() => void navigate({ to: '/' })}
     >
       <ArrowLeft className="mx-auto text-muted-foreground" style={{ height: '24px', width: '20px' }} />

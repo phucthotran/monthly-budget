@@ -12,15 +12,16 @@ import {
   useMemo,
   useState,
 } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { VndAmountInput } from '@/components/inputs'
 import { FormLabelWithHint, ModalHeading, ResponsiveSheet, ResponsiveSheetContent } from '@/components/patterns'
 import { Button, Field, FieldError, FieldLabel, Input } from '@/components/ui'
+import { useMoney } from '@/hooks/useMoney'
 import { useActualExpenses } from '@/hooks/useUserCollections'
 import { canRecordActualExpenseForBudgetItem } from '@/lib/budget/apply'
 import { firstFieldErrorMessage } from '@/lib/form/fieldMeta'
 import { currentMonthKey, formatMonthLabel, isPeriodClosedBefore } from '@/lib/month'
-import { t } from '@/lib/strings'
 
 import { actualExpenseFormSchema } from '../schemas/actualExpenseFormSchema'
 
@@ -51,10 +52,14 @@ function ActualExpenseDialogImpl(
   },
   ref: ForwardedRef<ActualExpenseDialogHandle>,
 ) {
+  const { t } = useTranslation('budget')
+  const { t: tc } = useTranslation()
+  const { currency } = useMoney()
   const [open, setOpen] = useState(false)
   const [item, setItem] = useState<BudgetItem | null>(null)
   const formId = useId()
   const recordMonth = currentMonthKey()
+  const schema = useMemo(() => actualExpenseFormSchema(currency), [currency])
 
   const { data: currentMonthLines = [], isHydrated: currentMonthReady } = useActualExpenses(
     open && uid && item ? uid : undefined,
@@ -86,7 +91,7 @@ function ActualExpenseDialogImpl(
       form.setFieldValue('amountVnd', 0)
     },
     validators: {
-      onSubmit: actualExpenseFormSchema,
+      onSubmit: schema,
     },
   })
 
@@ -132,18 +137,18 @@ function ActualExpenseDialogImpl(
     >
       <ResponsiveSheetContent className="max-w-full sm:max-h-[min(90vh,46rem)] sm:overflow-y-auto sm:max-w-lg md:max-w-3xl">
         <ModalHeading
-          title={addLocked ? t.budget.viewActual : t.budget.addActual}
+          title={addLocked ? t('viewActual') : t('addActual')}
           description={
             addLocked ? (
               <p className="text-pretty leading-relaxed">
-                {em(item.title)} — {t.budget.viewActualBody}
+                {em(item.title)} — {t('viewActualBody')}
               </p>
             ) : (
               <div className="space-y-2.5 text-pretty leading-relaxed">
                 <p>
-                  {em(item.title)} — {t.budget.addActualContext}
+                  {em(item.title)} — {t('addActualContext')}
                 </p>
-                <p className="text-muted-foreground">{t.budget.addActualBody}</p>
+                <p className="text-muted-foreground">{t('addActualBody')}</p>
               </div>
             )
           }
@@ -175,7 +180,7 @@ function ActualExpenseDialogImpl(
                   const describedBy = [err ? errId : null, quickPickDescId].filter(Boolean).join(' ') || undefined
                   return (
                     <Field invalid={!!err}>
-                      <FieldLabel htmlFor={`${formId}-amount`}>{t.budget.amount}</FieldLabel>
+                      <FieldLabel htmlFor={`${formId}-amount`}>{t('amount', { currency })}</FieldLabel>
                       <VndAmountInput
                         aria-describedby={describedBy}
                         id={`${formId}-amount`}
@@ -185,7 +190,7 @@ function ActualExpenseDialogImpl(
                       />
                       <FieldError id={errId}>{err}</FieldError>
                       <div className="min-w-0 pt-2" id={quickPickDescId}>
-                        <p className="mb-1.5 text-xs text-muted-foreground">{t.common.amountQuickPickHint}</p>
+                        <p className="mb-1.5 text-xs text-muted-foreground">{tc('amountQuickPickHint')}</p>
                         <ActualAmountQuickPick
                           currentAmountVnd={field.state.value}
                           plannedAmountVnd={item.amountVnd}
@@ -199,8 +204,8 @@ function ActualExpenseDialogImpl(
               </form.Field>
 
               <Field>
-                <FormLabelWithHint hint={<p className="text-pretty">{t.budget.actualSpentMonthReadOnlyHint}</p>}>
-                  {t.common.month}
+                <FormLabelWithHint hint={<p className="text-pretty">{t('actualSpentMonthReadOnlyHint')}</p>}>
+                  {tc('month')}
                 </FormLabelWithHint>
                 <p className="text-sm font-medium">{formatMonthLabel(recordMonth)}</p>
               </Field>
@@ -211,7 +216,7 @@ function ActualExpenseDialogImpl(
                   const errId = `${formId}-note-err`
                   return (
                     <Field invalid={!!err}>
-                      <FieldLabel htmlFor={`${formId}-note`}>{t.common.note}</FieldLabel>
+                      <FieldLabel htmlFor={`${formId}-note`}>{tc('note')}</FieldLabel>
                       <Input
                         aria-describedby={err ? errId : undefined}
                         aria-invalid={!!err}
@@ -227,7 +232,7 @@ function ActualExpenseDialogImpl(
               </form.Field>
 
               <Button className="w-full" disabled={form.state.isSubmitting} type="submit">
-                {form.state.isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : t.budget.saveActualAction}
+                {form.state.isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : t('saveActualAction')}
               </Button>
             </div>
           )}

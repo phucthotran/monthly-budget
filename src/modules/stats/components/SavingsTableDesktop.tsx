@@ -1,9 +1,10 @@
 import type { MonthSnapshot } from '@/lib/budget/aggregate'
 
+import { useTranslation } from 'react-i18next'
+
 import { InfoTooltip } from '@/components/patterns'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
 import { formatMonthLabelShort } from '@/lib/month'
-import { t } from '@/lib/strings'
 import { currencyClass } from '@/lib/style-classes'
 import { cn } from '@/lib/utils'
 
@@ -19,6 +20,7 @@ export type SavingsTableProps = {
 }
 
 export function SavingsTableDesktop({ formatVnd, isYearOpen, rows, toggleYear }: SavingsTableProps) {
+  const { t } = useTranslation('stats')
   const byYear = groupSnapshotsByYear(rows)
 
   return (
@@ -26,49 +28,45 @@ export function SavingsTableDesktop({ formatVnd, isYearOpen, rows, toggleYear }:
       <Table className="min-w-[880px]">
         <TableHeader>
           <TableRow>
-            <TableHead className="whitespace-nowrap">{t.stats.month}</TableHead>
+            <TableHead className="whitespace-nowrap">{t('month')}</TableHead>
             <TableHead className="text-right whitespace-nowrap">
               <span className="inline-flex w-full items-center justify-end gap-0.5">
-                {t.stats.plannedSurplus}
+                {t('plannedSurplus')}
+                <InfoTooltip
+                  className="h-4 w-4 shrink-0"
+                  content={<p className="max-w-xs text-pretty text-sm leading-snug">{t('plannedSurplusColumnHint')}</p>}
+                />
+              </span>
+            </TableHead>
+            <TableHead className="text-right whitespace-nowrap">
+              <span className="inline-flex w-full items-center justify-end gap-0.5">
+                {t('actualMonthlySurplus')}
                 <InfoTooltip
                   className="h-4 w-4 shrink-0"
                   content={
-                    <p className="max-w-xs text-pretty text-sm leading-snug">{t.stats.plannedSurplusColumnHint}</p>
+                    <p className="max-w-xs text-pretty text-sm leading-snug">{t('actualMonthlySurplusColumnHint')}</p>
                   }
                 />
               </span>
             </TableHead>
             <TableHead className="text-right whitespace-nowrap">
               <span className="inline-flex w-full items-center justify-end gap-0.5">
-                {t.stats.actualMonthlySurplus}
+                {t('savingsAccumulatedMonthly')}
                 <InfoTooltip
                   className="h-4 w-4 shrink-0"
                   content={
-                    <p className="max-w-xs text-pretty text-sm leading-snug">
-                      {t.stats.actualMonthlySurplusColumnHint}
-                    </p>
+                    <p className="max-w-xs text-pretty text-sm leading-snug">{t('savingsAccumulatedColumnHint')}</p>
                   }
                 />
               </span>
             </TableHead>
             <TableHead className="text-right whitespace-nowrap">
               <span className="inline-flex w-full items-center justify-end gap-0.5">
-                {t.stats.savingsAccumulatedMonthly}
+                {t('actualAccumulatedMonthly')}
                 <InfoTooltip
                   className="h-4 w-4 shrink-0"
                   content={
-                    <p className="max-w-xs text-pretty text-sm leading-snug">{t.stats.savingsAccumulatedColumnHint}</p>
-                  }
-                />
-              </span>
-            </TableHead>
-            <TableHead className="text-right whitespace-nowrap">
-              <span className="inline-flex w-full items-center justify-end gap-0.5">
-                {t.stats.actualAccumulatedMonthly}
-                <InfoTooltip
-                  className="h-4 w-4 shrink-0"
-                  content={
-                    <p className="max-w-xs text-pretty text-sm leading-snug">{t.stats.actualAccumulatedColumnHint}</p>
+                    <p className="max-w-xs text-pretty text-sm leading-snug">{t('actualAccumulatedColumnHint')}</p>
                   }
                 />
               </span>

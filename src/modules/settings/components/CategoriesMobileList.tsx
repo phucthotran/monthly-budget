@@ -1,11 +1,14 @@
 import type { CategoriesTableProps } from './CategoriesTableDesktop'
 
 import { Eye, EyeOff } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { Badge, Button } from '@/components/ui'
-import { t } from '@/lib/strings'
 
 export function CategoriesMobileList({ categories, onToggleArchive }: CategoriesTableProps) {
+  const { t } = useTranslation('settings')
+  const { t: tc } = useTranslation()
+
   return (
     <div className="space-y-2.5">
       {categories.map((c) => (
@@ -17,11 +20,11 @@ export function CategoriesMobileList({ categories, onToggleArchive }: Categories
             <span className="font-medium truncate">{c.name}</span>
             {c.archived ? (
               <Badge variant="muted" className="shrink-0">
-                {t.settings.archived}
+                {t('archived')}
               </Badge>
             ) : (
               <Badge variant="secondary" className="shrink-0">
-                {t.common.visible}
+                {tc('visible')}
               </Badge>
             )}
           </div>
@@ -34,12 +37,12 @@ export function CategoriesMobileList({ categories, onToggleArchive }: Categories
             {c.archived ? (
               <>
                 <Eye className="h-4 w-4" />
-                {t.settings.show}
+                {t('show')}
               </>
             ) : (
               <>
                 <EyeOff className="h-4 w-4" />
-                {t.settings.hide}
+                {t('hide')}
               </>
             )}
           </Button>

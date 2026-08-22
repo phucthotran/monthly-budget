@@ -1,0 +1,14 @@
+{
+  "add": "Thêm danh mục",
+  "archived": "Đã ẩn",
+  "dialogP1": "Đặt tên ngắn, dễ hiểu khi tạo khoản dự chi. Không dùng ký tự đặc biệt.",
+  "emptyList": "Chưa có danh mục nào.",
+  "hide": "Ẩn",
+  "hideAction": "Ẩn danh mục",
+  "name": "Tên",
+  "pageDetail": "Ẩn danh mục khi không dùng nữa; các khoản dự chi cũ vẫn giữ nguyên.",
+  "pageLead": "Tạo danh mục để phân loại các khoản dự chi.",
+  "show": "Hiện",
+  "showAction": "Hiện danh mục",
+  "title": "Phân loại"
+}

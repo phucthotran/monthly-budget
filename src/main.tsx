@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 
 import { AppProviders } from '@/components/AppProviders'
 import { routeTree } from '@/routeTree'
+import '@/i18n'
 
 import './index.css'
 

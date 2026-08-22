@@ -4,6 +4,7 @@ import {
   asOfMonthForYearFilter,
   calendarYearMonthKeys,
   compareMonthKeys,
+  formatMonthLabel,
   formatMonthLabelShort,
   isPeriodClosedBefore,
   matchesPeriodStatusFilter,
@@ -38,9 +39,21 @@ describe('statsMonthKeys', () => {
 })
 
 describe('formatMonthLabelShort', () => {
-  it('returns T{n} without year', () => {
-    expect(formatMonthLabelShort('2026-04')).toBe('T4')
-    expect(formatMonthLabelShort('2027-01')).toBe('T1')
+  it('returns T{n} without year in Vietnamese', () => {
+    expect(formatMonthLabelShort('2026-04', 'vi')).toBe('T4')
+    expect(formatMonthLabelShort('2027-01', 'vi')).toBe('T1')
+  })
+
+  it('returns English month abbreviations', () => {
+    expect(formatMonthLabelShort('2026-04', 'en')).toBe('Apr')
+    expect(formatMonthLabelShort('2027-01', 'en')).toBe('Jan')
+  })
+})
+
+describe('formatMonthLabel', () => {
+  it('uses T{n}/{year} in Vietnamese and Mon YYYY in English', () => {
+    expect(formatMonthLabel('2026-04', 'vi')).toBe('T4/2026')
+    expect(formatMonthLabel('2026-04', 'en')).toBe('Apr 2026')
   })
 })
 

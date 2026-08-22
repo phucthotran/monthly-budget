@@ -1,6 +1,7 @@
 import { type ComponentProps, useEffect, useMemo, useState } from 'react'
 
-import { formatVndNumber, parseVndInput } from '@/lib/vnd'
+import { useMoney } from '@/hooks/useMoney'
+import { parseMoneyInput } from '@/lib/money'
 
 import { Input } from '../ui'
 
@@ -21,7 +22,8 @@ export function VndAmountInput({
   id?: string
   invalid?: boolean
 } & Pick<ComponentProps<typeof Input>, 'aria-describedby' | 'aria-invalid' | 'id'>) {
-  const formatted = useMemo(() => formatVndNumber(value), [value])
+  const { currency, formatNumber } = useMoney()
+  const formatted = useMemo(() => formatNumber(value), [formatNumber, value])
   const [text, setText] = useState(formatted)
 
   useEffect(() => {
@@ -36,17 +38,17 @@ export function VndAmountInput({
       aria-invalid={showInvalid || undefined}
       className={className}
       id={id}
-      inputMode="numeric"
+      inputMode={currency === 'USD' ? 'decimal' : 'numeric'}
       placeholder={placeholder}
       value={text}
       onChange={(e) => {
         const raw = e.target.value
         setText(raw)
-        const n = parseVndInput(raw)
+        const n = parseMoneyInput(raw, currency)
         if (n != null) onValueChange(n)
       }}
       onBlur={() => {
-        setText(formatVndNumber(value))
+        setText(formatNumber(value))
       }}
     />
   )

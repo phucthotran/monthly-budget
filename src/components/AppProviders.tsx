@@ -5,7 +5,7 @@ import { type ReactNode, useState } from 'react'
 import { AuthProvider } from './AuthProvider'
 import { PwaUpdatePrompt } from './PwaUpdatePrompt'
 import { ThemeProvider } from './ThemeProvider'
-import { Toaster } from './ui'
+import { Toaster, TooltipProvider } from './ui'
 
 export function AppProviders({ children }: { children: ReactNode }) {
   const [client] = useState(
@@ -35,9 +35,11 @@ export function AppProviders({ children }: { children: ReactNode }) {
       <MotionConfig reducedMotion="user">
         <QueryClientProvider client={client}>
           <ThemeProvider>
-            <AuthProvider>{children}</AuthProvider>
-            <Toaster />
-            <PwaUpdatePrompt />
+            <TooltipProvider delayDuration={200}>
+              <AuthProvider>{children}</AuthProvider>
+              <Toaster />
+              <PwaUpdatePrompt />
+            </TooltipProvider>
           </ThemeProvider>
         </QueryClientProvider>
       </MotionConfig>

@@ -1,4 +1,5 @@
-import { t } from '@/lib/strings'
+import { useTranslation } from 'react-i18next'
+
 import { cn } from '@/lib/utils'
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui'
@@ -14,9 +15,11 @@ export function YearFilterSelect({
   onValueChange: (year: number) => void
   years: number[]
 }) {
+  const { t } = useTranslation()
+
   return (
     <div className={cn('flex flex-wrap items-center gap-2', className)}>
-      <span className="text-sm text-muted-foreground whitespace-nowrap">{t.common.year}</span>
+      <span className="text-sm text-muted-foreground whitespace-nowrap">{t('year')}</span>
       <Select value={String(value)} onValueChange={(v) => onValueChange(Number(v))}>
         <SelectTrigger className="w-[5.75rem]">
           <SelectValue />

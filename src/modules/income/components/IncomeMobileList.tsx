@@ -1,14 +1,17 @@
 import type { IncomeTableProps } from './IncomeTableDesktop'
 
 import { Pencil, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui'
+import { useMoney } from '@/hooks/useMoney'
 import { formatMonthLabel, isPeriodClosedBefore } from '@/lib/month'
-import { t } from '@/lib/strings'
 import { currencyClass } from '@/lib/style-classes'
-import { formatVnd } from '@/lib/vnd'
 
 export function IncomeMobileList({ asOfMonth, onDelete, onEdit, rows }: IncomeTableProps) {
+  const { t } = useTranslation('income')
+  const { format } = useMoney()
+
   return (
     <div className="space-y-3">
       {rows.map((row) => {
@@ -29,7 +32,7 @@ export function IncomeMobileList({ asOfMonth, onDelete, onEdit, rows }: IncomeTa
                   className="h-10 w-10 shrink-0 p-0 md:h-8 md:w-8"
                   disabled={locked}
                   onClick={() => onEdit(row)}
-                  aria-label={t.income.editAction}
+                  aria-label={t('editAction')}
                 >
                   <Pencil className="h-4 w-4" />
                 </Button>
@@ -39,13 +42,13 @@ export function IncomeMobileList({ asOfMonth, onDelete, onEdit, rows }: IncomeTa
                   className="h-10 w-10 shrink-0 p-0 md:h-8 md:w-8"
                   disabled={locked}
                   onClick={() => onDelete(row)}
-                  aria-label={t.income.deleteAction}
+                  aria-label={t('deleteAction')}
                 >
                   <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
               </div>
             </div>
-            <p className={currencyClass({ positive: row.amountVnd >= 0 })}>{formatVnd(row.amountVnd)}</p>
+            <p className={currencyClass({ positive: row.amountVnd >= 0 })}>{format(row.amountVnd)}</p>
           </div>
         )
       })}

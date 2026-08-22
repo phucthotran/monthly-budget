@@ -14,28 +14,24 @@ Load this skill when the user asks to:
 
 ### Step 1 — Zod schema (`src/modules/<feature>/schemas/<feature>FormSchema.ts`)
 
-Define the schema and export it. Use `t.validation.*` for all error messages. Never hardcode Vietnamese strings.
+Define a schema **factory** and export it. Use `i18n.t('validation.*')` for all error messages. Never hardcode UI strings.
 
 ```ts
 import { z } from 'zod'
-import { t } from '@/lib/strings'
+import i18n from '@/i18n'
 import { MONTH_KEY_REGEX } from '@/lib/month'
 
-export const <feature>FormSchema = z.object({
-  name: z.string().refine((s) => s.trim().length > 0, { message: t.validation.nameRequired }),
-  amountVnd: z.number().min(1000, { message: t.validation.amountAtLeastOne }),
-  // For month fields:
-  validFrom: z.string().regex(MONTH_KEY_REGEX, { message: t.validation.monthFormat }),
-  validTo: z.string().refine(
-    (s) => s.trim() === '' || MONTH_KEY_REGEX.test(s.trim()),
-    { message: t.validation.monthFormat },
-  ),
-})
-// Cross-field refine example:
-// .refine((d) => !d.validTo.trim() || compareMonthKeys(d.validTo, d.validFrom) >= 0, {
-//   message: t.validation.validToBeforeFrom,
-//   path: ['validTo'],
-// })
+export function <feature>FormSchema() {
+  return z.object({
+    name: z.string().refine((s) => s.trim().length > 0, { message: i18n.t('validation.nameRequired') }),
+    amountVnd: z.number().min(1000, { message: i18n.t('validation.amountAtLeastOne', { min: '1.000 ₫' }) }),
+    validFrom: z.string().regex(MONTH_KEY_REGEX, { message: i18n.t('validation.monthFormat') }),
+    validTo: z.string().refine(
+      (s) => s.trim() === '' || MONTH_KEY_REGEX.test(s.trim()),
+      { message: i18n.t('validation.monthFormat') },
+    ),
+  })
+}
 ```
 
 ---
@@ -75,7 +71,7 @@ import {
   Input,
 } from '@/components/ui'
 import { firstFieldErrorMessage } from '@/lib/form/fieldMeta'
-import { t } from '@/lib/strings'
+import { useTranslation } from 'react-i18next'
 
 import { <feature>FormSchema } from '../schemas/<feature>FormSchema'
 
@@ -93,6 +89,7 @@ function <Feature>DialogImpl(
   },
   ref: ForwardedRef<<Feature>DialogHandle>,
 ) {
+  const { t } = useTranslation('<feature>')
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<<Entity> | null>(null)
   const formId = useId()
@@ -109,7 +106,7 @@ function <Feature>DialogImpl(
       form.reset()
     },
     validators: {
-      onSubmit: <feature>FormSchema,
+      onSubmit: <feature>FormSchema(),
     },
   })
 
@@ -142,8 +139,8 @@ function <Feature>DialogImpl(
     >
       <ResponsiveSheetContent className="max-w-full sm:max-h-[min(90vh,46rem)] sm:overflow-y-auto sm:max-w-lg md:max-w-3xl">
         <ModalHeading
-          title={editing ? t.<feature>.editAction : t.<feature>.add}
-          description={<p>{t.<feature>.dialogP1}</p>}
+          title={editing ? t('editAction') : t('add')}
+          description={<p>{t('dialogP1')}</p>}
         />
         <form
           className="min-w-0 space-y-4"
@@ -159,7 +156,7 @@ function <Feature>DialogImpl(
               const errId = `${formId}-name-err`
               return (
                 <Field invalid={!!err}>
-                  <FieldLabel htmlFor={`${formId}-name`}>{t.<feature>.name}</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-name`}>{t('name')}</FieldLabel>
                   <Input
                     aria-describedby={err ? errId : undefined}
                     aria-invalid={!!err}
@@ -180,7 +177,7 @@ function <Feature>DialogImpl(
               const errId = `${formId}-amount-err`
               return (
                 <Field invalid={!!err}>
-                  <FieldLabel htmlFor={`${formId}-amount`}>{t.<feature>.amount}</FieldLabel>
+                  <FieldLabel htmlFor={`${formId}-amount`}>{t('amount')}</FieldLabel>
                   <VndAmountInput
                     aria-describedby={err ? errId : undefined}
                     aria-invalid={!!err}
@@ -203,7 +200,7 @@ function <Feature>DialogImpl(
               return (
                 <Field invalid={!!err}>
                   {/* Use FormLabelWithHint when a tooltip hint is needed */}
-                  <FieldLabel>{t.<feature>.validFrom}</FieldLabel>
+                  <FieldLabel>{t('validFrom')}</FieldLabel>
                   <MonthYearPicker
                     invalid={!!err}
                     value={field.state.value}
@@ -217,9 +214,9 @@ function <Feature>DialogImpl(
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              {t.common.cancel}
+              {t('common:cancel')}
             </Button>
-            <Button type="submit">{t.common.save}</Button>
+            <Button type="submit">{t('common:save')}</Button>
           </DialogFooter>
         </form>
       </ResponsiveSheetContent>
@@ -242,10 +239,10 @@ import { <Feature>Dialog, type <Feature>DialogHandle } from './components/<Featu
 const dialogRef = useRef<<Feature>DialogHandle>(null)
 
 // Open from a button:
-<Button onClick={() => dialogRef.current?.openCreate()}>{t.<feature>.add}</Button>
+<Button onClick={() => dialogRef.current?.openCreate()}>{t('add')}</Button>
 
 // Open edit from a table row:
-<Button onClick={() => dialogRef.current?.openEdit(item)}>{t.common.edit}</Button>
+<Button onClick={() => dialogRef.current?.openEdit(item)}>{t('common:edit')}</Button>
 
 // Render the dialog (outside tables/lists, at the end of JSX):
 <Feature>Dialog
@@ -269,6 +266,6 @@ const dialogRef = useRef<<Feature>DialogHandle>(null)
 ## Key rules to follow
 
 - `02-forms-dialog-edit-pattern` — imperative handle API
-- `04-strings-and-ui-text` — all copy in `t.*`; dynamic strings as functions
+- `04-strings-and-ui-text` — both locale JSON files; `useTranslation`; interpolation
 - `05-tanstack-form-zod` — schema, `useForm`, `Field`/`FieldLabel`/`FieldError`
 - `08-responsive-dialog` — shell components, sizing, cleanup on close

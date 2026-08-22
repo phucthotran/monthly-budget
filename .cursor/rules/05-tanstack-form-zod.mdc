@@ -8,9 +8,10 @@ alwaysApply: true
 ## Schemas
 
 - Place form Zod schemas in `src/modules/<feature>/schemas/` (one or more files per screen) and export clear names (e.g. `budgetItemFormSchema`, `incomeFormSchema`).
-- Error copy: use `t.validation.*` from `src/lib/strings.ts` (do not hardcode Vietnamese in schemas).
-- For `yyyy-MM` month strings in Zod, use `MONTH_KEY_REGEX` from `@/lib/month` with `.regex(MONTH_KEY_REGEX, { message: t.validation.monthFormat })`.
-- For cross-field rules on the same object, prefer `z.object(...).refine(..., { path: ['fieldName'], message: t.validation... })` over `superRefine` when you need a stable path for Standard Schema / TanStack.
+- Error copy: use `i18n.t('validation.*')` inside schema **factories** (do not close over messages at module load).
+- For `yyyy-MM` month strings in Zod, use `MONTH_KEY_REGEX` from `@/lib/month` with `.regex(MONTH_KEY_REGEX, { message: i18n.t('validation.monthFormat') })`.
+- Amount minima depend on locked currency (`currencyMinAmountMinor`). Interpolate `{{min}}` via `i18n.t('validation.amountAtLeastOne', { min })`.
+- For cross-field rules on the same object, prefer `z.object(...).refine(..., { path: ['fieldName'], message: i18n.t('validation...') })` over `superRefine` when you need a stable path for Standard Schema / TanStack.
 - You may export a small pure helper (e.g. `budgetItemValidToRangeError`) for reuse in field `validators` and keep it aligned with `.refine` in the same schema file.
 
 ## useForm

@@ -1,8 +1,8 @@
 import { Banknote, HandCoinsIcon, Landmark, PiggyBank, TrendingUp, Wallet } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { MetricTile } from '@/components/patterns'
 import { type HomeMonthLineItem } from '@/lib/budget/homeMonthBreakdown'
-import { t } from '@/lib/strings'
 
 import { AggregateTileContents } from './AggregateTileContents'
 import { BreakdownLines } from './BreakdownLines'
@@ -24,7 +24,7 @@ export type HomeSummaryTilesSharedProps = {
     /** Footnote line for carry-in: planned cumulative vs actual cumulative prior to {{monthLabel}}. */
     priorBasis?: 'actual' | 'planned'
   }
-  /** Overrides default `t.home.plannedSavingsHint` for this tile row (e.g. next-month projection). */
+  /** Overrides default `t('plannedSavingsHint')` for this tile row (e.g. next-month projection). */
   plannedSavingsHint?: string
   plannedSavingsToDateLabel: string
   plannedSurplusLabel: string
@@ -47,23 +47,24 @@ export type HomeSummaryTilesProps =
       actualSurplusLabel: string
     } & HomeSummaryTilesSharedProps)
 
-function fillMonthAmountTemplate(template: string, monthLabel: string, amountLabel: string) {
+function fillMonthAmountTemplate(text: string) {
   return (
     <p
       className="text-foreground font-normal"
       dangerouslySetInnerHTML={{
-        __html: template
-          .replaceAll('{{monthLabel}}', monthLabel)
-          .replaceAll(
-            '{{amount}}',
-            `<span class="font-semibold text-muted-foreground tabular-nums">${amountLabel}</span>`,
-          ),
+        __html: text,
       }}
     />
   )
 }
 
+function amountHtml(amountLabel: string) {
+  return `<span class="font-semibold text-muted-foreground tabular-nums">${amountLabel}</span>`
+}
+
 export function HomeSummaryTiles(props: HomeSummaryTilesProps) {
+  const { t } = useTranslation('home')
+
   const {
     breakdown,
     incomeLabel,
@@ -73,7 +74,7 @@ export function HomeSummaryTiles(props: HomeSummaryTilesProps) {
     plannedSavingsToDateLabel,
     plannedSurplusLabel,
   } = props
-  const plannedSavingsHintText = plannedSavingsHintOverride ?? t.home.plannedSavingsHint
+  const plannedSavingsHintText = plannedSavingsHintOverride ?? t('plannedSavingsHint')
   const plannedOverviewOnly = props.plannedOverviewOnly === true
   const actualSavingsComposition = 'actualSavingsComposition' in props ? props.actualSavingsComposition : undefined
   const actualSavingsToDateLabel = 'actualSavingsToDateLabel' in props ? props.actualSavingsToDateLabel : ''
@@ -88,8 +89,8 @@ export function HomeSummaryTiles(props: HomeSummaryTilesProps) {
           <span className="inline-flex items-center gap-2">
             <Wallet className="size-5 text-muted-foreground shrink-0" />
             <TileTitleWithHint
-              content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.home.incomeHint}</p>}
-              label={t.home.income}
+              content={<p className="max-w-xs text-pretty text-sm leading-snug">{t('incomeHint')}</p>}
+              label={t('income')}
             />
           </span>
         }
@@ -105,8 +106,8 @@ export function HomeSummaryTiles(props: HomeSummaryTilesProps) {
           <span className="inline-flex items-center gap-2">
             <TrendingUp className="size-5 text-muted-foreground shrink-0" />
             <TileTitleWithHint
-              content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.home.plannedBudgetHint}</p>}
-              label={t.home.plannedBudget}
+              content={<p className="max-w-xs text-pretty text-sm leading-snug">{t('plannedBudgetHint')}</p>}
+              label={t('plannedBudget')}
             />
           </span>
         }
@@ -123,8 +124,8 @@ export function HomeSummaryTiles(props: HomeSummaryTilesProps) {
             <span className="inline-flex items-center gap-2">
               <PiggyBank className="size-5 text-muted-foreground shrink-0" />
               <TileTitleWithHint
-                content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.home.plannedSurplusHint}</p>}
-                label={t.home.plannedSurplus}
+                content={<p className="max-w-xs text-pretty text-sm leading-snug">{t('plannedSurplusHint')}</p>}
+                label={t('plannedSurplus')}
               />
             </span>
           }
@@ -138,7 +139,7 @@ export function HomeSummaryTiles(props: HomeSummaryTilesProps) {
               <PiggyBank className="size-5 text-muted-foreground shrink-0" />
               <TileTitleWithHint
                 content={<p className="max-w-xs text-pretty text-sm leading-snug">{plannedSavingsHintText}</p>}
-                label={t.home.savingsToDatePlanned}
+                label={t('savingsToDatePlanned')}
               />
             </span>
           }
@@ -149,16 +150,21 @@ export function HomeSummaryTiles(props: HomeSummaryTilesProps) {
               footer={
                 <div className="space-y-1.5 text-sm leading-snug">
                   {fillMonthAmountTemplate(
-                    plannedSavingsComposition.priorBasis === 'actual'
-                      ? t.home.actualSavingsToDatePriorLine
-                      : t.home.plannedSavingsToDatePriorLine,
-                    plannedSavingsComposition.priorMonthLabel,
-                    plannedSavingsComposition.priorAmountLabel,
+                    t(
+                      plannedSavingsComposition.priorBasis === 'actual'
+                        ? 'actualSavingsToDatePriorLine'
+                        : 'plannedSavingsToDatePriorLine',
+                      {
+                        amount: amountHtml(plannedSavingsComposition.priorAmountLabel),
+                        monthLabel: plannedSavingsComposition.priorMonthLabel,
+                      },
+                    ),
                   )}
                   {fillMonthAmountTemplate(
-                    t.home.plannedSavingsToDatePlusSurplusLine,
-                    plannedSavingsComposition.monthLabel,
-                    plannedSavingsComposition.amountLabel,
+                    t('plannedSavingsToDatePlusSurplusLine', {
+                      amount: amountHtml(plannedSavingsComposition.amountLabel),
+                      monthLabel: plannedSavingsComposition.monthLabel,
+                    }),
                   )}
                 </div>
               }
@@ -178,8 +184,8 @@ export function HomeSummaryTiles(props: HomeSummaryTilesProps) {
             <span className="inline-flex items-center gap-2">
               <HandCoinsIcon className="size-5 text-muted-foreground shrink-0" />
               <TileTitleWithHint
-                content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.home.actualSpentHint}</p>}
-                label={t.home.actualSpent}
+                content={<p className="max-w-xs text-pretty text-sm leading-snug">{t('actualSpentHint')}</p>}
+                label={t('actualSpent')}
               />
             </span>
           }
@@ -198,8 +204,8 @@ export function HomeSummaryTiles(props: HomeSummaryTilesProps) {
               <span className="inline-flex items-center gap-2">
                 <Banknote className="size-5 text-muted-foreground shrink-0" />
                 <TileTitleWithHint
-                  content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.home.actualSurplusHint}</p>}
-                  label={t.home.actualSurplus}
+                  content={<p className="max-w-xs text-pretty text-sm leading-snug">{t('actualSurplusHint')}</p>}
+                  label={t('actualSurplus')}
                 />
               </span>
             }
@@ -214,8 +220,8 @@ export function HomeSummaryTiles(props: HomeSummaryTilesProps) {
               <span className="inline-flex items-center gap-2">
                 <Landmark className="size-5 text-muted-foreground shrink-0" />
                 <TileTitleWithHint
-                  content={<p className="max-w-xs text-pretty text-sm leading-snug">{t.home.actualSavingsHint}</p>}
-                  label={t.home.savingsToDateActual}
+                  content={<p className="max-w-xs text-pretty text-sm leading-snug">{t('actualSavingsHint')}</p>}
+                  label={t('savingsToDateActual')}
                 />
               </span>
             }
@@ -226,14 +232,16 @@ export function HomeSummaryTiles(props: HomeSummaryTilesProps) {
                 footer={
                   <div className="space-y-1.5 text-sm leading-snug">
                     {fillMonthAmountTemplate(
-                      t.home.actualSavingsToDatePriorLine,
-                      actualSavingsComposition.priorMonthLabel,
-                      actualSavingsComposition.priorAmountLabel,
+                      t('actualSavingsToDatePriorLine', {
+                        amount: amountHtml(actualSavingsComposition.priorAmountLabel),
+                        monthLabel: actualSavingsComposition.priorMonthLabel,
+                      }),
                     )}
                     {fillMonthAmountTemplate(
-                      t.home.actualSavingsToDatePlusSurplusLine,
-                      actualSavingsComposition.monthLabel,
-                      actualSavingsComposition.amountLabel,
+                      t('actualSavingsToDatePlusSurplusLine', {
+                        amount: amountHtml(actualSavingsComposition.amountLabel),
+                        monthLabel: actualSavingsComposition.monthLabel,
+                      }),
                     )}
                   </div>
                 }

@@ -4,11 +4,11 @@ import type { MonthKey } from '@/lib/types'
 
 import { ChevronDown } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui'
 import { buildHomeMonthLineItems } from '@/lib/budget/homeMonthBreakdown'
 import { formatMonthLabelShort } from '@/lib/month'
-import { t } from '@/lib/strings'
 import { currencyClass } from '@/lib/style-classes'
 import { cn } from '@/lib/utils'
 
@@ -23,6 +23,8 @@ function MobileMonthCard({
   formatVnd: (n: number) => string
   lineItems: ReturnType<typeof buildHomeMonthLineItems>
 }) {
+  const { t } = useTranslation('stats')
+  const { t: tb } = useTranslation('budget')
   const [expanded, setExpanded] = useState(false)
   const hasBreakdown = lineItems.plannedLines.length > 0
 
@@ -32,15 +34,15 @@ function MobileMonthCard({
 
       <div className="grid grid-cols-3 gap-x-2 gap-y-2 text-sm">
         <div>
-          <p className="text-xs text-muted-foreground truncate">{t.stats.income}</p>
+          <p className="text-xs text-muted-foreground truncate">{t('income')}</p>
           <p className={currencyClass({ positive: snapshot.incomeVnd >= 0 })}>{formatVnd(snapshot.incomeVnd)}</p>
         </div>
         <div>
-          <p className="text-xs text-muted-foreground truncate">{t.stats.planned}</p>
+          <p className="text-xs text-muted-foreground truncate">{t('planned')}</p>
           <p className={currencyClass({ positive: snapshot.plannedVnd >= 0 })}>{formatVnd(snapshot.plannedVnd)}</p>
         </div>
         <div>
-          <p className="text-xs text-muted-foreground truncate">{t.stats.actual}</p>
+          <p className="text-xs text-muted-foreground truncate">{t('actual')}</p>
           <p className={currencyClass({ positive: snapshot.actualSpentVnd >= 0 })}>
             {formatVnd(snapshot.actualSpentVnd)}
           </p>
@@ -49,13 +51,13 @@ function MobileMonthCard({
 
       <div className="border-t border-border/60 pt-2.5 grid grid-cols-3 gap-x-2 text-sm">
         <div>
-          <p className="text-xs text-muted-foreground truncate">{t.stats.plannedSurplus}</p>
+          <p className="text-xs text-muted-foreground truncate">{t('plannedSurplus')}</p>
           <p className={currencyClass({ positive: snapshot.plannedSurplusVnd >= 0, primary: true })}>
             {formatVnd(snapshot.plannedSurplusVnd)}
           </p>
         </div>
         <div>
-          <p className="text-xs text-muted-foreground truncate">{t.stats.actualMonthlySurplus}</p>
+          <p className="text-xs text-muted-foreground truncate">{t('actualMonthlySurplus')}</p>
           <p className={currencyClass({ positive: snapshot.actualSurplusVnd >= 0, primary: true })}>
             {formatVnd(snapshot.actualSurplusVnd)}
           </p>
@@ -75,7 +77,7 @@ function MobileMonthCard({
               className={cn('h-3.5 w-3.5 shrink-0 transition-transform', expanded && '-rotate-180')}
               aria-hidden
             />
-            {expanded ? t.stats.collapseMonthBreakdown : t.stats.expandMonthBreakdown}
+            {expanded ? t('collapseMonthBreakdown') : t('expandMonthBreakdown')}
             {!expanded && <span className="text-muted-foreground/70">({lineItems.plannedLines.length})</span>}
           </Button>
 
@@ -89,19 +91,19 @@ function MobileMonthCard({
                   <div key={planned.id} className="grid grid-cols-3 gap-x-2 text-xs py-1 border-t border-border/40">
                     <div className="col-span-3 text-foreground/80 truncate mb-0.5 font-medium">{planned.label}</div>
                     <div>
-                      <p className="text-muted-foreground">{t.stats.planned}: </p>
+                      <p className="text-muted-foreground">{t('planned')}: </p>
                       <p className={currencyClass({ positive: planned.amountVnd >= 0 })}>
                         {formatVnd(planned.amountVnd)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">{t.stats.actual}: </p>
+                      <p className="text-muted-foreground">{t('actual')}: </p>
                       <p className={currencyClass({ positive: (actual?.amountVnd ?? 0) >= 0 })}>
                         {formatVnd(actual?.amountVnd ?? 0)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">{t.budget.termRemaining}: </p>
+                      <p className="text-muted-foreground">{tb('termRemaining')}: </p>
                       <p className={currencyClass({ positive: remaining >= 0 })}>{formatVnd(remaining)}</p>
                     </div>
                   </div>
@@ -124,14 +126,15 @@ export function StatsTableMobileList({
   rows,
   toggleYear,
 }: StatsTableProps) {
+  const { t: th } = useTranslation('home')
   const byYear = groupSnapshotsByYear(rows)
   const breakdownByMonth = useMemo(() => {
     const map = new Map<MonthKey, ReturnType<typeof buildHomeMonthLineItems>>()
     for (const s of rows) {
-      map.set(s.month, buildHomeMonthLineItems(s.month, income, budget, actuals, t.home.orphanedBudgetActual))
+      map.set(s.month, buildHomeMonthLineItems(s.month, income, budget, actuals, th('orphanedBudgetActual')))
     }
     return map
-  }, [actuals, budget, income, rows])
+  }, [actuals, budget, income, rows, th])
 
   return (
     <div className="space-y-4">

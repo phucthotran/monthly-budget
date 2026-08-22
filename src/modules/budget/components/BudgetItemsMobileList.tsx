@@ -2,13 +2,13 @@ import type { BudgetItemsTableProps } from './BudgetItemsTableDesktop'
 
 import { HandCoinsIcon, Pencil, Trash2 } from 'lucide-react'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Badge, Button } from '@/components/ui'
+import { useMoney } from '@/hooks/useMoney'
 import { canRecordActualExpenseForBudgetItem } from '@/lib/budget/apply'
 import { currentMonthKey, formatMonthLabel, isPeriodClosedBefore } from '@/lib/month'
-import { t } from '@/lib/strings'
 import { currencyClass } from '@/lib/style-classes'
-import { formatVnd } from '@/lib/vnd'
 
 export function BudgetItemsMobileList({
   actualMap,
@@ -19,6 +19,8 @@ export function BudgetItemsMobileList({
   onDelete,
   onEdit,
 }: BudgetItemsTableProps) {
+  const { t } = useTranslation('budget')
+  const { currency, format } = useMoney()
   const categoryMap = useMemo(() => {
     return new Map(categories.map((c) => [c.id, c]))
   }, [categories])
@@ -49,12 +51,12 @@ export function BudgetItemsMobileList({
 
             <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
               <div>
-                <p className="text-xs text-muted-foreground">{t.budget.amount}</p>
-                <p className={currencyClass({ positive: item.amountVnd >= 0 })}>{formatVnd(item.amountVnd)}</p>
+                <p className="text-xs text-muted-foreground">{t('amount', { currency })}</p>
+                <p className={currencyClass({ positive: item.amountVnd >= 0 })}>{format(item.amountVnd)}</p>
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">{t.budget.termRemaining}</p>
-                <p className={currencyClass({ positive: remaining >= 0, primary: true })}>{formatVnd(remaining)}</p>
+                <p className="text-xs text-muted-foreground">{t('termRemaining')}</p>
+                <p className={currencyClass({ positive: remaining >= 0, primary: true })}>{format(remaining)}</p>
               </div>
             </div>
 
@@ -66,7 +68,7 @@ export function BudgetItemsMobileList({
                 onClick={() => onAddActual(item)}
               >
                 <HandCoinsIcon className="h-4 w-4" />
-                {canAddActual ? t.budget.actuals : t.budget.viewActual}
+                {canAddActual ? t('actuals') : t('viewActual')}
               </Button>
               <Button
                 size="sm"
@@ -74,7 +76,7 @@ export function BudgetItemsMobileList({
                 className="h-10 w-10 shrink-0 p-0 md:h-8 md:w-8"
                 disabled={locked}
                 onClick={() => onEdit(item)}
-                aria-label={t.budget.editAction}
+                aria-label={t('editAction')}
               >
                 <Pencil className="h-4 w-4" />
               </Button>
@@ -84,7 +86,7 @@ export function BudgetItemsMobileList({
                 className="h-10 w-10 shrink-0 p-0 md:h-8 md:w-8"
                 disabled={locked}
                 onClick={() => onDelete(item)}
-                aria-label={t.budget.deleteAction}
+                aria-label={t('deleteAction')}
               >
                 <Trash2 className="h-4 w-4 text-destructive" />
               </Button>

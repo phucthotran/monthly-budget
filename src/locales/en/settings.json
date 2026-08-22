@@ -1,0 +1,14 @@
+{
+  "add": "Add category",
+  "archived": "Hidden",
+  "dialogP1": "Use a short name that is easy to pick when creating a budget item. Avoid special characters.",
+  "emptyList": "No categories yet.",
+  "hide": "Hide",
+  "hideAction": "Hide category",
+  "name": "Name",
+  "pageDetail": "Hide a category you no longer use; existing budget items stay as they are.",
+  "pageLead": "Create categories to group budget items.",
+  "show": "Show",
+  "showAction": "Show category",
+  "title": "Categories"
+}

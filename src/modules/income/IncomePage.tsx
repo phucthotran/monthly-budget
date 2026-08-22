@@ -2,6 +2,7 @@ import type { IncomePeriod } from '@/lib/types'
 
 import { PiggyBank, Plus } from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { useAuthContext } from '@/components/AuthProvider'
 import { PeriodStatusFilterToggle, YearFilterSelect } from '@/components/inputs'
@@ -18,7 +19,6 @@ import { Button } from '@/components/ui'
 import { usePeriodListPageState } from '@/hooks/usePeriodListPageState'
 import { useIncomePeriods } from '@/hooks/useUserCollections'
 import { asOfMonthForYearFilter, currentMonthKey, matchesPeriodStatusFilter } from '@/lib/month'
-import { incomeDeleteDialogP1, t } from '@/lib/strings'
 import { runWithToast } from '@/lib/toast'
 
 import { IncomeDialog, type IncomeDialogHandle } from './components/IncomeDialog'
@@ -26,6 +26,8 @@ import { IncomeTable } from './components/IncomeTable'
 import { useIncomeMutations } from './hooks/useIncomeMutations'
 
 export function IncomePage() {
+  const { t } = useTranslation('income')
+  const { t: tc } = useTranslation()
   const { user } = useAuthContext()
   const uid = user?.uid
   const [rowToDelete, setRowToDelete] = useState<IncomePeriod | null>(null)
@@ -52,18 +54,18 @@ export function IncomePage() {
         <div className="space-y-6">
           <PageHeading
             icon={<PiggyBank />}
-            title={t.income.title}
+            title={t('title')}
             description={
               <div className="space-y-2 text-pretty">
-                <p>{t.income.pageLead}</p>
-                <p className="text-sm text-muted-foreground">{t.income.pageDetail}</p>
+                <p>{t('pageLead')}</p>
+                <p className="text-sm text-muted-foreground">{t('pageDetail')}</p>
               </div>
             }
             actions={
               <span className="hidden md:inline-flex">
                 <Button type="button" onClick={() => dialogRef.current?.openCreate()}>
                   <Plus className="h-4 w-4" />
-                  {t.income.add}
+                  {t('add')}
                 </Button>
               </span>
             }
@@ -74,7 +76,7 @@ export function IncomePage() {
             defaultMonth={dialogDefaultMonth}
             onSubmit={async (editing, value) => {
               if (!mutations) return
-              await runWithToast(() => mutations.upsertIncome(editing, value), t.toast.incomeSaved)
+              await runWithToast(() => mutations.upsertIncome(editing, value), tc('toast.incomeSaved'))
             }}
           />
 
@@ -96,12 +98,12 @@ export function IncomePage() {
             ) : rows.length === 0 ? (
               <EmptyState
                 icon={<PiggyBank />}
-                title={t.income.emptyList}
-                description={t.income.emptyHint}
+                title={t('emptyList')}
+                description={t('emptyHint')}
                 action={
                   <Button type="button" onClick={() => dialogRef.current?.openCreate()}>
                     <Plus className="h-4 w-4" />
-                    {t.income.add}
+                    {t('add')}
                   </Button>
                 }
               />
@@ -109,9 +111,7 @@ export function IncomePage() {
               <EmptyState
                 compact
                 description={
-                  periodStatus === 'expired'
-                    ? t.common.noExpiredItemsInSelectedYear
-                    : t.common.noActiveItemsInSelectedYear
+                  periodStatus === 'expired' ? tc('noExpiredItemsInSelectedYear') : tc('noActiveItemsInSelectedYear')
                 }
               />
             )}
@@ -119,19 +119,19 @@ export function IncomePage() {
 
           <ConfirmDeleteDialog
             open={rowToDelete !== null}
-            title={t.income.deleteDialogTitle}
-            description={rowToDelete ? <p>{incomeDeleteDialogP1(rowToDelete.label)}</p> : null}
-            emphasis={rowToDelete ? t.income.deleteDialogP2 : null}
+            title={t('deleteDialogTitle')}
+            description={rowToDelete ? <p>{t('deleteDialogP1', { label: rowToDelete.label })}</p> : null}
+            emphasis={rowToDelete ? t('deleteDialogP2') : null}
             onOpenChange={(open) => {
               if (!open) setRowToDelete(null)
             }}
             onConfirm={async () => {
               if (!mutations || !rowToDelete) return
-              await runWithToast(() => mutations.deleteIncome(rowToDelete.id), t.toast.incomeDeleted)
+              await runWithToast(() => mutations.deleteIncome(rowToDelete.id), tc('toast.incomeDeleted'))
             }}
           />
 
-          <MobileFab label={t.income.add} onClick={() => dialogRef.current?.openCreate()} />
+          <MobileFab label={t('add')} onClick={() => dialogRef.current?.openCreate()} />
         </div>
       )}
     </RequireAuth>

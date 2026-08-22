@@ -1,9 +1,9 @@
 import { Link, useRouterState } from '@tanstack/react-router'
 import { m } from 'motion/react'
+import { useTranslation } from 'react-i18next'
 
 import { haptic } from '@/lib/haptics'
-import { navItems } from '@/lib/nav'
-import { t } from '@/lib/strings'
+import { useNavItems } from '@/lib/nav'
 import { cn } from '@/lib/utils'
 
 /**
@@ -15,13 +15,15 @@ const TAB_LAYOUT = 'flex flex-col items-center justify-center gap-0.5 px-1 text-
 const INDICATOR_TRANSITION = { bounce: 0.25, duration: 0.4, type: 'spring' } as const
 
 export function MobileBottomNav() {
+  const { t } = useTranslation()
+  const labeledItems = useNavItems()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const activeIndex = navItems.findIndex((item) => item.to === pathname)
+  const activeIndex = labeledItems.findIndex((item) => item.to === pathname)
 
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-40 box-content flex h-16 items-stretch border-t border-border bg-card/95 pb-safe-b backdrop-blur-md md:hidden"
-      aria-label={t.nav.mainNav}
+      aria-label={t('nav.mainNav')}
     >
       {/*
        * One pill for the whole bar rather than one per tab, so switching tabs
@@ -36,18 +38,18 @@ export function MobileBottomNav() {
         <m.div
           aria-hidden
           className={cn('pointer-events-none absolute left-0 top-0 h-16', TAB_LAYOUT)}
-          style={{ width: `${String(100 / navItems.length)}%` }}
+          style={{ width: `${String(100 / labeledItems.length)}%` }}
           initial={false}
           animate={{ x: `${String(activeIndex * 100)}%` }}
           transition={INDICATOR_TRANSITION}
         >
           <span className="h-7 w-12 rounded-full bg-primary/15" />
           {/* Reserves the label's line box, which centres the pill on the icons. */}
-          <span className="invisible truncate">{navItems[activeIndex].label}</span>
+          <span className="invisible truncate">{labeledItems[activeIndex].label}</span>
         </m.div>
       ) : null}
 
-      {navItems.map((item) => {
+      {labeledItems.map((item) => {
         const active = pathname === item.to
         const Icon = item.icon
         return (
@@ -57,7 +59,7 @@ export function MobileBottomNav() {
             // `relative` keeps the tabs painting above the indicator, which is
             // positioned and would otherwise cover them.
             className={cn(
-              'relative flex-1 font-medium transition-colors duration-200 active:scale-95',
+              'relative flex-1 font-medium transition-colors duration-200 active:scale-95 ease-in-out',
               TAB_LAYOUT,
               active ? 'text-primary' : 'text-muted-foreground',
             )}

@@ -2,6 +2,7 @@ import type { ActualExpense, BudgetItem } from '@/lib/types'
 
 import { Plus, Wallet } from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { useAuthContext } from '@/components/AuthProvider'
 import { PeriodStatusFilterToggle, YearFilterSelect } from '@/components/inputs'
@@ -15,12 +16,11 @@ import {
 } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { Button } from '@/components/ui'
+import { useMoney } from '@/hooks/useMoney'
 import { usePeriodListPageState } from '@/hooks/usePeriodListPageState'
 import { useActualExpenses, useBudgetItems, useCategories } from '@/hooks/useUserCollections'
 import { asOfMonthForYearFilter, currentMonthKey, formatMonthLabel, matchesPeriodStatusFilter } from '@/lib/month'
-import { actualExpenseLineDeleteDialogP1, budgetDeleteDialogP1, t } from '@/lib/strings'
 import { runWithToast } from '@/lib/toast'
-import { formatVnd } from '@/lib/vnd'
 
 import { ActualExpenseDialog, type ActualExpenseDialogHandle } from './components/ActualExpenseDialog'
 import { BudgetItemDialog, type BudgetItemDialogHandle } from './components/BudgetItemDialog'
@@ -29,6 +29,9 @@ import { useBudgetDerived } from './hooks/useBudgetDerived'
 import { useBudgetMutations } from './hooks/useBudgetMutations'
 
 export function BudgetPage() {
+  const { t } = useTranslation('budget')
+  const { t: tc } = useTranslation()
+  const { format } = useMoney()
   const { user } = useAuthContext()
   const uid = user?.uid
 
@@ -64,18 +67,18 @@ export function BudgetPage() {
         <div className="space-y-6">
           <PageHeading
             icon={<Wallet />}
-            title={t.budget.title}
+            title={t('title')}
             description={
               <div className="space-y-2 text-pretty">
-                <p>{t.budget.pageLead}</p>
-                <p className="text-sm text-muted-foreground">{t.budget.pageDetail}</p>
+                <p>{t('pageLead')}</p>
+                <p className="text-sm text-muted-foreground">{t('pageDetail')}</p>
               </div>
             }
             actions={
               <span className="hidden md:inline-flex">
                 <Button type="button" onClick={() => budgetDialogRef.current?.openCreate()}>
                   <Plus className="h-4 w-4" />
-                  {t.budget.add}
+                  {t('add')}
                 </Button>
               </span>
             }
@@ -87,7 +90,7 @@ export function BudgetPage() {
             defaultMonth={dialogDefaultMonth}
             onSubmit={async (editing, value) => {
               if (!mutations) return
-              await runWithToast(() => mutations.upsertBudgetItem(editing, value), t.toast.budgetSaved)
+              await runWithToast(() => mutations.upsertBudgetItem(editing, value), tc('toast.budgetSaved'))
             }}
           />
 
@@ -112,12 +115,12 @@ export function BudgetPage() {
             ) : items.length === 0 ? (
               <EmptyState
                 icon={<Wallet />}
-                title={t.budget.emptyList}
-                description={t.budget.emptyHint}
+                title={t('emptyList')}
+                description={t('emptyHint')}
                 action={
                   <Button type="button" onClick={() => budgetDialogRef.current?.openCreate()}>
                     <Plus className="h-4 w-4" />
-                    {t.budget.add}
+                    {t('add')}
                   </Button>
                 }
               />
@@ -125,9 +128,7 @@ export function BudgetPage() {
               <EmptyState
                 compact
                 description={
-                  periodStatus === 'expired'
-                    ? t.common.noExpiredItemsInSelectedYear
-                    : t.common.noActiveItemsInSelectedYear
+                  periodStatus === 'expired' ? tc('noExpiredItemsInSelectedYear') : tc('noActiveItemsInSelectedYear')
                 }
               />
             )}
@@ -140,34 +141,34 @@ export function BudgetPage() {
             onDeleteLine={(expense) => setActualLineToDelete(expense)}
             onSubmit={async (item, value) => {
               if (!mutations) return
-              await runWithToast(() => mutations.addActualExpense(item, value), t.toast.actualSaved)
+              await runWithToast(() => mutations.addActualExpense(item, value), tc('toast.actualSaved'))
             }}
           />
 
           <ConfirmDeleteDialog
             open={itemToDelete !== null}
-            title={t.budget.deleteDialogTitle}
-            description={itemToDelete ? <p>{budgetDeleteDialogP1(itemToDelete.title)}</p> : null}
-            emphasis={itemToDelete ? t.budget.deleteDialogP2 : null}
+            title={t('deleteDialogTitle')}
+            description={itemToDelete ? <p>{t('deleteDialogP1', { title: itemToDelete.title })}</p> : null}
+            emphasis={itemToDelete ? t('deleteDialogP2') : null}
             onOpenChange={(open) => {
               if (!open) setItemToDelete(null)
             }}
             onConfirm={async () => {
               if (!mutations || !itemToDelete) return
-              await runWithToast(() => mutations.deleteBudgetItem(itemToDelete.id), t.toast.budgetDeleted)
+              await runWithToast(() => mutations.deleteBudgetItem(itemToDelete.id), tc('toast.budgetDeleted'))
             }}
           />
 
           <ConfirmDeleteDialog
             open={actualLineToDelete !== null}
-            title={t.budget.actualExpenseLineDeleteDialogTitle}
+            title={t('actualExpenseLineDeleteDialogTitle')}
             description={
               actualLineToDelete ? (
                 <p>
-                  {actualExpenseLineDeleteDialogP1(
-                    formatVnd(actualLineToDelete.amountVnd),
-                    formatMonthLabel(actualLineToDelete.spentMonth),
-                  )}
+                  {t('actualExpenseLineDeleteDialogP1', {
+                    formattedAmount: format(actualLineToDelete.amountVnd),
+                    monthLabel: formatMonthLabel(actualLineToDelete.spentMonth),
+                  })}
                 </p>
               ) : null
             }
@@ -176,11 +177,11 @@ export function BudgetPage() {
             }}
             onConfirm={async () => {
               if (!mutations || !actualLineToDelete) return
-              await runWithToast(() => mutations.deleteActualExpense(actualLineToDelete.id), t.toast.actualDeleted)
+              await runWithToast(() => mutations.deleteActualExpense(actualLineToDelete.id), tc('toast.actualDeleted'))
             }}
           />
 
-          <MobileFab label={t.budget.add} onClick={() => budgetDialogRef.current?.openCreate()} />
+          <MobileFab label={t('add')} onClick={() => budgetDialogRef.current?.openCreate()} />
         </div>
       )}
     </RequireAuth>

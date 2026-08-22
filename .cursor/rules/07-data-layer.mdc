@@ -25,6 +25,8 @@ Each hook:
 
 Existing hooks: `useCategories`, `useBudgetItems`, `useIncomePeriods`, `useActualExpenses`.
 
+User profile (document, not a collection): `useUserPreferences(uid)` in `src/hooks/useUserPreferences.ts` listens to `users/{uid}`. Currency is **create-only** via `usePreferencesMutations(uid).setCurrencyOnce`.
+
 ## Mutation hook shape
 
 Create `src/modules/<feature>/hooks/use<Feature>Mutations.ts`:
@@ -60,6 +62,7 @@ queryKeys.categories(uid)       // ['categories', uid]
 queryKeys.budgetItems(uid)      // ['budgetItems', uid]
 queryKeys.incomePeriods(uid)    // ['incomePeriods', uid]
 queryKeys.actualExpenses(uid)   // ['actualExpenses', uid]
+queryKeys.userPreferences(uid)  // ['userPreferences', uid]
 ```
 
 When adding a new collection, add its entry to `src/lib/query-keys.ts` and to `useUserCollections.ts` in the same PR.
@@ -67,6 +70,7 @@ When adding a new collection, add its entry to `src/lib/query-keys.ts` and to `u
 ## Firestore collection paths
 
 ```
+users/{uid}                 // { currency: 'VND' | 'USD', updatedAt } — create-only
 users/{uid}/categories
 users/{uid}/budgetItems
 users/{uid}/incomePeriods

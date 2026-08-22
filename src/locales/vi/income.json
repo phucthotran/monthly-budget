@@ -1,0 +1,21 @@
+{
+  "add": "Thêm kỳ thu nhập",
+  "amount": "Số tiền ({{currency}})",
+  "deleteAction": "Xóa kỳ thu nhập",
+  "deleteDialogP1": "Bạn sắp xóa kỳ thu nhập “{{label}}”. Thao tác này không thể hoàn tác.",
+  "deleteDialogP2": "Kỳ thu nhập sẽ không còn trong danh sách kỳ thu nhập. Các tháng trong quá khứ từng dùng mức thu này có thể hiển thị khác trên tổng quan và thống kê.",
+  "deleteDialogTitle": "Xóa kỳ thu nhập?",
+  "dialogP1": "Tạo một mức thu nhập theo tháng. Khi thu nhập đổi, thêm kỳ mới thay vì sửa lại từng tháng.",
+  "dialogP2c": "Bỏ trống tháng kết thúc nếu mức thu này còn dùng cho các tháng sau.",
+  "editAction": "Sửa kỳ thu nhập",
+  "editTitle": "Sửa kỳ thu nhập",
+  "emptyHint": "Thêm kỳ thu nhập đầu tiên để bắt đầu.",
+  "emptyList": "Chưa có kỳ thu nhập nào.",
+  "label": "Tên kỳ thu nhập",
+  "pageDetail": "Khi thu nhập thay đổi, tạo kỳ mới với giai đoạn áp dụng phù hợp.",
+  "pageLead": "Khai báo các mức thu nhập áp dụng theo từng giai đoạn.",
+  "title": "Thu nhập theo kỳ",
+  "validFrom": "Từ tháng",
+  "validTo": "Đến tháng (tùy chọn)",
+  "validToHint": "Bỏ trống nếu tiếp tục áp dụng từ tháng bắt đầu về sau."
+}

@@ -1,7 +1,8 @@
 import { toast } from 'sonner'
 
+import i18n from '@/i18n'
+
 import { haptic } from './haptics'
-import { t } from './strings'
 
 /**
  * Runs a mutation and reports the outcome as a toast.
@@ -13,7 +14,7 @@ export async function runWithToast(action: () => Promise<void>, successMessage: 
   try {
     await action()
   } catch (error) {
-    toast.error(t.toast.error)
+    toast.error(i18n.t('toast.error'))
     throw error
   }
   haptic('success')

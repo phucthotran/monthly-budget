@@ -2,14 +2,14 @@ import type { MonthKey } from '@/lib/month'
 import type { IncomePeriod } from '@/lib/types'
 
 import { Pencil, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { ActionTooltipButton } from '@/components/patterns'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui'
+import { useMoney } from '@/hooks/useMoney'
 import { formatMonthLabel, isPeriodClosedBefore } from '@/lib/month'
-import { t } from '@/lib/strings'
 import { currencyClass } from '@/lib/style-classes'
 import { cn } from '@/lib/utils'
-import { formatVnd } from '@/lib/vnd'
 
 export type IncomeTableProps = {
   asOfMonth: MonthKey
@@ -19,14 +19,18 @@ export type IncomeTableProps = {
 }
 
 export function IncomeTableDesktop({ asOfMonth, onDelete, onEdit, rows }: IncomeTableProps) {
+  const { t } = useTranslation('income')
+  const { t: tc } = useTranslation()
+  const { currency, format } = useMoney()
+
   return (
     <div className="-mx-4 overflow-x-auto px-4">
       <Table className="min-w-[720px]">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[40%]">{t.income.label}</TableHead>
-            <TableHead className="text-right whitespace-nowrap">{t.income.amount}</TableHead>
-            <TableHead className="whitespace-nowrap">{t.common.period}</TableHead>
+            <TableHead className="w-[40%]">{t('label')}</TableHead>
+            <TableHead className="text-right whitespace-nowrap">{t('amount', { currency })}</TableHead>
+            <TableHead className="whitespace-nowrap">{tc('period')}</TableHead>
             <TableHead className="w-[96px]" />
           </TableRow>
         </TableHeader>
@@ -39,7 +43,7 @@ export function IncomeTableDesktop({ asOfMonth, onDelete, onEdit, rows }: Income
                   <span className="block truncate">{row.label}</span>
                 </TableCell>
                 <TableCell className={cn('text-right', currencyClass({ positive: row.amountVnd >= 0 }))}>
-                  {formatVnd(row.amountVnd)}
+                  {format(row.amountVnd)}
                 </TableCell>
                 <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
                   {formatMonthLabel(row.validFrom)} → {row.validTo ? formatMonthLabel(row.validTo) : '…'}
@@ -50,7 +54,7 @@ export function IncomeTableDesktop({ asOfMonth, onDelete, onEdit, rows }: Income
                       variant="outline"
                       disabled={locked}
                       onClick={() => onEdit(row)}
-                      label={locked ? t.common.periodEndedLocked : t.income.editAction}
+                      label={locked ? tc('periodEndedLocked') : t('editAction')}
                     >
                       <Pencil className="h-4 w-4" />
                     </ActionTooltipButton>
@@ -58,7 +62,7 @@ export function IncomeTableDesktop({ asOfMonth, onDelete, onEdit, rows }: Income
                       variant="ghost"
                       disabled={locked}
                       onClick={() => onDelete(row)}
-                      label={locked ? t.common.periodEndedLocked : t.income.deleteAction}
+                      label={locked ? tc('periodEndedLocked') : t('deleteAction')}
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </ActionTooltipButton>

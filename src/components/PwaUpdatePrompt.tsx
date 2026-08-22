@@ -1,8 +1,7 @@
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { useRegisterSW } from 'virtual:pwa-register/react'
-
-import { t } from '@/lib/strings'
 
 const UPDATE_TOAST_ID = 'pwa-update'
 
@@ -13,6 +12,7 @@ const UPDATE_TOAST_ID = 'pwa-update'
  * only activates once the user confirms — no surprise reloads mid-edit.
  */
 export function PwaUpdatePrompt() {
+  const { t } = useTranslation()
   const {
     needRefresh: [needRefresh],
     offlineReady: [offlineReady, setOfflineReady],
@@ -21,21 +21,21 @@ export function PwaUpdatePrompt() {
 
   useEffect(() => {
     if (!offlineReady) return
-    toast.success(t.toast.offlineReady)
+    toast.success(t('toast.offlineReady'))
     setOfflineReady(false)
-  }, [offlineReady, setOfflineReady])
+  }, [offlineReady, setOfflineReady, t])
 
   useEffect(() => {
     if (!needRefresh) return
-    toast.info(t.toast.updateAvailable, {
+    toast.info(t('toast.updateAvailable'), {
       action: {
-        label: t.toast.updateAction,
+        label: t('toast.updateAction'),
         onClick: () => void updateServiceWorker(true),
       },
       duration: Infinity,
       id: UPDATE_TOAST_ID,
     })
-  }, [needRefresh, updateServiceWorker])
+  }, [needRefresh, t, updateServiceWorker])
 
   return null
 }
