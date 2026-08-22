@@ -63,6 +63,7 @@ export default defineConfig(({ mode }) => {
         registerType: 'prompt',
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,svg,png,jpg,woff2}'],
+          navigateFallbackDenylist: [/^\/__/],
         },
       }),
     ],

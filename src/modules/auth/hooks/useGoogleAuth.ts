@@ -1,28 +1,19 @@
-import { getRedirectResult, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from 'firebase/auth'
-import { useCallback, useEffect, useState } from 'react'
+import { GoogleAuthProvider, signInWithPopup, signInWithRedirect } from 'firebase/auth'
+import { useCallback, useState } from 'react'
 
 import i18n from '@/i18n'
 import { getFirebaseAuth } from '@/lib/firebase'
 
 function shouldUseRedirect() {
-  // Popup is flaky on iOS Safari / installed PWAs.
+  // Popup is blocked on iOS Safari (including installed PWAs). Android/desktop PWAs
+  // should use popup — redirect breaks when authDomain differs from the app origin.
   const ua = navigator.userAgent.toLowerCase()
-  const isIOS = /iphone|ipad|ipod/.test(ua)
-  const isStandalone = window.matchMedia?.('(display-mode: standalone)')?.matches ?? false
-  return isIOS || isStandalone
+  return /iphone|ipad|ipod/.test(ua)
 }
 
 export function useGoogleAuth() {
   const [error, setError] = useState<null | string>(null)
   const [pending, setPending] = useState(false)
-
-  useEffect(() => {
-    // If we previously used redirect, consume the result once.
-    const auth = getFirebaseAuth()
-    void getRedirectResult(auth).catch(() => {
-      // Ignore: user may land here without redirect auth.
-    })
-  }, [])
 
   const submitGoogle = useCallback(async () => {
     setError(null)
