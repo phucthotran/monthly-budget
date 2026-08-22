@@ -31,8 +31,8 @@ export function useTouchTooltip({ activation, autoHideMs = DEFAULT_AUTO_HIDE_MS 
 } {
   const prefersTouch = usePrefersTouch()
   const [open, setOpen] = useState(false)
-  const autoHideTimerRef = useRef<ReturnType<typeof setTimeout>>()
-  const longPressTimerRef = useRef<ReturnType<typeof setTimeout>>()
+  const autoHideTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const ignoreCloseRef = useRef(false)
   const longPressHandledRef = useRef(false)
 
