@@ -7,7 +7,7 @@ import { InfoTooltip, PageHeading, PageLoadingSkeleton } from '@/components/patt
 import { RequireAuth } from '@/components/RequireAuth'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 import { useMoney } from '@/hooks/useMoney'
-import { useActualExpenses, useBudgetItems, useIncomePeriods } from '@/hooks/useUserCollections'
+import { useActualExpenses, useBudgetItems, useCategories, useIncomePeriods } from '@/hooks/useUserCollections'
 
 import { SavingsTable } from './components/SavingsTable'
 import { StatsCharts } from './components/StatsCharts'
@@ -26,7 +26,8 @@ export function StatsPage() {
   const { data: budget = [], isHydrated: budgetReady } = useBudgetItems(uid)
   const { data: income = [], isHydrated: incomeReady } = useIncomePeriods(uid)
   const { data: actuals = [], isHydrated: actualsReady } = useActualExpenses(uid)
-  const dataLoading = !budgetReady || !incomeReady || !actualsReady
+  const { data: categories = [], isHydrated: categoriesReady } = useCategories(uid)
+  const dataLoading = !budgetReady || !incomeReady || !actualsReady || !categoriesReady
 
   const { actualAvg, plannedAvg, snaps } = useStatsData({ actuals, budget, income })
   const byYear = useMemo(() => groupSnapshotsByYear(snaps), [snaps])
@@ -51,7 +52,7 @@ export function StatsPage() {
 
           <StatsSummaryTiles plannedAvgLabel={format(plannedAvg)} actualAvgLabel={format(actualAvg)} />
 
-          <StatsCharts actuals={actuals} budget={budget} income={income} />
+          <StatsCharts actuals={actuals} budget={budget} categories={categories} income={income} />
 
           <Tabs defaultValue="detail" className="w-full">
             <TabsList className="grid h-11 w-full grid-cols-2 gap-1 sm:h-10">

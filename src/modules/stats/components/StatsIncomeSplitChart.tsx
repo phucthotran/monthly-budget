@@ -4,7 +4,7 @@ import { IncomeSplitChart } from '@/components/patterns'
 import { useMoney } from '@/hooks/useMoney'
 import { type IncomeSplit, overspentSharePercent } from '@/lib/budget/incomeSplit'
 
-export function StatsIncomeSplitChart({ split }: { split: IncomeSplit }) {
+export function StatsIncomeSplitChart({ embedded = false, split }: { embedded?: boolean; split: IncomeSplit }) {
   const { t } = useTranslation('stats')
   const { format } = useMoney()
 
@@ -13,6 +13,7 @@ export function StatsIncomeSplitChart({ split }: { split: IncomeSplit }) {
       actualLabel={t('chartActual')}
       centerLabel={t('chartIncomeSplitCenter')}
       centerOverspentLabel={t('chartIncomeSplitCenterOver')}
+      embedded={embedded}
       empty={t('chartIncomeSplitEmpty')}
       leftoverLabel={t('chartLeftover')}
       overspent={t('chartIncomeSplitOverspent', {
@@ -20,7 +21,7 @@ export function StatsIncomeSplitChart({ split }: { split: IncomeSplit }) {
         percent: overspentSharePercent(split),
       })}
       split={split}
-      title={t('chartTitleIncomeSplit')}
+      title={embedded ? undefined : t('chartTitleIncomeSplit')}
     />
   )
 }

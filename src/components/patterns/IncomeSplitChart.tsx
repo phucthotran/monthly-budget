@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { Cell, Label, Pie, PieChart } from 'recharts'
 
 import { useMoney } from '@/hooks/useMoney'
-import { type IncomeSplit, overspentSharePercent } from '@/lib/budget/incomeSplit'
+import { type IncomeSplit, leftoverSharePercent, overspentSharePercent } from '@/lib/budget/incomeSplit'
 
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, type ChartTooltipRow } from '../ui'
 
@@ -23,16 +23,12 @@ export type IncomeSplitChartProps = {
   centerLabel: string
   centerOverspentLabel: string
   className?: string
+  embedded?: boolean
   empty: string
   leftoverLabel: string
   overspent: string
   split: IncomeSplit
-  title: string
-}
-
-function leftoverSharePercent(split: IncomeSplit): number {
-  if (split.incomeVnd <= 0) return 0
-  return Math.round((split.leftoverVnd / split.incomeVnd) * 100)
+  title?: string
 }
 
 function slicePercentOfIncome(value: number, split: IncomeSplit, pieTotal: number): number {
@@ -46,6 +42,7 @@ export function IncomeSplitChart({
   centerLabel,
   centerOverspentLabel,
   className,
+  embedded = false,
   empty,
   leftoverLabel,
   overspent,
@@ -97,67 +94,73 @@ export function IncomeSplitChart({
     }
   }, [config, format, pieTotal, split])
 
+  const body = isEmpty ? (
+    <p className="px-4 py-10 text-center text-sm text-muted-foreground">{empty}</p>
+  ) : (
+    <div className="space-y-2">
+      <ChartContainer className="mx-auto h-[200px] w-full max-w-[16rem] sm:h-[220px]" config={config}>
+        <PieChart>
+          <ChartTooltip content={<PieTooltip />} />
+          <Pie
+            data={slices}
+            dataKey="value"
+            innerRadius={58}
+            nameKey="key"
+            outerRadius={80}
+            paddingAngle={slices.length > 1 ? 2 : 0}
+            stroke="hsl(var(--background))"
+            strokeWidth={2}
+          >
+            {slices.map((row) => (
+              <Cell key={row.key} fill={row.fill} />
+            ))}
+            <Label
+              content={({ viewBox }) => {
+                if (!viewBox || !('cx' in viewBox) || !('cy' in viewBox)) return null
+                const cx = viewBox.cx
+                const cy = viewBox.cy
+                if (cx == null || cy == null) return null
+                return (
+                  <text dominantBaseline="middle" textAnchor="middle" x={cx} y={cy}>
+                    <tspan
+                      className={`text-lg font-semibold ${isOverspent ? 'fill-destructive' : 'fill-foreground'}`}
+                      x={cx}
+                      y={cy}
+                    >
+                      {centerPct}%
+                    </tspan>
+                    <tspan className="fill-muted-foreground text-[11px]" x={cx} y={cy + 18}>
+                      {isOverspent ? centerOverspentLabel : centerLabel}
+                    </tspan>
+                  </text>
+                )
+              }}
+            />
+          </Pie>
+        </PieChart>
+      </ChartContainer>
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 pt-1">
+        {slices.map((row) => (
+          <span key={row.key} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+            <span
+              className="inline-block h-2 w-2 shrink-0 rounded-[2px]"
+              style={{ backgroundColor: config[row.key].color }}
+            />
+            {config[row.key].label}
+          </span>
+        ))}
+      </div>
+      {split.overspentVnd > 0 ? <p className="px-2 text-center text-xs text-destructive">{overspent}</p> : null}
+    </div>
+  )
+
+  if (embedded) {
+    return <div className={className}>{body}</div>
+  }
+
   return (
     <Panel bodyClassName="overflow-visible px-2 pb-3 pt-1" className={className} title={title}>
-      {isEmpty ? (
-        <p className="px-4 py-10 text-center text-sm text-muted-foreground">{empty}</p>
-      ) : (
-        <div className="space-y-2">
-          <ChartContainer className="mx-auto h-[200px] w-full max-w-[16rem] sm:h-[220px]" config={config}>
-            <PieChart>
-              <ChartTooltip content={<PieTooltip />} />
-              <Pie
-                data={slices}
-                dataKey="value"
-                innerRadius={58}
-                nameKey="key"
-                outerRadius={80}
-                paddingAngle={slices.length > 1 ? 2 : 0}
-                stroke="hsl(var(--background))"
-                strokeWidth={2}
-              >
-                {slices.map((row) => (
-                  <Cell key={row.key} fill={row.fill} />
-                ))}
-                <Label
-                  content={({ viewBox }) => {
-                    if (!viewBox || !('cx' in viewBox) || !('cy' in viewBox)) return null
-                    const cx = viewBox.cx
-                    const cy = viewBox.cy
-                    if (cx == null || cy == null) return null
-                    return (
-                      <text dominantBaseline="middle" textAnchor="middle" x={cx} y={cy}>
-                        <tspan
-                          className={`text-lg font-semibold ${isOverspent ? 'fill-destructive' : 'fill-foreground'}`}
-                          x={cx}
-                          y={cy}
-                        >
-                          {centerPct}%
-                        </tspan>
-                        <tspan className="fill-muted-foreground text-[11px]" x={cx} y={cy + 18}>
-                          {isOverspent ? centerOverspentLabel : centerLabel}
-                        </tspan>
-                      </text>
-                    )
-                  }}
-                />
-              </Pie>
-            </PieChart>
-          </ChartContainer>
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 pt-1">
-            {slices.map((row) => (
-              <span key={row.key} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                <span
-                  className="inline-block h-2 w-2 shrink-0 rounded-[2px]"
-                  style={{ backgroundColor: config[row.key].color }}
-                />
-                {config[row.key].label}
-              </span>
-            ))}
-          </div>
-          {split.overspentVnd > 0 ? <p className="px-2 text-center text-xs text-destructive">{overspent}</p> : null}
-        </div>
-      )}
+      {body}
     </Panel>
   )
 }

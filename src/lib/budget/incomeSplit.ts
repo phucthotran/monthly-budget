@@ -19,6 +19,12 @@ export function incomeSplit(snaps: Pick<MonthSnapshot, 'actualSpentVnd' | 'incom
   }
 }
 
+/** Leftover as a percent of income. */
+export function leftoverSharePercent(split: Pick<IncomeSplit, 'incomeVnd' | 'leftoverVnd'>): number {
+  if (split.incomeVnd <= 0) return 0
+  return Math.round((split.leftoverVnd / split.incomeVnd) * 100)
+}
+
 /** Overspend as a percent of income. Spend with no income is 100%. */
 export function overspentSharePercent(split: Pick<IncomeSplit, 'incomeVnd' | 'overspentVnd'>): number {
   if (split.overspentVnd <= 0) return 0

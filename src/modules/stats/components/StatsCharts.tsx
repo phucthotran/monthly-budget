@@ -1,5 +1,5 @@
 import type { MonthSnapshot } from '@/lib/budget/aggregate'
-import type { BudgetItem, IncomePeriod, MonthKey } from '@/lib/types'
+import type { BudgetItem, Category, IncomePeriod, MonthKey } from '@/lib/types'
 import type { TooltipContentProps, TooltipPayloadEntry } from 'recharts'
 
 import { useMemo } from 'react'
@@ -18,18 +18,20 @@ import {
   type ChartTooltipRow,
 } from '@/components/ui'
 import { useMoney } from '@/hooks/useMoney'
+import { categoryIncomeSplit } from '@/lib/budget/categoryIncomeSplit'
 import { incomeSplit } from '@/lib/budget/incomeSplit'
 import { formatMonthLabel, formatMonthLabelShort } from '@/lib/month'
 
 import { buildChartYearSnapshots } from '../buildChartYearSnapshots'
 import { PIE_MONTH_SCOPE_ALL, useStatsChartYearState } from '../hooks/useStatsChartYearState'
 
-import { StatsIncomeSplitChart } from './StatsIncomeSplitChart'
+import { StatsIncomeSplitTabs } from './StatsIncomeSplitTabs'
 import { StatsPieMonthSelect } from './StatsPieMonthSelect'
 
 type Props = {
-  actuals: { spentMonth: MonthKey; amountVnd: number }[]
+  actuals: { amountVnd: number; budgetItemId: string; spentMonth: MonthKey }[]
   budget: BudgetItem[]
+  categories: Category[]
   income: IncomePeriod[]
 }
 
@@ -59,7 +61,7 @@ const xAxisProps = {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export function StatsCharts({ actuals, budget, income }: Props) {
+export function StatsCharts({ actuals, budget, categories, income }: Props) {
   const { t } = useTranslation('stats')
   const { format, formatShort } = useMoney()
   const { filterYear, monthScope, setFilterYear, setMonthScope, yearOptions } = useStatsChartYearState()
@@ -129,17 +131,31 @@ export function StatsCharts({ actuals, budget, income }: Props) {
     return incomeSplit(snaps.filter((s) => s.month === monthKey))
   }, [filterYear, monthScope, snaps])
 
+  const scopedMonths = useMemo(() => {
+    if (monthScope === PIE_MONTH_SCOPE_ALL) return new Set(snaps.map((s) => s.month))
+    return new Set([`${filterYear}-${monthScope}` as MonthKey])
+  }, [filterYear, monthScope, snaps])
+
+  const categorySplit = useMemo(() => {
+    const scopedActuals = actuals.filter((row) => scopedMonths.has(row.spentMonth))
+    return categoryIncomeSplit(split.incomeVnd, scopedActuals, budget)
+  }, [actuals, budget, scopedMonths, split.incomeVnd])
+
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-lg font-semibold tracking-tight">{t('chartSectionTitle')}</h2>
-        <div className="flex flex-wrap items-center gap-3">
-          <StatsPieMonthSelect value={monthScope} onValueChange={setMonthScope} />
-          <YearFilterSelect value={filterYear} years={yearOptions} onValueChange={setFilterYear} />
-        </div>
-      </div>
+      <h2 className="text-lg font-semibold tracking-tight">{t('chartSectionTitle')}</h2>
 
-      <StatsIncomeSplitChart split={split} />
+      <StatsIncomeSplitTabs
+        categories={categories}
+        categorySplit={categorySplit}
+        filters={
+          <>
+            <StatsPieMonthSelect value={monthScope} onValueChange={setMonthScope} />
+            <YearFilterSelect value={filterYear} years={yearOptions} onValueChange={setFilterYear} />
+          </>
+        }
+        split={split}
+      />
 
       {/* Chart 1: Cashflow */}
       <Panel bodyClassName="overflow-visible px-2 pb-3 pt-1" title={t('chartTitleCashflow')}>
