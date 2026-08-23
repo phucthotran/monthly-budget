@@ -255,8 +255,9 @@ function HomeMonthSectionSkeleton({
             <CardHeader>
               <Skeleton className="h-5 w-28 bg-slate-200 dark:bg-slate-800" />
             </CardHeader>
-            <CardContent className="flex justify-center overflow-visible px-2 pb-3 pt-1">
-              <Skeleton className="aspect-square h-[200px] w-full max-w-[16rem] rounded-full bg-slate-200 dark:bg-slate-800 sm:h-[220px]" />
+            <CardContent className="flex justify-center overflow-visible px-2 pb-3 pt-1 flex-col items-center gap-8">
+              <Skeleton className="aspect-square size-40 rounded-full bg-slate-200 dark:bg-slate-800" />
+              <Skeleton className="h-5 w-28 bg-slate-200 dark:bg-slate-800" />
             </CardContent>
           </Card>
           <HomeMetricTileSkeleton className="h-full min-w-0" footer="breakdown" />
