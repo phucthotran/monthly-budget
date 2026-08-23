@@ -2,6 +2,7 @@ export { ActionTooltipButton, type ActionTooltipButtonProps } from './ActionTool
 export { AuthCard, type AuthCardProps } from './AuthCard'
 export { ConfirmDeleteDialog, type ConfirmDeleteDialogProps } from './ConfirmDeleteDialog'
 export { EmptyState, type EmptyStateProps } from './EmptyState'
+export { IncomeSplitChart, type IncomeSplitChartProps } from './IncomeSplitChart'
 export { FormLabelWithHint, type FormLabelWithHintProps, InfoTooltip, type InfoTooltipProps } from './InfoTooltip'
 export { MetricTile, type MetricTileProps } from './MetricTile'
 export { MobileBackButton, type MobileBackButtonProps } from './MobileBackButton'

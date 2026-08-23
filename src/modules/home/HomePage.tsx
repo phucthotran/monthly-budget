@@ -3,16 +3,18 @@ import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useAuthContext } from '@/components/AuthProvider'
-import { PageHeading, PageLoadingSkeleton } from '@/components/patterns'
+import { IncomeSplitChart, PageHeading, PageLoadingSkeleton } from '@/components/patterns'
 import { RequireAuth } from '@/components/RequireAuth'
 import { useMoney } from '@/hooks/useMoney'
 import { usePreferencesMutations } from '@/hooks/usePreferencesMutations'
 import { useActualExpenses, useBudgetItems, useIncomePeriods } from '@/hooks/useUserCollections'
 import { useUserPreferences } from '@/hooks/useUserPreferences'
 import { buildHomeMonthLineItems } from '@/lib/budget/homeMonthBreakdown'
+import { incomeSplit, overspentSharePercent } from '@/lib/budget/incomeSplit'
 import { DEFAULT_CURRENCY } from '@/lib/money'
 import { formatMonthLabel } from '@/lib/month'
 
+import { HomeIncomeTile } from './components/HomeIncomeTile'
 import { HomeSummaryTiles } from './components/HomeSummaryTiles'
 import { OnboardingCard } from './components/OnboardingCard'
 import { useHomeData } from './hooks/useHomeData'
@@ -51,6 +53,8 @@ export function HomePage() {
     [actuals, budget, income, nextMonth, t],
   )
 
+  const split = useMemo(() => incomeSplit(cur ? [cur] : []), [cur])
+
   return (
     <RequireAuth>
       {dataLoading ? (
@@ -81,12 +85,36 @@ export function HomePage() {
                 {formatMonthLabel(currentMonth)}
               </div>
             </div>
+            {!isNewUser ? (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <IncomeSplitChart
+                  actualLabel={t('actualSpent')}
+                  centerLabel={t('chartIncomeSplitCenter')}
+                  centerOverspentLabel={t('chartIncomeSplitCenterOver')}
+                  className="h-full"
+                  empty={t('chartIncomeSplitEmpty')}
+                  leftoverLabel={t('chartLeftover')}
+                  overspent={t('chartIncomeSplitOverspent', {
+                    amount: format(split.overspentVnd),
+                    percent: overspentSharePercent(split),
+                  })}
+                  split={split}
+                  title={t('chartTitleIncomeSplit')}
+                />
+                <HomeIncomeTile
+                  className="h-full"
+                  incomeLabel={cur ? format(cur.incomeVnd) : '—'}
+                  incomeLines={breakdownThisMonth.incomeLines}
+                />
+              </div>
+            ) : null}
             <HomeSummaryTiles
               actualSavingsToDateLabel={cur ? format(cur.actualSavingsToDateVnd) : '—'}
               actualSpentLabel={cur ? format(cur.actualSpentVnd) : '—'}
               actualSurplusLabel={cur ? format(cur.actualSurplusVnd) : '—'}
               breakdown={breakdownThisMonth}
               incomeLabel={cur ? format(cur.incomeVnd) : '—'}
+              omitIncome={!isNewUser}
               plannedBudgetLabel={cur ? format(cur.plannedVnd) : '—'}
               plannedSavingsToDateLabel={cur ? format(cur.plannedSavingsToDateVnd) : '—'}
               plannedSurplusLabel={cur ? format(cur.plannedSurplusVnd) : '—'}

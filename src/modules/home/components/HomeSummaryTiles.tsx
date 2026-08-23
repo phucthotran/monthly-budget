@@ -1,4 +1,4 @@
-import { Banknote, HandCoinsIcon, Landmark, PiggyBank, TrendingUp, Wallet } from 'lucide-react'
+import { Banknote, HandCoinsIcon, Landmark, PiggyBank, TrendingUp } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { MetricTile } from '@/components/patterns'
@@ -6,6 +6,7 @@ import { type HomeMonthLineItem } from '@/lib/budget/homeMonthBreakdown'
 
 import { AggregateTileContents } from './AggregateTileContents'
 import { BreakdownLines } from './BreakdownLines'
+import { HomeIncomeTile } from './HomeIncomeTile'
 import { TileTitleWithHint } from './TileTitleWithHint'
 
 export type HomeSummaryTilesSharedProps = {
@@ -15,6 +16,8 @@ export type HomeSummaryTilesSharedProps = {
     plannedLines: readonly HomeMonthLineItem[]
   }
   incomeLabel: string
+  /** When true, skip the income tile (rendered beside the this-month pie instead). */
+  omitIncome?: boolean
   plannedBudgetLabel: string
   plannedSavingsComposition?: {
     amountLabel: string
@@ -68,6 +71,7 @@ export function HomeSummaryTiles(props: HomeSummaryTilesProps) {
   const {
     breakdown,
     incomeLabel,
+    omitIncome,
     plannedBudgetLabel,
     plannedSavingsComposition,
     plannedSavingsHint: plannedSavingsHintOverride,
@@ -83,23 +87,9 @@ export function HomeSummaryTiles(props: HomeSummaryTilesProps) {
 
   return (
     <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
-      <MetricTile
-        className="min-w-0 lg:col-span-2"
-        title={
-          <span className="inline-flex items-center gap-2">
-            <Wallet className="size-5 text-muted-foreground shrink-0" />
-            <TileTitleWithHint
-              content={<p className="max-w-xs text-pretty text-sm leading-snug">{t('incomeHint')}</p>}
-              label={t('income')}
-            />
-          </span>
-        }
-        contentClassName="font-normal"
-      >
-        <AggregateTileContents footer={<BreakdownLines lines={breakdown.incomeLines} />}>
-          <span className="text-primary">{incomeLabel}</span>
-        </AggregateTileContents>
-      </MetricTile>
+      {!omitIncome ? (
+        <HomeIncomeTile className="lg:col-span-2" incomeLabel={incomeLabel} incomeLines={breakdown.incomeLines} />
+      ) : null}
       <MetricTile
         className="min-w-0"
         title={

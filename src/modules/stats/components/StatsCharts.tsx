@@ -18,10 +18,14 @@ import {
   type ChartTooltipRow,
 } from '@/components/ui'
 import { useMoney } from '@/hooks/useMoney'
+import { incomeSplit } from '@/lib/budget/incomeSplit'
 import { formatMonthLabel, formatMonthLabelShort } from '@/lib/month'
 
 import { buildChartYearSnapshots } from '../buildChartYearSnapshots'
-import { useStatsChartYearState } from '../hooks/useStatsChartYearState'
+import { PIE_MONTH_SCOPE_ALL, useStatsChartYearState } from '../hooks/useStatsChartYearState'
+
+import { StatsIncomeSplitChart } from './StatsIncomeSplitChart'
+import { StatsPieMonthSelect } from './StatsPieMonthSelect'
 
 type Props = {
   actuals: { spentMonth: MonthKey; amountVnd: number }[]
@@ -58,7 +62,7 @@ const xAxisProps = {
 export function StatsCharts({ actuals, budget, income }: Props) {
   const { t } = useTranslation('stats')
   const { format, formatShort } = useMoney()
-  const { filterYear, setFilterYear, yearOptions } = useStatsChartYearState()
+  const { filterYear, monthScope, setFilterYear, setMonthScope, yearOptions } = useStatsChartYearState()
 
   const cashflowConfig = useMemo(
     () =>
@@ -119,12 +123,23 @@ export function StatsCharts({ actuals, budget, income }: Props) {
     [snaps],
   )
 
+  const split = useMemo(() => {
+    if (monthScope === PIE_MONTH_SCOPE_ALL) return incomeSplit(snaps)
+    const monthKey = `${filterYear}-${monthScope}`
+    return incomeSplit(snaps.filter((s) => s.month === monthKey))
+  }, [filterYear, monthScope, snaps])
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-lg font-semibold tracking-tight">{t('chartSectionTitle')}</h2>
-        <YearFilterSelect value={filterYear} years={yearOptions} onValueChange={setFilterYear} />
+        <div className="flex flex-wrap items-center gap-3">
+          <StatsPieMonthSelect value={monthScope} onValueChange={setMonthScope} />
+          <YearFilterSelect value={filterYear} years={yearOptions} onValueChange={setFilterYear} />
+        </div>
       </div>
+
+      <StatsIncomeSplitChart split={split} />
 
       {/* Chart 1: Cashflow */}
       <Panel bodyClassName="overflow-visible px-2 pb-3 pt-1" title={t('chartTitleCashflow')}>

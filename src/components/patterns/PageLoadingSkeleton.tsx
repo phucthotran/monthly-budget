@@ -137,9 +137,9 @@ function HomeHeadingSkeleton() {
 type HomeMetricTileFooter = 'breakdown' | 'compact' | 'savings'
 
 /** Matches `MetricTile` + `TileTitleWithHint` + optional `AggregateTileContents` footers (HomeSummaryTiles). */
-function HomeMetricTileSkeleton({ footer }: { footer: HomeMetricTileFooter }) {
+function HomeMetricTileSkeleton({ className, footer }: { className?: string; footer: HomeMetricTileFooter }) {
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader>
         <div className="flex min-w-0 items-center gap-2">
           <Skeleton className="size-5 shrink-0 rounded-md" />
@@ -189,13 +189,21 @@ function HomeTwinMetricStackSkeleton() {
   )
 }
 
-/** Matches `HomeSummaryTiles` grid: full-width income on lg, pair rows with a stacked column. */
-function HomeSummaryTilesSkeleton({ plannedOverviewOnly }: { plannedOverviewOnly?: boolean }) {
+/** Matches `HomeSummaryTiles` grid: optional full-width income on lg, pair rows with a stacked column. */
+function HomeSummaryTilesSkeleton({
+  omitIncome,
+  plannedOverviewOnly,
+}: {
+  omitIncome?: boolean
+  plannedOverviewOnly?: boolean
+}) {
   return (
     <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
-      <div className="min-w-0 lg:col-span-2">
-        <HomeMetricTileSkeleton footer="breakdown" />
-      </div>
+      {!omitIncome ? (
+        <div className="min-w-0 lg:col-span-2">
+          <HomeMetricTileSkeleton footer="breakdown" />
+        </div>
+      ) : null}
       <div className="min-w-0">
         <HomeMetricTileSkeleton footer="breakdown" />
       </div>
@@ -214,7 +222,7 @@ function HomeSummaryTilesSkeleton({ plannedOverviewOnly }: { plannedOverviewOnly
 
 /**
  * Matches HomePage month block: CalendarDays + heading | pill (`formatMonthLabel`),
- * optional next-month helper copy, then `HomeSummaryTiles`.
+ * optional this-month pie + income row, optional next-month helper copy, then `HomeSummaryTiles`.
  */
 function HomeMonthSectionSkeleton({
   monthTitleWidth,
@@ -241,7 +249,20 @@ function HomeMonthSectionSkeleton({
           <Skeleton className="h-4 w-[90%] bg-slate-200 dark:bg-slate-800" />
         </div>
       ) : null}
-      <HomeSummaryTilesSkeleton plannedOverviewOnly={plannedOverviewOnly} />
+      {!plannedOverviewOnly ? (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Card className="h-full">
+            <CardHeader>
+              <Skeleton className="h-5 w-28 bg-slate-200 dark:bg-slate-800" />
+            </CardHeader>
+            <CardContent className="flex justify-center overflow-visible px-2 pb-3 pt-1">
+              <Skeleton className="aspect-square h-[200px] w-full max-w-[16rem] rounded-full bg-slate-200 dark:bg-slate-800 sm:h-[220px]" />
+            </CardContent>
+          </Card>
+          <HomeMetricTileSkeleton className="h-full min-w-0" footer="breakdown" />
+        </div>
+      ) : null}
+      <HomeSummaryTilesSkeleton omitIncome={!plannedOverviewOnly} plannedOverviewOnly={plannedOverviewOnly} />
     </div>
   )
 }
