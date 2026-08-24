@@ -40,7 +40,9 @@
   "titleLabel": "Tên khoản",
   "validFrom": "Từ tháng",
   "validFromCreateHint": "Chỉ cho phép tạo khoản từ tháng hiện tại trở đi.",
+  "validFromLockedHint": "Không đổi tháng bắt đầu khi khoản này đã có chi thực tế. Xóa các dòng chi đó trước nếu cần đổi.",
   "validTo": "Đến tháng (tùy chọn)",
+  "validToActualsHint": "Nếu chọn, tháng kết thúc phải trùng hoặc sau tháng chi thực tế gần nhất ({{month}}).",
   "validToHint": "Có thể trùng tháng với từ tháng hoặc chọn tháng sau.",
   "viewActual": "Xem chi thực tế",
   "viewActualBody": "Xem các dòng chi đã ghi theo từng tháng. Kỳ đã kết thúc không thể thêm hay xóa."

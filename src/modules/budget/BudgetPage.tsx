@@ -19,6 +19,7 @@ import { Button } from '@/components/ui'
 import { useMoney } from '@/hooks/useMoney'
 import { usePeriodListPageState } from '@/hooks/usePeriodListPageState'
 import { useActualExpenses, useBudgetItems, useCategories } from '@/hooks/useUserCollections'
+import { actualSpentMonthBoundsByItemId } from '@/lib/budget/apply'
 import { asOfMonthForYearFilter, currentMonthKey, formatMonthLabel, matchesPeriodStatusFilter } from '@/lib/month'
 import { runWithToast } from '@/lib/toast'
 
@@ -51,6 +52,7 @@ export function BudgetPage() {
   const dataLoading = !categoriesReady || !itemsReady || !actualsReady
 
   const { actualMap } = useBudgetDerived(actuals)
+  const actualMonthBoundsByItemId = useMemo(() => actualSpentMonthBoundsByItemId(actuals), [actuals])
   const itemIdsWithActuals = useMemo(() => new Set(actuals.map((a) => a.budgetItemId)), [actuals])
 
   const mutations = useBudgetMutations(uid)
@@ -87,6 +89,7 @@ export function BudgetPage() {
 
           <BudgetItemDialog
             ref={budgetDialogRef}
+            actualMonthBoundsByItemId={actualMonthBoundsByItemId}
             categories={categories}
             defaultMonth={dialogDefaultMonth}
             itemIdsWithActuals={itemIdsWithActuals}

@@ -74,8 +74,10 @@
     "nameRequired": "Nhập tên danh mục.",
     "noteRequired": "Nhập ghi chú.",
     "titleRequired": "Nhập tên khoản.",
+    "validFromLockedWithActuals": "Không đổi tháng bắt đầu khi đã có chi thực tế.",
     "validFromNotBeforeCurrent": "Khi tạo mới, chỉ chọn từ tháng hiện tại trở đi.",
-    "validToBeforeFrom": "Tháng kết thúc không được trước tháng bắt đầu."
+    "validToBeforeFrom": "Tháng kết thúc không được trước tháng bắt đầu.",
+    "validToBeforeLatestActual": "Tháng kết thúc không được trước tháng chi thực tế gần nhất ({{month}})."
   },
   "visible": "Hiển thị",
   "year": "Năm"

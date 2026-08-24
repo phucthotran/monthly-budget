@@ -74,8 +74,10 @@
     "nameRequired": "Enter a category name.",
     "noteRequired": "Enter a note.",
     "titleRequired": "Enter a name.",
+    "validFromLockedWithActuals": "Start month cannot change after actual spending is recorded.",
     "validFromNotBeforeCurrent": "When creating, start from the current month or later.",
-    "validToBeforeFrom": "End month cannot be before the start month."
+    "validToBeforeFrom": "End month cannot be before the start month.",
+    "validToBeforeLatestActual": "End month cannot be before the latest actual ({{month}})."
   },
   "visible": "Visible",
   "year": "Year"

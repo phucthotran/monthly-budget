@@ -40,7 +40,9 @@
   "titleLabel": "Item name",
   "validFrom": "From month",
   "validFromCreateHint": "New items can only start from the current month onward.",
+  "validFromLockedHint": "Start month cannot change after actual spending is recorded on this item. Delete those actuals first if you need a different start month.",
   "validTo": "To month (optional)",
+  "validToActualsHint": "If set, the end month must be on or after the latest actual ({{month}}).",
   "validToHint": "Can match the start month or a later month.",
   "viewActual": "View actual spending",
   "viewActualBody": "See recorded lines by month. Ended periods cannot add or delete lines."

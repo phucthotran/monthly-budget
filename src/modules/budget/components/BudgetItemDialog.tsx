@@ -1,3 +1,4 @@
+import type { ActualMonthBounds } from '@/lib/budget/apply'
 import type { BudgetItem, Category, MonthKey } from '@/lib/types'
 
 import { useForm } from '@tanstack/react-form'
@@ -21,9 +22,9 @@ import {
 } from '@/components/ui'
 import { useMoney } from '@/hooks/useMoney'
 import { firstFieldErrorMessage } from '@/lib/form/fieldMeta'
-import { compareMonthKeys, monthYearPickerYearConstraints } from '@/lib/month'
+import { compareMonthKeys, formatMonthLabel, monthYearPickerYearConstraints } from '@/lib/month'
 
-import { budgetItemFormSchema } from '../schemas/budgetItemFormSchema'
+import { budgetItemFormSchema, budgetItemValidToActualsError } from '../schemas/budgetItemFormSchema'
 
 export type BudgetItemDialogHandle = {
   openCreate: () => void
@@ -33,11 +34,13 @@ export type BudgetItemDialogHandle = {
 
 function BudgetItemDialogImpl(
   {
+    actualMonthBoundsByItemId,
     categories,
     defaultMonth,
     itemIdsWithActuals,
     onSubmit,
   }: {
+    actualMonthBoundsByItemId: Map<string, ActualMonthBounds>
     categories: Category[]
     defaultMonth: MonthKey
     itemIdsWithActuals: Set<string>
@@ -56,7 +59,16 @@ function BudgetItemDialogImpl(
 
   const defaultCategoryId = useMemo(() => categories.find((c) => !c.archived)?.id ?? '', [categories])
   const yearPick = useMemo(() => monthYearPickerYearConstraints(editing), [editing])
-  const schema = useMemo(() => budgetItemFormSchema(!!editing, currency), [currency, editing])
+  const actualBounds = editing ? (actualMonthBoundsByItemId.get(editing.id) ?? null) : null
+  const fromLocked = actualBounds != null
+  const schema = useMemo(
+    () =>
+      budgetItemFormSchema(!!editing, currency, {
+        actualBounds,
+        lockedValidFrom: fromLocked && editing ? editing.validFrom : null,
+      }),
+    [actualBounds, currency, editing, fromLocked],
+  )
   const formId = useId()
   const categoryLocked = editing != null && itemIdsWithActuals.has(editing.id)
 
@@ -74,7 +86,7 @@ function BudgetItemDialogImpl(
         amountVnd: value.amountVnd,
         categoryId: categoryLocked && editing ? editing.categoryId : value.categoryId,
         title: value.title.trim(),
-        validFrom: value.validFrom as MonthKey,
+        validFrom: fromLocked && editing ? editing.validFrom : (value.validFrom as MonthKey),
         validTo,
       })
 
@@ -234,7 +246,11 @@ function BudgetItemDialogImpl(
               const errId = `${formId}-validFrom-err`
               return (
                 <Field invalid={!!err}>
-                  {editing ? (
+                  {fromLocked ? (
+                    <FormLabelWithHint hint={<p className="text-pretty">{t('validFromLockedHint')}</p>}>
+                      {t('validFrom')}
+                    </FormLabelWithHint>
+                  ) : editing ? (
                     <FieldLabel>{t('validFrom')}</FieldLabel>
                   ) : (
                     <FormLabelWithHint hint={<p className="text-pretty">{t('validFromCreateHint')}</p>}>
@@ -242,6 +258,7 @@ function BudgetItemDialogImpl(
                     </FormLabelWithHint>
                   )}
                   <MonthYearPicker
+                    disabled={fromLocked}
                     invalid={!!err}
                     value={field.state.value}
                     maxYear={yearPick.maxYear}
@@ -261,20 +278,37 @@ function BudgetItemDialogImpl(
               )
             }}
           </form.Field>
-          <form.Field name="validTo">
+          <form.Field
+            name="validTo"
+            validators={{
+              onSubmit: ({ value }) =>
+                actualBounds ? budgetItemValidToActualsError(value, actualBounds.latest) : undefined,
+            }}
+          >
             {(field) => {
               const err = firstFieldErrorMessage(field.state.meta)
               const errId = `${formId}-validTo-err`
               return (
                 <Field invalid={!!err}>
-                  <FormLabelWithHint hint={<p className="text-pretty">{t('validToHint')}</p>}>
+                  <FormLabelWithHint
+                    hint={
+                      <p className="text-pretty">
+                        {actualBounds
+                          ? t('validToActualsHint', { month: formatMonthLabel(actualBounds.latest) })
+                          : t('validToHint')}
+                      </p>
+                    }
+                  >
                     {t('validTo')}
                   </FormLabelWithHint>
                   <form.Subscribe selector={(s) => s.values.validFrom}>
                     {(validFrom) => {
                       const fromKey = /^\d{4}-\d{2}$/.test(validFrom) ? (validFrom as MonthKey) : defaultMonth
-                      const fromYear = Number(fromKey.slice(0, 4))
-                      const toMinYear = Math.max(yearPick.minYear, fromYear)
+                      const toMinMonth =
+                        actualBounds && compareMonthKeys(fromKey, actualBounds.latest) < 0
+                          ? actualBounds.latest
+                          : fromKey
+                      const toMinYear = Math.max(yearPick.minYear, Number(toMinMonth.slice(0, 4)))
                       return (
                         <MonthYearPicker
                           invalid={!!err}
@@ -282,7 +316,7 @@ function BudgetItemDialogImpl(
                           value={field.state.value}
                           maxYear={yearPick.maxYear}
                           maxYears={yearPick.maxYears}
-                          minMonth={fromKey}
+                          minMonth={toMinMonth}
                           minYear={toMinYear}
                           onChange={(v) => field.handleChange(v)}
                         />

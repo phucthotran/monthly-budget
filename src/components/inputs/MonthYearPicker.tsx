@@ -35,6 +35,7 @@ function visibleYearsAsc(yearsAsc: number[], centerYear: number, maxYears: numbe
 
 export function MonthYearPicker({
   className,
+  disabled,
   invalid,
   maxMonth,
   maxYear,
@@ -50,17 +51,18 @@ export function MonthYearPicker({
   placeholder,
   value,
 }: {
-  value: MonthKey
-  onChange: (v: MonthKey) => void
-  placeholder?: string
   className?: string
+  disabled?: boolean
   invalid?: boolean
-  minMonth?: MonthKey
   maxMonth?: MonthKey
-  minYear?: number
   maxYear?: number
   maxYears?: number
+  minMonth?: MonthKey
+  minYear?: number
+  onChange: (v: MonthKey) => void
   outOfMinSync?: 'empty' | 'minMonth'
+  placeholder?: string
+  value: MonthKey
 }) {
   const { t } = useTranslation()
   const resolvedPlaceholder = placeholder ?? t('pickMonth')
@@ -73,7 +75,7 @@ export function MonthYearPicker({
   onChangeRef.current = onChange
 
   useLayoutEffect(() => {
-    if (!isValidKey || !trimmed) return
+    if (disabled || !isValidKey || !trimmed) return
     const v = trimmed as MonthKey
     if (minMonth && compareMonthKeys(v, minMonth) < 0) {
       if (outOfMinSync === 'empty') onChangeRef.current('' as MonthKey)
@@ -83,7 +85,7 @@ export function MonthYearPicker({
     if (maxMonth && compareMonthKeys(v, maxMonth) > 0) {
       onChangeRef.current(maxMonth)
     }
-  }, [isValidKey, maxMonth, minMonth, outOfMinSync, trimmed])
+  }, [disabled, isValidKey, maxMonth, minMonth, outOfMinSync, trimmed])
 
   const effectiveMonth: MonthKey = (() => {
     if (isValidKey) {
@@ -137,6 +139,7 @@ export function MonthYearPicker({
       <div className="relative min-w-0">
         <Calendar className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Select
+          disabled={disabled}
           value={displayEmpty ? '' : month}
           onValueChange={(mm) => {
             onChange(`${yStr}-${mm}` as MonthKey)
@@ -158,6 +161,7 @@ export function MonthYearPicker({
       </div>
 
       <Select
+        disabled={disabled}
         value={displayEmpty ? '' : String(year)}
         onValueChange={(y) => {
           onChange(`${y}-${monthForYear(y)}` as MonthKey)

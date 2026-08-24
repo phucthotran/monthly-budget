@@ -1,6 +1,37 @@
 import type { BudgetItem, IncomePeriod, MonthKey } from '@/lib/types'
 
-import { isMonthInRange } from '@/lib/month'
+import { compareMonthKeys, isMonthInRange } from '@/lib/month'
+
+export type ActualMonthBounds = {
+  latest: MonthKey
+  oldest: MonthKey
+}
+
+export function actualSpentMonthBoundsByItemId(
+  actuals: { budgetItemId: string; spentMonth: MonthKey }[],
+): Map<string, ActualMonthBounds> {
+  const map = new Map<string, ActualMonthBounds>()
+  for (const a of actuals) {
+    const prev = map.get(a.budgetItemId)
+    if (!prev) {
+      map.set(a.budgetItemId, { latest: a.spentMonth, oldest: a.spentMonth })
+      continue
+    }
+    if (compareMonthKeys(a.spentMonth, prev.oldest) < 0) prev.oldest = a.spentMonth
+    if (compareMonthKeys(a.spentMonth, prev.latest) > 0) prev.latest = a.spentMonth
+  }
+  return map
+}
+
+export function periodCoversActualMonthBounds(
+  validFrom: MonthKey,
+  validTo: MonthKey | null,
+  bounds: ActualMonthBounds,
+): boolean {
+  if (compareMonthKeys(validFrom, bounds.oldest) > 0) return false
+  if (validTo !== null && compareMonthKeys(validTo, bounds.latest) < 0) return false
+  return true
+}
 
 export function incomeForMonth(month: MonthKey, periods: IncomePeriod[]): number {
   return periods.filter((p) => isMonthInRange(month, p.validFrom, p.validTo)).reduce((s, p) => s + p.amountVnd, 0)

@@ -1,10 +1,14 @@
-import type { BudgetItem, MonthKey } from '@/lib/types'
+import type { ActualExpense, BudgetItem, MonthKey } from '@/lib/types'
 
 import { useQueryClient } from '@tanstack/react-query'
 import { addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore'
 import { useMemo } from 'react'
 
-import { canRecordActualExpenseForBudgetItem } from '@/lib/budget/apply'
+import {
+  actualSpentMonthBoundsByItemId,
+  canRecordActualExpenseForBudgetItem,
+  periodCoversActualMonthBounds,
+} from '@/lib/budget/apply'
 import { getFirestoreDb } from '@/lib/firebase'
 import { compareMonthKeys, currentMonthKey } from '@/lib/month'
 import { queryKeys } from '@/lib/query-keys'
@@ -29,6 +33,21 @@ export function useBudgetMutations(uid: string | undefined) {
     async function upsertBudgetItem(editing: BudgetItem | null, input: BudgetItemInput) {
       if (!editing && compareMonthKeys(input.validFrom, currentMonthKey()) < 0) {
         throw new Error('New budget item validFrom must be current month or later')
+      }
+
+      if (editing) {
+        const cached = qc.getQueryData<ActualExpense[]>(queryKeys.actualExpenses(userId))
+        if (cached) {
+          const bounds = actualSpentMonthBoundsByItemId(cached).get(editing.id)
+          if (bounds) {
+            if (input.validFrom !== editing.validFrom) {
+              throw new Error('Budget item validFrom cannot change after actual expenses exist')
+            }
+            if (!periodCoversActualMonthBounds(input.validFrom, input.validTo, bounds)) {
+              throw new Error('Budget item period must cover all recorded actual expense months')
+            }
+          }
+        }
       }
 
       const now = Date.now()
