@@ -14,6 +14,7 @@
   "addActualContext": "record the amount spent on this item",
   "amount": "Amount ({{currency}})",
   "category": "Category",
+  "categoryLockedHint": "Category cannot change after actual spending is recorded on this item. Delete those actuals first if you need a different category.",
   "createdAt": "Recorded on",
   "delete": "Delete",
   "deleteAction": "Delete budget item",

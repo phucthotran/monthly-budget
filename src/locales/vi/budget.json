@@ -14,6 +14,7 @@
   "addActualContext": "ghi số tiền đã chi cho khoản này",
   "amount": "Số tiền ({{currency}})",
   "category": "Phân loại",
+  "categoryLockedHint": "Không đổi phân loại khi khoản này đã có chi thực tế. Xóa các dòng chi đó trước nếu cần đổi.",
   "createdAt": "Ngày ghi",
   "delete": "Xóa",
   "deleteAction": "Xóa khoản dự chi",

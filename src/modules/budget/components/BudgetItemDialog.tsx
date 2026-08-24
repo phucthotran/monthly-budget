@@ -35,10 +35,12 @@ function BudgetItemDialogImpl(
   {
     categories,
     defaultMonth,
+    itemIdsWithActuals,
     onSubmit,
   }: {
     categories: Category[]
     defaultMonth: MonthKey
+    itemIdsWithActuals: Set<string>
     onSubmit: (
       editing: BudgetItem | null,
       value: { title: string; amountVnd: number; categoryId: string; validFrom: MonthKey; validTo: MonthKey | null },
@@ -56,6 +58,7 @@ function BudgetItemDialogImpl(
   const yearPick = useMemo(() => monthYearPickerYearConstraints(editing), [editing])
   const schema = useMemo(() => budgetItemFormSchema(!!editing, currency), [currency, editing])
   const formId = useId()
+  const categoryLocked = editing != null && itemIdsWithActuals.has(editing.id)
 
   const form = useForm({
     defaultValues: {
@@ -69,7 +72,7 @@ function BudgetItemDialogImpl(
       const validTo = value.validTo.trim() ? (value.validTo.trim() as MonthKey) : null
       await onSubmit(editing, {
         amountVnd: value.amountVnd,
-        categoryId: value.categoryId,
+        categoryId: categoryLocked && editing ? editing.categoryId : value.categoryId,
         title: value.title.trim(),
         validFrom: value.validFrom as MonthKey,
         validTo,
@@ -191,8 +194,18 @@ function BudgetItemDialogImpl(
               const errId = `${formId}-category-err`
               return (
                 <Field invalid={!!err}>
-                  <FieldLabel htmlFor={`${formId}-category`}>{t('category')}</FieldLabel>
-                  <Select value={field.state.value} onValueChange={(v) => field.handleChange(v)}>
+                  {categoryLocked ? (
+                    <FormLabelWithHint hint={<p className="text-pretty">{t('categoryLockedHint')}</p>}>
+                      {t('category')}
+                    </FormLabelWithHint>
+                  ) : (
+                    <FieldLabel htmlFor={`${formId}-category`}>{t('category')}</FieldLabel>
+                  )}
+                  <Select
+                    disabled={categoryLocked}
+                    value={field.state.value}
+                    onValueChange={(v) => field.handleChange(v)}
+                  >
                     <SelectTrigger
                       aria-describedby={err ? errId : undefined}
                       aria-invalid={!!err}
@@ -202,7 +215,7 @@ function BudgetItemDialogImpl(
                     </SelectTrigger>
                     <SelectContent>
                       {categories
-                        .filter((c) => !c.archived)
+                        .filter((c) => !c.archived || c.id === field.state.value)
                         .map((c) => (
                           <SelectItem key={c.id} value={c.id}>
                             {c.name}

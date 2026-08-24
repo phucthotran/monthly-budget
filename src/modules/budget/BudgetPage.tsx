@@ -51,6 +51,7 @@ export function BudgetPage() {
   const dataLoading = !categoriesReady || !itemsReady || !actualsReady
 
   const { actualMap } = useBudgetDerived(actuals)
+  const itemIdsWithActuals = useMemo(() => new Set(actuals.map((a) => a.budgetItemId)), [actuals])
 
   const mutations = useBudgetMutations(uid)
 
@@ -88,6 +89,7 @@ export function BudgetPage() {
             ref={budgetDialogRef}
             categories={categories}
             defaultMonth={dialogDefaultMonth}
+            itemIdsWithActuals={itemIdsWithActuals}
             onSubmit={async (editing, value) => {
               if (!mutations) return
               await runWithToast(() => mutations.upsertBudgetItem(editing, value), tc('toast.budgetSaved'))
