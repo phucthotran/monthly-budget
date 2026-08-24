@@ -24,13 +24,13 @@ export function InfoTooltip({ ariaLabel, className, content, htmlTag = 'button' 
             type="button"
             variant="ghost"
             size="icon"
-            className={cn('size-6 rounded-full text-muted-foreground hover:text-foreground', className)}
+            className={cn('size-6 rounded-full text-muted-foreground hover:text-foreground mx-2', className)}
             aria-label={ariaLabel ?? t('moreInfo')}
           >
             <Info className="size-3.5" aria-hidden />
           </Button>
         ) : (
-          <span className={cn('inline-flex items-center justify-center min-w-0 cursor-pointer', className)}>
+          <span className={cn('inline-flex items-center justify-center min-w-0 cursor-pointer mx-2', className)}>
             <Info className="size-3.5" aria-hidden />
           </span>
         )}

@@ -3,6 +3,7 @@ import type { IncomeSplit } from '@/lib/budget/incomeSplit'
 import type { Category } from '@/lib/types'
 import type { ReactNode } from 'react'
 
+import { LayoutGrid, Settings } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { Panel } from '@/components/patterns'
@@ -25,14 +26,16 @@ export function StatsIncomeSplitTabs({
   const { t } = useTranslation('stats')
 
   return (
-    <Panel bodyClassName="overflow-visible px-2 pb-3 pt-1" title={t('chartTitleIncomeSplit')}>
+    <Panel bodyClassName="overflow-visible pt-1" title={t('chartTitleIncomeSplit')}>
       <Tabs defaultValue="overview">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <TabsList className="grid h-11 w-full grid-cols-2 gap-1 sm:h-10 sm:w-auto sm:min-w-[16rem]">
-            <TabsTrigger className="min-w-0 px-2 text-xs sm:px-3 sm:text-sm" value="overview">
+            <TabsTrigger className="min-w-0 px-2 text-xs sm:px-3 sm:text-sm gap-2" value="overview">
+              <LayoutGrid className="size-4" />
               <span className="min-w-0 truncate">{t('chartTabIncomeOverview')}</span>
             </TabsTrigger>
-            <TabsTrigger className="min-w-0 px-2 text-xs sm:px-3 sm:text-sm" value="category">
+            <TabsTrigger className="min-w-0 px-2 text-xs sm:px-3 sm:text-sm gap-2" value="category">
+              <Settings className="size-4" />
               <span className="min-w-0 truncate">{t('chartTabIncomeCategory')}</span>
             </TabsTrigger>
           </TabsList>
