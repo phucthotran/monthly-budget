@@ -21,15 +21,15 @@ export function StatsPieMonthSelect({
   const { t: tc } = useTranslation()
 
   return (
-    <div className={cn('flex flex-wrap items-center gap-2', className)}>
-      <span className="text-sm text-muted-foreground whitespace-nowrap">{tc('month')}</span>
+    <div className={cn('flex min-w-0 flex-wrap items-center gap-2', className)}>
+      <span className="sr-only text-sm text-muted-foreground whitespace-nowrap sm:not-sr-only">{tc('month')}</span>
       <Select
         value={value}
         onValueChange={(next) => {
           if (isPieMonthScope(next)) onValueChange(next)
         }}
       >
-        <SelectTrigger className="w-[7.5rem]">
+        <SelectTrigger className="w-full sm:w-[7.5rem]">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

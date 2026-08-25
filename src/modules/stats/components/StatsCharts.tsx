@@ -151,7 +151,7 @@ export function StatsCharts({ actuals, budget, categories, income }: Props) {
         filters={
           <>
             <StatsPieMonthSelect value={monthScope} onValueChange={setMonthScope} />
-            <YearFilterSelect value={filterYear} years={yearOptions} onValueChange={setFilterYear} />
+            <YearFilterSelect hideLabelOnMobile value={filterYear} years={yearOptions} onValueChange={setFilterYear} />
           </>
         }
         split={split}

@@ -39,7 +39,9 @@ export function StatsIncomeSplitTabs({
               <span className="min-w-0 truncate">{t('chartTabIncomeCategory')}</span>
             </TabsTrigger>
           </TabsList>
-          <div className="flex flex-wrap items-center gap-3 sm:justify-end">{filters}</div>
+          <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:items-center sm:justify-end sm:gap-3">
+            {filters}
+          </div>
         </div>
         <TabsContent className="mt-3" value="overview">
           <StatsIncomeSplitChart embedded split={split} />

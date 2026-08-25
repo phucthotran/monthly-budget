@@ -6,11 +6,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 
 export function YearFilterSelect({
   className,
+  hideLabelOnMobile,
   onValueChange,
   value,
   years,
 }: {
   className?: string
+  hideLabelOnMobile?: boolean
   value: number
   onValueChange: (year: number) => void
   years: number[]
@@ -18,10 +20,14 @@ export function YearFilterSelect({
   const { t } = useTranslation()
 
   return (
-    <div className={cn('flex flex-wrap items-center gap-2', className)}>
-      <span className="text-sm text-muted-foreground whitespace-nowrap">{t('year')}</span>
+    <div className={cn('flex flex-wrap items-center gap-2', hideLabelOnMobile && 'min-w-0', className)}>
+      <span
+        className={cn('text-sm text-muted-foreground whitespace-nowrap', hideLabelOnMobile && 'sr-only sm:not-sr-only')}
+      >
+        {t('year')}
+      </span>
       <Select value={String(value)} onValueChange={(v) => onValueChange(Number(v))}>
-        <SelectTrigger className="w-[5.75rem]">
+        <SelectTrigger className={hideLabelOnMobile ? 'w-full sm:w-[5.75rem]' : 'w-[5.75rem]'}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
