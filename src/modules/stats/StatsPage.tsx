@@ -55,16 +55,16 @@ export function StatsPage() {
           <StatsCharts actuals={actuals} budget={budget} categories={categories} income={income} />
 
           <Tabs defaultValue="detail" className="w-full">
-            <TabsList className="grid h-11 w-full grid-cols-2 gap-1 sm:h-10">
-              <TabsTrigger value="detail" className="min-w-0 gap-1.5 px-2 text-xs sm:px-3 sm:text-sm">
-                <Table2 className="hidden size-4 shrink-0 sm:block" />
+            <TabsList className="flex flex-col h-auto sm:grid w-full grid-cols-2 gap-1 sm:h-10">
+              <TabsTrigger value="detail" className="w-full sm:w-auto min-w-0 gap-1.5 px-2 text-xs sm:px-3 sm:text-sm">
+                <Table2 className="size-4 shrink-0" />
                 <span className="min-w-0 truncate">{t('tabDetail')}</span>
-                <InfoTooltip content={t('tabDetailTooltip')} htmlTag="span" className="hidden sm:inline-flex" />
+                <InfoTooltip content={t('tabDetailTooltip')} htmlTag="span" />
               </TabsTrigger>
-              <TabsTrigger value="savings" className="min-w-0 gap-1.5 px-2 text-xs sm:px-3 sm:text-sm">
-                <PiggyBank className="hidden size-4 shrink-0 sm:block" />
+              <TabsTrigger value="savings" className="w-full sm:w-auto min-w-0 gap-1.5 px-2 text-xs sm:px-3 sm:text-sm">
+                <PiggyBank className="size-4 shrink-0" />
                 <span className="min-w-0 truncate">{t('tabSavings')}</span>
-                <InfoTooltip content={t('tabSavingsTooltip')} htmlTag="span" className="hidden sm:inline-flex" />
+                <InfoTooltip content={t('tabSavingsTooltip')} htmlTag="span" />
               </TabsTrigger>
             </TabsList>
 
