@@ -27,7 +27,7 @@ export default defineConfig(({ mode }) => {
       VitePWA({
         includeAssets: ['favicon.png', 'apple-touch-icon.png'],
         manifest: {
-          background_color: '#0f172a',
+          background_color: '#f1f5f9',
           categories: ['finance', 'productivity'],
           description: 'Quản lý dự chi, thu nhập và tiết kiệm (VND)',
           display: 'standalone',

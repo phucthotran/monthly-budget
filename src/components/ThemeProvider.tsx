@@ -1,5 +1,7 @@
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
+import { applyPwaThemeColor } from '@/lib/pwaThemeColor'
+
 export const THEME_STORAGE_KEY = 'theme'
 
 type Theme = 'dark' | 'light' | 'system'
@@ -30,6 +32,7 @@ function systemPrefersDark() {
 
 function applyHtmlClass(isDark: boolean) {
   document.documentElement.classList.toggle('dark', isDark)
+  applyPwaThemeColor(isDark)
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {

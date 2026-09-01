@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="vi">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="theme-color" content="#f1f5f9" />
     <script>
       ;(function () {
         try {
@@ -9,31 +11,28 @@
             document.documentElement.lang = lng
           }
           var t = localStorage.getItem('theme')
+          var isDark = false
           if (t === 'light') {
-            document.documentElement.classList.remove('dark')
-            return
-          }
-          if (t === 'dark') {
-            document.documentElement.classList.add('dark')
-            return
-          }
-          if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark')
+            isDark = false
+          } else if (t === 'dark') {
+            isDark = true
           } else {
-            document.documentElement.classList.remove('dark')
+            isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+          }
+          document.documentElement.classList.toggle('dark', isDark)
+          var meta = document.querySelector('meta[name="theme-color"]')
+          if (meta) {
+            meta.setAttribute('content', isDark ? '#0f172a' : '#f1f5f9')
           }
         } catch (e) {}
       })()
     </script>
-    <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="%BASE_URL%favicon.png" />
     <link rel="apple-touch-icon" href="%BASE_URL%apple-touch-icon.png" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-visual"
     />
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Monthly Budget" />
