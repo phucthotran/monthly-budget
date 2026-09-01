@@ -2,6 +2,7 @@ import { createRootRoute, Outlet, useRouterState } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 
 import { AppShell } from '@/components/AppShell'
+import { usePinLock } from '@/components/PinLockProvider'
 
 export const rootRoute = createRootRoute({
   component: RootLayout,
@@ -18,12 +19,15 @@ function RootLayout() {
   }
 
   const pathname = useRouterState({ select: (s) => s.location.pathname })
-  const hideShell = pathname === '/login'
+  const { hideAppShell } = usePinLock()
+  const hideShell = pathname === '/login' || hideAppShell
 
   return (
     <>
       {hideShell ? (
-        <Outlet />
+        pathname === '/login' ? (
+          <Outlet />
+        ) : null
       ) : (
         <AppShell>
           <Outlet />

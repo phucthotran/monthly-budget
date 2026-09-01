@@ -1,10 +1,11 @@
 import { signOut, type User } from 'firebase/auth'
-import { LogOut } from 'lucide-react'
+import { KeyRound, LogOut } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { getFirebaseAuth } from '@/lib/firebase'
 
 import { ActionTooltipButton } from './patterns/ActionTooltipButton'
+import { usePinLock } from './PinLockProvider'
 import { Skeleton } from './ui'
 import { UserAvatar } from './UserAvatar'
 
@@ -14,6 +15,7 @@ export type AppShellUserCardProps = {
 
 export function AppShellUserCard({ user }: AppShellUserCardProps) {
   const { t } = useTranslation()
+  const { hasPin, openChangePin, openSetPin } = usePinLock()
 
   if (!user) {
     return (
@@ -40,6 +42,14 @@ export function AppShellUserCard({ user }: AppShellUserCardProps) {
         <p className="truncate text-xs font-medium">{primaryName}</p>
         {secondaryEmail ? <p className="truncate text-[11px] text-muted-foreground">{secondaryEmail}</p> : null}
       </div>
+      <ActionTooltipButton
+        className="h-7 w-7 shrink-0"
+        label={hasPin ? t('nav.changePin') : t('nav.setPin')}
+        variant="ghost"
+        onClick={() => (hasPin ? openChangePin() : openSetPin())}
+      >
+        <KeyRound className="h-3.5 w-3.5" />
+      </ActionTooltipButton>
       <ActionTooltipButton
         className="h-7 w-7 shrink-0"
         label={t('nav.logout')}

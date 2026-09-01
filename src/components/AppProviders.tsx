@@ -3,6 +3,7 @@ import { domAnimation, LazyMotion, MotionConfig } from 'motion/react'
 import { type ReactNode, useState } from 'react'
 
 import { AuthProvider } from './AuthProvider'
+import { PinLockProvider } from './PinLockProvider'
 import { PwaUpdatePrompt } from './PwaUpdatePrompt'
 import { ThemeProvider } from './ThemeProvider'
 import { Toaster, TooltipProvider } from './ui'
@@ -36,7 +37,9 @@ export function AppProviders({ children }: { children: ReactNode }) {
         <QueryClientProvider client={client}>
           <ThemeProvider>
             <TooltipProvider delayDuration={200}>
-              <AuthProvider>{children}</AuthProvider>
+              <AuthProvider>
+                <PinLockProvider>{children}</PinLockProvider>
+              </AuthProvider>
               <Toaster />
               <PwaUpdatePrompt />
             </TooltipProvider>

@@ -7,6 +7,18 @@ export interface UserPreferences {
   updatedAt: number
 }
 
+export type PinKdf = 'pbkdf2-sha256'
+
+/** `users/{uid}/security/lock` — hash fields when set, or `{ skipped: true }` after skip. */
+export interface PinLockDoc {
+  iterations?: number
+  kdf?: PinKdf
+  pinHash?: string
+  pinSalt?: string
+  skipped?: boolean
+  updatedAt: number
+}
+
 export interface Category {
   id: string
   name: string
