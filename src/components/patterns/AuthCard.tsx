@@ -7,12 +7,13 @@ import Logo from '../../../public/header-logo.png'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Separator } from '../ui'
 
 export type AuthCardProps = {
-  title: ReactNode
   children: ReactNode
   className?: string
+  compact?: boolean
+  title: ReactNode
 }
 
-export function AuthCard({ children, className, title }: AuthCardProps) {
+export function AuthCard({ children, className, compact = false, title }: AuthCardProps) {
   const { t } = useTranslation()
 
   return (
@@ -22,10 +23,12 @@ export function AuthCard({ children, className, title }: AuthCardProps) {
           <img src={Logo} alt={t('appName')} className="size-6 shrink-0 text-primary" />
           {title}
         </CardTitle>
-        <Separator className="my-6 h-[1px]" />
-        <CardDescription className="items-center justify-center flex">
-          <img src="./logo.png" alt={t('appName')} className="max-w-full h-80" />
-        </CardDescription>
+        <Separator className={cn('h-[1px]', compact ? 'my-3' : 'my-6')} />
+        {compact ? null : (
+          <CardDescription className="items-center justify-center flex">
+            <img src="./logo.png" alt={t('appName')} className="max-w-full h-80" />
+          </CardDescription>
+        )}
       </CardHeader>
       <CardContent>{children}</CardContent>
     </Card>

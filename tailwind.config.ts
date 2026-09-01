@@ -1,11 +1,23 @@
 import type { Config } from 'tailwindcss'
 
 import animate from 'tailwindcss-animate'
+import plugin from 'tailwindcss/plugin'
 
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   darkMode: ['class'],
-  plugins: [animate],
+  plugins: [
+    animate,
+    plugin(({ addUtilities }) => {
+      addUtilities({
+        '.scrollbar-none': {
+          '-ms-overflow-style': 'none',
+          '&::-webkit-scrollbar': { display: 'none' },
+          'scrollbar-width': 'none',
+        },
+      })
+    }),
+  ],
   theme: {
     extend: {
       animation: {

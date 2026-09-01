@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { useAuthContext } from '@/components/AuthProvider'
+import { useKeyboardInset } from '@/hooks/useKeyboardInset'
 import { usePinLockDoc } from '@/hooks/usePinLockDoc'
 import { pinLockHasHash, verifyPin } from '@/lib/pinCrypto'
 import {
@@ -102,9 +103,11 @@ export function PinLockProvider({ children }: { children: ReactNode }) {
   }
 
   const idleEnabled = Boolean(uid && hasPin && !locked && gate === 'none')
+  const gateOpen = gate !== 'none'
   usePinIdleAndVisibilityLock(idleEnabled, lock)
+  useKeyboardInset(gateOpen)
 
-  const hideAppShell = gate === 'hydrating' || gate === 'reset' || gate === 'setup'
+  const hideAppShell = gate !== 'none'
 
   const markUnlocked = useCallback(() => {
     if (!uid) return
@@ -205,31 +208,29 @@ export function PinLockProvider({ children }: { children: ReactNode }) {
 
   return (
     <PinLockContext.Provider value={value}>
-      <div className="min-h-dvh" {...(gate === 'unlock' ? { 'aria-hidden': true as const, inert: true as const } : {})}>
-        {children}
-      </div>
+      <div className={gateOpen ? 'hidden' : 'min-h-dvh'}>{children}</div>
       {gate !== 'none' ? (
-        <div className="fixed inset-0 z-[200] overflow-y-auto bg-slate-100 dark:bg-slate-900">
-          <PinGateScreen
-            backoffRemainingMs={backoffRemainingMs}
-            mode={gate}
-            pending={pending || reauth.pending}
-            unlockError={unlockError}
-            onForgotPin={gate === 'unlock' ? () => void handleForgotPin() : undefined}
-            onSkip={gate === 'setup' ? () => void handleSkip() : undefined}
-            onSubmitSetup={handleSetup}
-            onUnlock={handleUnlock}
-          />
-        </div>
+        <PinGateScreen
+          backoffRemainingMs={backoffRemainingMs}
+          mode={gate}
+          pending={pending || reauth.pending}
+          unlockError={unlockError}
+          onForgotPin={gate === 'unlock' ? () => void handleForgotPin() : undefined}
+          onSkip={gate === 'setup' ? () => void handleSkip() : undefined}
+          onSubmitSetup={handleSetup}
+          onUnlock={handleUnlock}
+        />
       ) : null}
-      <PinEditDialog
-        ref={editRef}
-        verifyCurrentPin={verifyCurrentPin}
-        onSave={async (pin) => {
-          if (!mutations) return
-          await runWithToast(() => mutations.setPin(pin), t('toast.pinSaved'))
-        }}
-      />
+      {gateOpen ? null : (
+        <PinEditDialog
+          ref={editRef}
+          verifyCurrentPin={verifyCurrentPin}
+          onSave={async (pin) => {
+            if (!mutations) return
+            await runWithToast(() => mutations.setPin(pin), t('toast.pinSaved'))
+          }}
+        />
+      )}
     </PinLockContext.Provider>
   )
 }

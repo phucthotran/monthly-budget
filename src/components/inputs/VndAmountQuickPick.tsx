@@ -29,7 +29,7 @@ export function VndAmountQuickPick({
       aria-label={t('amountQuickPickLabel')}
       className={cn(
         'flex w-full min-w-0 max-w-full gap-1.5',
-        'flex-nowrap overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+        'flex-nowrap overflow-x-auto overscroll-x-contain scrollbar-none',
         'touch-pan-x md:touch-auto',
         'md:flex-wrap md:overflow-x-visible md:overscroll-auto',
       )}
