@@ -37,6 +37,14 @@ export function writeUnlockSession(uid: string): void {
   }
 }
 
+export function clearUnlockSession(uid: string): void {
+  try {
+    sessionStorage.removeItem(unlockKey(uid))
+  } catch {
+    // Ignore storage failures.
+  }
+}
+
 export function readBackoffState(uid: string): PinBackoffState {
   try {
     const raw = sessionStorage.getItem(backoffKey(uid))

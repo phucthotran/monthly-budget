@@ -8,6 +8,7 @@ import { usePinLockDoc } from '@/hooks/usePinLockDoc'
 import { pinLockHasHash, verifyPin } from '@/lib/pinCrypto'
 import {
   clearBackoffState,
+  clearUnlockSession,
   type PinBackoffState,
   readBackoffState,
   recordPinFailure,
@@ -51,6 +52,7 @@ export function PinLockProvider({ children }: { children: ReactNode }) {
   const reauth = useGoogleReauth()
   const editRef = useRef<PinEditDialogHandle>(null)
   const didInitLock = useRef(false)
+  const prevUidRef = useRef<string | undefined>(undefined)
 
   const hasPin = pinLockHasHash(doc)
   const skipped = Boolean(doc?.skipped) && !hasPin
@@ -63,6 +65,12 @@ export function PinLockProvider({ children }: { children: ReactNode }) {
   const [now, setNow] = useState(() => Date.now())
 
   useEffect(() => {
+    const prevUid = prevUidRef.current
+    if (prevUid && prevUid !== uid) {
+      clearUnlockSession(prevUid)
+    }
+    prevUidRef.current = uid
+
     didInitLock.current = false
     setResetting(false)
     setUnlockError(null)
@@ -89,10 +97,11 @@ export function PinLockProvider({ children }: { children: ReactNode }) {
   }, [backoffRemainingMs])
 
   const lock = useCallback(() => {
-    if (!hasPin) return
+    if (!hasPin || !uid) return
+    clearUnlockSession(uid)
     setLocked(true)
     setUnlockError(null)
-  }, [hasPin])
+  }, [hasPin, uid])
 
   let gate: Gate = 'none'
   if (uid) {
